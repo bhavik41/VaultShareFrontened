@@ -237,6 +237,7 @@ export function SigninForm({ onSubmit, isSubmitting = false, error }: SigninForm
                 />
               </div>
 
+              <div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="signin-password" className="text-sm font-medium text-foreground">
                     Password

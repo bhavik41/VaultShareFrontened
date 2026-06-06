@@ -8,7 +8,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks"
 export default function DashboardPage() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const { user, loading, error, token } = useAppSelector((state) => state.auth)
+  const { user, loading, error, token, twoFactorEnabled } = useAppSelector((state) => state.auth)
+  const is2faEnabled = twoFactorEnabled || !!user?.twoFactorEnabled
 
   const [disableCode, setDisableCode] = useState("")
   const [showDisableForm, setShowDisableForm] = useState(false)
@@ -66,23 +67,23 @@ export default function DashboardPage() {
             <div>
               <p className="text-white font-medium flex items-center gap-2">
                 Two-Factor Authentication
-                {user?.twoFactorEnabled ? (
+                {is2faEnabled ? (
                   <ShieldCheck className="h-4 w-4 text-emerald-400" />
                 ) : (
                   <ShieldAlert className="h-4 w-4 text-amber-400" />
                 )}
               </p>
               <p className="text-white/50 text-sm mt-1">
-                {user?.twoFactorEnabled 
+                {is2faEnabled 
                   ? "Your account is protected with 2FA." 
                   : "Add an extra layer of security to your account."}
               </p>
             </div>
             
-            {user?.twoFactorEnabled ? (
-              <Button 
-                variant="destructive" 
+            {is2faEnabled ? (
+              <Button
                 size="sm"
+                className="bg-red-600 hover:bg-red-500 text-white"
                 onClick={() => setShowDisableForm(!showDisableForm)}
               >
                 Disable
@@ -99,7 +100,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Inline form to disable 2FA */}
-          {showDisableForm && user?.twoFactorEnabled && (
+          {showDisableForm && is2faEnabled && (
             <div className="mt-6 p-4 bg-black/20 rounded-xl border border-white/5">
               <p className="text-white/80 text-sm mb-3">Enter a code from your authenticator app to disable 2FA.</p>
               <form onSubmit={handleDisable2fa} className="flex gap-2">

@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit"
 import axios from "axios"
 
-const BASE_URL = "http://localhost:5001/api/auth"
+const BASE_URL = `${import.meta.env.VITE_API_URL}/auth`
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -12,6 +12,7 @@ export interface User {
   name: string
   email: string
   createdAt: string
+  twoFactorEnabled?: boolean
 }
 
 interface AuthState {

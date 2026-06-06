@@ -1,13 +1,18 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { SignupForm } from "@/components/ui/login-signup"
-import { signupThunk } from "@/store/authSlice"
+import { signupThunk, clearError } from "@/store/authSlice"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 
 export default function SignupPage() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { loading, error, token } = useAppSelector((state) => state.auth)
+
+  useEffect(() => {
+    dispatch(clearError())
+    return () => { dispatch(clearError()) }
+  }, [dispatch])
 
   // Redirect once token is available
   useEffect(() => {
