@@ -1,0 +1,67 @@
+import { useState } from "react"
+import { validate2faThunk } from "@/store/authSlice"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { ShieldCheck, Loader2 } from "lucide-react"
+
+export default function TwoFactorPrompt() {
+  const dispatch = useAppDispatch()
+  const { loading, error } = useAppSelector((s) => s.auth)
+  const [code, setCode] = useState("")
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await dispatch(validate2faThunk({ token: code }))
+  }
+
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-slate-950 p-4">
+      <div className="w-full max-w-sm">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
+          {/* Icon */}
+          <div className="flex justify-center mb-6">
+            <div className="h-14 w-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
+              <ShieldCheck className="h-7 w-7 text-violet-400" />
+            </div>
+          </div>
+
+          <h1 className="text-2xl font-bold text-white text-center mb-2">Two-Factor Auth</h1>
+          <p className="text-white/50 text-sm text-center mb-8">
+            Enter the 6-digit code from your authenticator app.
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <input
+              type="text"
+              required
+              maxLength={6}
+              autoFocus
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              placeholder="000 000"
+              className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-white text-center text-2xl tracking-[0.6em] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+            />
+
+            {error && (
+              <p className="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading || code.length < 6}
+              className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
+            >
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              Verify
+            </button>
+          </form>
+
+          <p className="text-white/30 text-xs text-center mt-6">
+            Lost access to your authenticator? Contact support.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
