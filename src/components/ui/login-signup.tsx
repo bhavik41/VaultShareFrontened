@@ -34,7 +34,6 @@ const Logo = (props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) => (
 
 interface SignupFormProps {
   onSubmit?: (data: {
-    role: string
     firstName: string
     lastName: string
     username: string
@@ -48,7 +47,6 @@ interface SignupFormProps {
 
 export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupFormProps) {
   const [showPassword, setShowPassword] = useState(false)
-  const [role, setRole] = useState("designer")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [username, setUsername] = useState("")
@@ -58,7 +56,7 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit?.({ role, firstName, lastName, username, email, password, agreedToTerms })
+    onSubmit?.({ firstName, lastName, username, email, password, agreedToTerms })
   }
 
   return (
@@ -75,32 +73,6 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
 
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-5 px-8">
-              {/* Role */}
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select value={role} onValueChange={setRole}>
-                  <SelectTrigger
-                    id="role"
-                    className="[&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_svg]:shrink-0"
-                  >
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="designer">
-                      <User size={16} aria-hidden="true" />
-                      <span className="truncate">Product Designer</span>
-                    </SelectItem>
-                    <SelectItem value="developer">
-                      <Code size={16} aria-hidden="true" />
-                      <span className="truncate">Developer</span>
-                    </SelectItem>
-                    <SelectItem value="manager">
-                      <BarChart size={16} aria-hidden="true" />
-                      <span className="truncate">Product Manager</span>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
 
               {/* Name */}
               <div className="grid grid-cols-2 gap-4">
@@ -265,10 +237,17 @@ export function SigninForm({ onSubmit, isSubmitting = false, error }: SigninForm
                 />
               </div>
 
-              <div>
-                <Label htmlFor="signin-password" className="text-sm font-medium text-foreground">
-                  Password
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="signin-password" className="text-sm font-medium text-foreground">
+                    Password
+                  </Label>
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm font-medium text-primary hover:text-primary/90 hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <div className="relative mt-2">
                   <Input
                     type={showPassword ? "text" : "password"}

@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit"
 import axios from "axios"
 
-const BASE_URL = "http://localhost:5000/api/auth"
+const BASE_URL = "http://localhost:5001/api/auth"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -68,13 +68,13 @@ async function apiPost<T>(url: string, body: object, headers?: Record<string, st
 // Signup
 export const signupThunk = createAsyncThunk<
   { token: string; refreshToken: string; user: User },
-  { firstName: string; lastName: string; email: string; password: string; username: string; role: string; agreedToTerms: boolean },
+  { firstName: string; lastName: string; email: string; password: string; username: string; agreedToTerms: boolean },
   { rejectValue: string }
 >("auth/signup", async (data, { rejectWithValue }) => {
   try {
     const result = await apiPost<{ token: string; refreshToken: string; user: User }>(
       `${BASE_URL}/signup`,
-      { name: `${data.firstName} ${data.lastName}`.trim(), email: data.email, password: data.password, username: data.username, role: data.role },
+      { name: `${data.firstName} ${data.lastName}`.trim(), email: data.email, password: data.password, username: data.username },
     )
     return result
   } catch (err: unknown) {

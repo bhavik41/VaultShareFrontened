@@ -21,11 +21,6 @@ export default function SigninPage() {
   return (
     <div className="relative">
       <SigninForm onSubmit={handleSubmit} isSubmitting={loading} error={error ?? ""} />
-      <div className="absolute bottom-8 left-0 right-0 text-center">
-        <Link to="/forgot-password" className="text-violet-400 hover:text-violet-300 text-sm underline-offset-2 hover:underline transition-colors">
-          Forgot your password?
-        </Link>
-      </div>
     </div>
   )
 }

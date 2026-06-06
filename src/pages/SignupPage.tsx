@@ -15,7 +15,6 @@ export default function SignupPage() {
   }, [token, navigate])
 
   const handleSubmit = async (data: {
-    role: string
     firstName: string
     lastName: string
     username: string
