@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { LogOut, Vault } from "lucide-react"
+import { logout } from "@/store/authSlice"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
 
 export default function DashboardPage() {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const user = useAppSelector((state) => state.auth.user)
 
   const handleLogout = () => {
-    localStorage.removeItem("token")
+    dispatch(logout())
     navigate("/signin")
   }
 
@@ -18,7 +22,9 @@ export default function DashboardPage() {
         </div>
         <h1 className="text-3xl font-bold text-white">VaultShare</h1>
         <p className="text-white/60 max-w-sm">
-          You're signed in. Your secure file vault is ready.
+          {user
+            ? `Welcome, ${user.name}! Your secure file vault is ready.`
+            : "You're signed in. Your secure file vault is ready."}
         </p>
       </div>
 

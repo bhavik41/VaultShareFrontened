@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { useAppSelector } from "@/store/hooks"
 import SignupPage from "@/pages/SignupPage"
 import SigninPage from "@/pages/SigninPage"
 import DashboardPage from "@/pages/DashboardPage"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const token = localStorage.getItem("token")
+  const token = useAppSelector((state) => state.auth.token)
   return token ? <>{children}</> : <Navigate to="/signin" replace />
 }
 
