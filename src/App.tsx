@@ -42,7 +42,7 @@ export default function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <LandingPage />
+              <DashboardPage />
             </ProtectedRoute>
           }
         />

@@ -3,14 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { BarChart, Code, Eye, EyeOff, User } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
 import { type JSX, type SVGProps, useState } from "react"
 import { Link } from "react-router-dom"
 
