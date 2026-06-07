@@ -1,22 +1,23 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { useAppSelector } from "@/store/hooks"
-import SignupPage from "@/pages/SignupPage"
-import SigninPage from "@/pages/SigninPage"
-import DashboardPage from "@/pages/DashboardPage"
-import ForgotPasswordPage from "@/pages/ForgotPasswordPage"
-import ResetPasswordPage from "@/pages/ResetPasswordPage"
-import TwoFactorSetupPage from "@/pages/TwoFactorSetupPage"
-import TwoFactorPrompt from "@/components/TwoFactorPrompt"
-import LandingPage from "@/pages/LandingPage"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAppSelector } from "@/store/hooks";
+import SignupPage from "@/pages/SignupPage";
+import SigninPage from "@/pages/SigninPage";
+import DashboardPage from "@/pages/DashboardPage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
+import TwoFactorSetupPage from "@/pages/TwoFactorSetupPage";
+import TwoFactorPrompt from "@/components/TwoFactorPrompt";
+import LandingPage from "@/pages/LandingPage";
+import UploadPage from "@/pages/UploadPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const token = useAppSelector((state) => state.auth.token)
-  return token ? <>{children}</> : <Navigate to="/signin" replace />
+  const token = useAppSelector((state) => state.auth.token);
+  return token ? <>{children}</> : <Navigate to="/signin" replace />;
 }
 
 function RootRoute() {
-  const token = useAppSelector((state) => state.auth.token)
-  return token ? <Navigate to="/dashboard" replace /> : <LandingPage />
+  const token = useAppSelector((state) => state.auth.token);
+  return token ? <Navigate to="/dashboard" replace /> : <LandingPage />;
 }
 
 export default function App() {
@@ -41,12 +42,20 @@ export default function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <LandingPage />
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <UploadPage />
             </ProtectedRoute>
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
