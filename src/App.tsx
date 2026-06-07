@@ -7,16 +7,23 @@ import ForgotPasswordPage from "@/pages/ForgotPasswordPage"
 import ResetPasswordPage from "@/pages/ResetPasswordPage"
 import TwoFactorSetupPage from "@/pages/TwoFactorSetupPage"
 import TwoFactorPrompt from "@/components/TwoFactorPrompt"
+import LandingPage from "@/pages/LandingPage"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token)
   return token ? <>{children}</> : <Navigate to="/signin" replace />
 }
 
+function RootRoute() {
+  const token = useAppSelector((state) => state.auth.token)
+  return token ? <Navigate to="/dashboard" replace /> : <LandingPage />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<RootRoute />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/signin" element={<SigninPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -31,15 +38,14 @@ export default function App() {
           }
         />
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <LandingPage />
             </ProtectedRoute>
           }
         />
-        {/* Catch-all → signin */}
-        <Route path="*" element={<Navigate to="/signin" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
