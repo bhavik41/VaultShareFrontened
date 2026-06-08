@@ -8,6 +8,7 @@ import ResetPasswordPage from "@/pages/ResetPasswordPage"
 import TwoFactorSetupPage from "@/pages/TwoFactorSetupPage"
 import TwoFactorPrompt from "@/components/TwoFactorPrompt"
 import LandingPage from "@/pages/LandingPage"
+import CollaborationPage from "@/pages/CollaborationPage"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token)
@@ -41,7 +42,15 @@ export default function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <LandingPage />
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/collaboration"
+          element={
+            <ProtectedRoute>
+              <CollaborationPage />
             </ProtectedRoute>
           }
         />
