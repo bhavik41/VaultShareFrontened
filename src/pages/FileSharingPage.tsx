@@ -4,6 +4,7 @@ import {
   Copy,
   Link,
   Loader2,
+  Mail,
   RefreshCw,
   Share2,
   Trash2,
@@ -11,10 +12,16 @@ import {
   Users,
 } from "lucide-react"
 import type { UploadedFile } from "@/store/filesApi"
-import type { SharedRole, SharedUser, ShareLink } from "@/store/collaborationApi"
+import type {
+  CollaborationInvitation,
+  SharedRole,
+  SharedUser,
+  ShareLink,
+} from "@/store/collaborationApi"
 import { getMyFiles } from "@/store/filesApi"
 import {
   createShareLink,
+  getFileInvitations,
   getShareLinks,
   getSharedUsers,
   inviteCollaborator,
@@ -42,11 +49,20 @@ function buildPublicShareUrl(token: string) {
   return `${window.location.origin}/share/${token}`
 }
 
+function getStatusClass(status: CollaborationInvitation["status"]) {
+  if (status === "accepted") return "bg-emerald-500/15 text-emerald-200"
+  if (status === "rejected") return "bg-red-500/15 text-red-200"
+  return "bg-amber-500/15 text-amber-200"
+}
+
 export default function FileSharingPage() {
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [selectedFileId, setSelectedFileId] = useState("")
   const [collaborators, setCollaborators] = useState<SharedUser[]>([])
   const [shareLinks, setShareLinks] = useState<ShareLink[]>([])
+  const [sentInvitations, setSentInvitations] = useState<
+    CollaborationInvitation[]
+  >([])
   const [inviteEmail, setInviteEmail] = useState("")
   const [inviteRole, setInviteRole] = useState<SharedRole>("viewer")
   const [shareEmail, setShareEmail] = useState("")
@@ -70,13 +86,15 @@ export default function FileSharingPage() {
   }
 
   async function loadSelectedFileSharing(fileId: string) {
-    const [sharedUsers, links] = await Promise.all([
+    const [sharedUsers, links, invitations] = await Promise.all([
       getSharedUsers(fileId),
       getShareLinks(fileId),
+      getFileInvitations(fileId),
     ])
 
     setCollaborators(sharedUsers)
     setShareLinks(links)
+    setSentInvitations(invitations)
   }
 
   async function loadPageData() {
@@ -194,6 +212,7 @@ export default function FileSharingPage() {
           <RouterLink to="/dashboard" className="text-lg font-semibold text-white">
             VaultShare
           </RouterLink>
+
           <div className="flex gap-2">
             <RouterLink
               to="/collaboration"
@@ -201,6 +220,7 @@ export default function FileSharingPage() {
             >
               My Access
             </RouterLink>
+
             <button
               type="button"
               onClick={loadPageData}
@@ -260,7 +280,7 @@ export default function FileSharingPage() {
                   >
                     <p className="truncate text-sm font-medium">{file.name}</p>
                     <p className="mt-1 text-xs text-slate-400">
-                      {formatSize(file.size)} • {formatDate(file.createdAt)}
+                      {formatSize(file.size)} - {formatDate(file.createdAt)}
                     </p>
                   </button>
                 ))}
@@ -271,9 +291,11 @@ export default function FileSharingPage() {
               {selectedFile && (
                 <div className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
                   <p className="text-sm text-slate-400">Selected file</p>
-                  <h2 className="mt-1 text-xl font-semibold">{selectedFile.name}</h2>
+                  <h2 className="mt-1 text-xl font-semibold">
+                    {selectedFile.name}
+                  </h2>
                   <p className="mt-1 text-sm text-slate-400">
-                    {selectedFile.mimeType} • {formatSize(selectedFile.size)}
+                    {selectedFile.mimeType} - {formatSize(selectedFile.size)}
                   </p>
                 </div>
               )}
@@ -356,6 +378,44 @@ export default function FileSharingPage() {
 
               <div className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
                 <div className="mb-4 flex items-center gap-2">
+                  <Mail size={18} className="text-violet-300" />
+                  <h2 className="text-lg font-semibold">Sent Invitations</h2>
+                </div>
+
+                {sentInvitations.length === 0 ? (
+                  <p className="text-sm text-slate-400">
+                    No invitations have been sent for this file.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {sentInvitations.map((invitation) => (
+                      <div
+                        key={invitation.id}
+                        className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-white/10 bg-slate-900 p-4"
+                      >
+                        <div>
+                          <p className="font-medium">{invitation.inviteeEmail}</p>
+                          <p className="mt-1 text-sm text-slate-400">
+                            Role: {invitation.role} - Sent{" "}
+                            {formatDate(invitation.createdAt)}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`rounded-md px-2 py-1 text-xs font-medium ${getStatusClass(
+                            invitation.status,
+                          )}`}
+                        >
+                          {invitation.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+                <div className="mb-4 flex items-center gap-2">
                   <Users size={18} className="text-violet-300" />
                   <h2 className="text-lg font-semibold">Collaborators</h2>
                 </div>
@@ -380,7 +440,10 @@ export default function FileSharingPage() {
                           <select
                             value={user.role}
                             onChange={(e) =>
-                              handleRoleChange(user.userId, e.target.value as SharedRole)
+                              handleRoleChange(
+                                user.userId,
+                                e.target.value as SharedRole,
+                              )
                             }
                             className="rounded-md border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-violet-400"
                           >
@@ -409,7 +472,10 @@ export default function FileSharingPage() {
                   <h2 className="text-lg font-semibold">Share Links</h2>
                 </div>
 
-                <form onSubmit={handleCreateShareLink} className="mb-5 grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+                <form
+                  onSubmit={handleCreateShareLink}
+                  className="mb-5 grid gap-3 md:grid-cols-[1fr_1fr_auto]"
+                >
                   <select
                     value={linkRole}
                     onChange={(e) => setLinkRole(e.target.value as SharedRole)}
@@ -453,9 +519,9 @@ export default function FileSharingPage() {
                               {buildPublicShareUrl(shareLink.token)}
                             </p>
                             <p className="mt-1 text-xs text-slate-400">
-                              Role: {shareLink.role} • Expires{" "}
+                              Role: {shareLink.role} - Expires{" "}
                               {formatDate(shareLink.expiresAt)}
-                              {shareLink.revokedAt ? " • Revoked" : ""}
+                              {shareLink.revokedAt ? " - Revoked" : ""}
                             </p>
                           </div>
 
@@ -468,6 +534,7 @@ export default function FileSharingPage() {
                             >
                               <Copy size={16} />
                             </button>
+
                             <button
                               type="button"
                               onClick={() => handleRevokeLink(shareLink.token)}
