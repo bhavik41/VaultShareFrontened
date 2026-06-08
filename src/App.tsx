@@ -9,6 +9,7 @@ import TwoFactorSetupPage from "@/pages/TwoFactorSetupPage"
 import TwoFactorPrompt from "@/components/TwoFactorPrompt"
 import LandingPage from "@/pages/LandingPage"
 import CollaborationPage from "@/pages/CollaborationPage"
+import FileSharingPage from "@/pages/FileSharingPage"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token)
@@ -54,6 +55,14 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/file-sharing"
+  element={
+    <ProtectedRoute>
+      <FileSharingPage />
+    </ProtectedRoute>
+  }
+/>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
