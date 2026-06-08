@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react"
 import { Link as RouterLink } from "react-router-dom"
-import { Check, FileText, Loader2, Mail, RefreshCw, X } from "lucide-react"
+import {
+  Check,
+  Download,
+  ExternalLink,
+  FileText,
+  Loader2,
+  Mail,
+  RefreshCw,
+  X,
+} from "lucide-react"
 import type {
   CollaborationInvitation,
   SharedFile,
@@ -10,6 +19,7 @@ import {
   getMyInvitations,
   respondToInvitation,
 } from "@/store/collaborationApi"
+import { downloadFile, getFileSignedUrl } from "@/store/filesApi"
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString(undefined, {
@@ -61,6 +71,31 @@ export default function CollaborationPage() {
       await loadCollaborationData()
     } catch {
       setError(`Unable to ${status} invitation.`)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  async function handleOpenFile(fileId: string) {
+    try {
+      setActionLoading(fileId)
+      setError("")
+      const { url } = await getFileSignedUrl(fileId)
+      window.open(url, "_blank", "noopener,noreferrer")
+    } catch {
+      setError("Unable to open this file.")
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  async function handleDownloadFile(file: SharedFile) {
+    try {
+      setActionLoading(file.id)
+      setError("")
+      await downloadFile(file.id, file.name)
+    } catch {
+      setError("Unable to download this file.")
     } finally {
       setActionLoading(null)
     }
@@ -206,7 +241,7 @@ export default function CollaborationPage() {
                       key={file.id}
                       className="rounded-md border border-white/10 bg-slate-900 p-4"
                     >
-                      <div className="flex items-start justify-between gap-3">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <p className="font-medium">{file.name}</p>
                           <p className="mt-1 text-sm text-slate-400">
@@ -216,9 +251,32 @@ export default function CollaborationPage() {
                             Shared {formatDate(file.sharedAt)}
                           </p>
                         </div>
-                        <span className="rounded-md bg-violet-500/15 px-2 py-1 text-xs font-medium text-violet-200">
-                          {file.role}
-                        </span>
+
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-md bg-violet-500/15 px-2 py-1 text-xs font-medium text-violet-200">
+                            {file.role}
+                          </span>
+
+                          <button
+                            type="button"
+                            disabled={actionLoading === file.id}
+                            onClick={() => handleOpenFile(file.id)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/5 text-white hover:bg-white/10 disabled:opacity-60"
+                            title="Open file"
+                          >
+                            <ExternalLink size={16} />
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={actionLoading === file.id}
+                            onClick={() => handleDownloadFile(file)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-60"
+                            title="Download file"
+                          >
+                            <Download size={16} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
