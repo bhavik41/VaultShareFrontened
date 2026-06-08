@@ -29,6 +29,18 @@ function formatDate(value: string) {
   })
 }
 
+function getStatusClass(status: CollaborationInvitation["status"]) {
+  if (status === "accepted") {
+    return "bg-emerald-500/15 text-emerald-200"
+  }
+
+  if (status === "rejected") {
+    return "bg-red-500/15 text-red-200"
+  }
+
+  return "bg-amber-500/15 text-amber-200"
+}
+
 export default function CollaborationPage() {
   const [invitations, setInvitations] = useState<CollaborationInvitation[]>([])
   const [sharedFiles, setSharedFiles] = useState<SharedFile[]>([])
@@ -101,10 +113,6 @@ export default function CollaborationPage() {
     }
   }
 
-  const pendingInvitations = invitations.filter(
-    (invitation) => invitation.status === "pending",
-  )
-
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <header className="border-b border-white/10 bg-slate-950/95">
@@ -137,7 +145,7 @@ export default function CollaborationPage() {
         <div className="mb-8">
           <h1 className="text-2xl font-bold">Collaboration</h1>
           <p className="mt-2 text-sm text-slate-400">
-            Manage received invitations and files shared with you.
+            Manage invitations, accepted access, and files shared with you.
           </p>
         </div>
 
@@ -163,21 +171,21 @@ export default function CollaborationPage() {
             <section className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
               <div className="mb-4 flex items-center gap-2">
                 <Mail size={18} className="text-violet-300" />
-                <h2 className="text-lg font-semibold">Pending Invitations</h2>
+                <h2 className="text-lg font-semibold">Invitation History</h2>
               </div>
 
-              {pendingInvitations.length === 0 ? (
+              {invitations.length === 0 ? (
                 <p className="text-sm text-slate-400">
-                  You do not have any pending invitations.
+                  You do not have any invitations.
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {pendingInvitations.map((invitation) => (
+                  {invitations.map((invitation) => (
                     <div
                       key={invitation.id}
                       className="rounded-md border border-white/10 bg-slate-900 p-4"
                     >
-                      <div className="flex items-start justify-between gap-3">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <p className="font-medium">
                             {invitation.fileName ?? "Shared file"}
@@ -189,33 +197,54 @@ export default function CollaborationPage() {
                             </span>
                           </p>
                           <p className="mt-1 text-xs text-slate-500">
-                            {formatDate(invitation.createdAt)}
+                            Created {formatDate(invitation.createdAt)}
+                            {invitation.respondedAt
+                              ? ` • Responded ${formatDate(invitation.respondedAt)}`
+                              : ""}
                           </p>
                         </div>
 
-                        <div className="flex shrink-0 gap-2">
-                          <button
-                            type="button"
-                            disabled={actionLoading === invitation.id}
-                            onClick={() =>
-                              handleInvitationResponse(invitation.id, "accepted")
-                            }
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-60"
-                            title="Accept invitation"
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span
+                            className={`rounded-md px-2 py-1 text-xs font-medium ${getStatusClass(
+                              invitation.status,
+                            )}`}
                           >
-                            <Check size={16} />
-                          </button>
-                          <button
-                            type="button"
-                            disabled={actionLoading === invitation.id}
-                            onClick={() =>
-                              handleInvitationResponse(invitation.id, "rejected")
-                            }
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white hover:bg-red-500 disabled:opacity-60"
-                            title="Reject invitation"
-                          >
-                            <X size={16} />
-                          </button>
+                            {invitation.status}
+                          </span>
+
+                          {invitation.status === "pending" && (
+                            <>
+                              <button
+                                type="button"
+                                disabled={actionLoading === invitation.id}
+                                onClick={() =>
+                                  handleInvitationResponse(
+                                    invitation.id,
+                                    "accepted",
+                                  )
+                                }
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-60"
+                                title="Accept invitation"
+                              >
+                                <Check size={16} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={actionLoading === invitation.id}
+                                onClick={() =>
+                                  handleInvitationResponse(
+                                    invitation.id,
+                                    "rejected",
+                                  )
+                                }
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white hover:bg-red-500 disabled:opacity-60"
+                                title="Reject invitation"
+                              >
+                                <X size={16} />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
