@@ -217,7 +217,7 @@ const filesSlice = createSlice({
       })
       .addCase(listFilesThunk.fulfilled, (s, a) => {
         s.loading = false;
-        s.items = a.payload;
+        s.items = a.payload ?? [];
       })
       .addCase(listFilesThunk.rejected, (s, a) => {
         s.loading = false;
