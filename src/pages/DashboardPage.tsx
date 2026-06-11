@@ -28,6 +28,7 @@ import {
   Code,
   ExternalLink,
   Lock,
+  Eye,
 } from "lucide-react";
 import { logout, disable2faThunk, fetchMeThunk } from "@/store/authSlice";
 import {
@@ -220,6 +221,18 @@ function ProfileDropdown({
               action: () => handleMenuClick("files"),
             },
             {
+              icon: <Share2 size={15} />,
+              label: "Collaboration",
+              sub: "Invitations & shared files",
+              action: () => { setOpen(false); navigate("/collaboration"); },
+            },
+            {
+              icon: <Users size={15} />,
+              label: "Manage Sharing",
+              sub: "Permissions & share links",
+              action: () => { setOpen(false); navigate("/file-sharing"); },
+            },
+            {
               icon: is2faEnabled ? (
                 <ShieldCheck size={15} className="text-emerald-400" />
               ) : (
@@ -285,9 +298,10 @@ export default function DashboardPage() {
   const { user, loading: authLoading, error: authError, token, twoFactorEnabled } = useAppSelector(
     (state) => state.auth,
   );
-  const { items: uploadedFiles, uploadProgress } = useAppSelector(
+  const { items: uploadedFilesRaw, uploadProgress } = useAppSelector(
     (state) => state.files,
   );
+  const uploadedFiles = uploadedFilesRaw ?? [];
 
   const is2faEnabled = twoFactorEnabled || !!user?.twoFactorEnabled;
 
@@ -480,20 +494,25 @@ export default function DashboardPage() {
             {[
               { id: "dashboard", label: "Dashboard", icon: <LayoutGrid size={18} /> },
               { id: "files", label: "My Files", icon: <Folder size={18} /> },
-              { id: "shared", label: "Shared with me", icon: <Share2 size={18} />, badge: "Coming" },
+              { id: "shared", label: "Shared with me", icon: <Share2 size={18} /> },
               { id: "starred", label: "Starred", icon: <Star size={18} />, badge: "Coming" },
               { id: "vault", label: "Encrypted Vault", icon: <Lock size={18} />, badge: "Secure" },
-              { id: "team", label: "Team", icon: <Users size={18} />, badge: "Pro" },
+              { id: "team", label: "Team / Sharing", icon: <Users size={18} /> },
               { id: "activity", label: "Activity", icon: <Activity size={18} /> },
               { id: "settings", label: "Settings", icon: <Settings size={18} /> },
             ].map(({ id, label, icon, badge }) => {
               const isActive = activeTab === id;
-              const isInteractable = ["dashboard", "files", "settings"].includes(id);
+              const isNavLink = id === "shared" || id === "team";
+              const isInteractable = ["dashboard", "files", "settings"].includes(id) || isNavLink;
 
               return (
                 <button
                   key={id}
-                  onClick={() => isInteractable && setActiveTab(id)}
+                  onClick={() => {
+                    if (id === "shared") navigate("/collaboration");
+                    else if (id === "team") navigate("/file-sharing");
+                    else if (isInteractable) setActiveTab(id);
+                  }}
                   disabled={!isInteractable}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border-0 text-left font-medium text-sm transition-all duration-200 ${
                     isActive
@@ -709,6 +728,16 @@ export default function DashboardPage() {
                                 className="absolute right-0 top-full mt-1.5 w-36 bg-slate-950 border border-slate-850 rounded-xl p-1 z-50 shadow-xl"
                               >
                                 <button
+                                  onClick={() => {
+                                    setActiveMenuId(null);
+                                    navigate(`/files/${file.id}`);
+                                  }}
+                                  className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-900/60 hover:text-white transition-colors"
+                                >
+                                  <Eye size={13} />
+                                  <span>View</span>
+                                </button>
+                                <button
                                   onClick={() =>
                                     handleDownload(file.id, file.name)
                                   }
@@ -738,8 +767,8 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Card Name */}
-                        <div className="flex flex-col gap-1">
-                          <span className="font-bold text-slate-100 text-sm tracking-tight truncate pr-2">
+                        <div className="flex flex-col gap-1" onClick={() => navigate(`/files/${file.id}`)} style={{ cursor: "pointer" }}>
+                          <span className="font-bold text-slate-100 text-sm tracking-tight truncate pr-2 hover:text-violet-300 transition-colors">
                             {file.name}
                           </span>
                           <span className="text-[11px] text-slate-500">
