@@ -9,6 +9,13 @@ import TwoFactorSetupPage from "@/pages/TwoFactorSetupPage";
 import TwoFactorPrompt from "@/components/TwoFactorPrompt";
 import LandingPage from "@/pages/LandingPage";
 import UploadPage from "@/pages/UploadPage";
+import CollaborationPage from "@/pages/CollaborationPage";
+import FileSharingPage from "@/pages/FileSharingPage";
+import ShareLinkPage from "@/pages/ShareLinkPage";
+import ContactPage from "@/pages/ContactPage";
+import AboutPage from "@/pages/AboutPage";
+import TeamPage from "@/pages/TeamPage";
+import FileViewerPage from "@/pages/FileViewerPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token);
@@ -30,6 +37,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/2fa-validate" element={<TwoFactorPrompt />} />
+        <Route path="/share/:token" element={<ShareLinkPage />} />
         <Route
           path="/2fa-setup"
           element={
@@ -51,6 +59,33 @@ export default function App() {
           element={
             <ProtectedRoute>
               <UploadPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/collaboration"
+          element={
+            <ProtectedRoute>
+              <CollaborationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/file-sharing"
+          element={
+            <ProtectedRoute>
+              <FileSharingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/team" element={<TeamPage />} />
+        <Route
+          path="/files/:id"
+          element={
+            <ProtectedRoute>
+              <FileViewerPage />
             </ProtectedRoute>
           }
         />
