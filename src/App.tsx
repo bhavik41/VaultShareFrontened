@@ -11,6 +11,7 @@ import LandingPage from "@/pages/LandingPage"
 import CollaborationPage from "@/pages/CollaborationPage"
 import FileSharingPage from "@/pages/FileSharingPage"
 import ShareLinkPage from "@/pages/ShareLinkPage"
+import DocumentDashboardPage from "@/pages/DocumentDashboardPage"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token)
@@ -48,6 +49,15 @@ export default function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/documents"
+          element={
+            <ProtectedRoute>
+              <DocumentDashboardPage />
             </ProtectedRoute>
           }
         />

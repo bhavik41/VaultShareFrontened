@@ -14,6 +14,21 @@ export async function getMyFiles() {
   return res.data.files
 }
 
+export async function uploadFile(file: File) {
+  const formData = new FormData()
+  formData.append("file", file)
+
+  const res = await api.post<{ message: string; file: UploadedFile }>(
+    "/files/upload",
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    },
+  )
+
+  return res.data.file
+}
+
 export async function getFileSignedUrl(fileId: string) {
   const res = await api.get<{ url: string; expiresIn: number }>(
     `/files/${fileId}/signed-url`,
