@@ -55,6 +55,16 @@ VITE_API_URL=http://localhost:5001/api
 - **Persistent sessions** — tokens stored in localStorage, auto-restored on reload
 - **Protected routes** — unauthenticated users are redirected to `/signin`
 
+## Dashboard & Document Management
+
+Contributed by NishthaPandya07.
+
+- Added a protected document dashboard route at `/dashboard/documents`.
+- Added dashboard statistics, uploaded files, shared files, recent activity, search, filtering, sorting, and document metadata views.
+- Integrated document viewing, download, sharing, and upload actions with the API layer.
+- Added reusable dashboard components: `DashboardStats`, `FileTable`, `FileFilters`, `DocumentViewer`, and `RecentActivity`.
+- Added `dashboardApi` and file API updates for dashboard data and file upload support.
+
 ## Project Structure
 
 ```
