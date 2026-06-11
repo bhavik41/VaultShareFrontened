@@ -46,6 +46,10 @@ VITE_API_URL=http://localhost:5001/api
 | `/2fa-validate` | `TwoFactorPrompt` | Public | Enter TOTP code during login |
 | `/2fa-setup` | `TwoFactorSetupPage` | Protected | Enable or disable 2FA |
 | `/` | `DashboardPage` | Protected | Home — security settings, logout |
+| `/dashboard` | `DashboardPage` | Protected | Main dashboard with security settings and collaboration shortcuts |
+| `/collaboration` | `CollaborationPage` | Protected | View invitation history, accept/reject invitations, and access shared files |
+| `/file-sharing` | `FileSharingPage` | Protected | Manage owned file sharing, collaborators, permissions, and share links |
+| `/share/:token` | `ShareLinkPage` | Public | Open public expiring share links |
 
 ## Features
 
@@ -54,7 +58,12 @@ VITE_API_URL=http://localhost:5001/api
 - **Password reset** via email OTP
 - **Persistent sessions** — tokens stored in localStorage, auto-restored on reload
 - **Protected routes** — unauthenticated users are redirected to `/signin`
-
+- **Collaboration invitations** — receive, accept, reject, and track invitation status.
+- **File sharing management** — owners can invite collaborators, directly share files, and remove access.
+- **Permission management** — supports viewer and editor collaborator roles.
+- **Shared file access** — collaborators can open and download files shared with them.
+- **Share links** — owners can create, copy, and revoke expiring public share links.
+- **Dashboard shortcuts** — quick access to collaboration and file sharing pages.
 ## Project Structure
 
 ```
@@ -87,3 +96,4 @@ src/
 ├── App.tsx                       # Router + protected route setup
 └── main.tsx
 ```
+              # File listing, signed URL, and download helpers
