@@ -1,4 +1,6 @@
-﻿import api from "./api"
+﻿import axios from "axios"
+
+const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000"
 
 export type AuditAction =
   | "upload"
@@ -7,6 +9,9 @@ export type AuditAction =
   | "share"
   | "permission_change"
   | "delete"
+  | "revoke_access"
+  | "star"
+  | "invitation_accepted"
 
 export interface AuditLog {
   id: string
@@ -14,12 +19,11 @@ export interface AuditLog {
   userId: string
   userName: string
   userEmail: string
+  fileOwnerName: string
+  fileOwnerId: string
   action: AuditAction
   details?: string
-  ipAddress?: string
-  userAgent?: string
   timestamp: string
-  fileOwnerName: string
 }
 
 export interface AuditSummary {
@@ -27,14 +31,6 @@ export interface AuditSummary {
   byAction: Record<AuditAction, number>
   uniqueUsers: number
   lastActivityAt: string | null
-}
-
-export interface AuditHistoryResponse {
-  logs: AuditLog[]
-  total: number
-  fileOwnerName: string
-  fileOwnerId: string
-  summary: AuditSummary
 }
 
 export interface UserActivity {
@@ -48,29 +44,48 @@ export interface UserActivity {
   mimeType: string
 }
 
-export async function getMyActivity(options?: {
-  actions?: AuditAction[]
-  limit?: number
-  offset?: number
-}) {
-  const params = new URLSearchParams()
-  if (options?.limit) params.set("limit", String(options.limit))
-  if (options?.offset) params.set("offset", String(options.offset))
-  if (options?.actions?.length) params.set("actions", options.actions.join(","))
-  const res = await api.get<{ activities: UserActivity[]; total: number }>(
-    `/audit/my-activity?${params.toString()}`,
-  )
-  return res.data
+function getAuthHeaders(): Record<string, string> {
+  const token = localStorage.getItem("token")
+  return token ? { Authorization: Bearer  } : {}
 }
 
 export async function getFileAuditHistory(
   fileId: string,
-  limit: number = 50,
-  offset: number = 0,
+  limit = 20,
+  offset = 0,
   action?: AuditAction,
-) {
-  const params = new URLSearchParams({ limit: limit.toString(), offset: offset.toString() })
-  if (action) params.append("action", action)
-  const res = await api.get<AuditHistoryResponse>(`/files/${fileId}/audit?${params.toString()}`)
+): Promise<{ logs: AuditLog[]; total: number; fileOwnerName: string; fileOwnerId: string; summary: AuditSummary }> {
+  const params: Record<string, string | number> = { limit, offset }
+  if (action) params.action = action
+  const res = await axios.get(${API}/api/files//audit, {
+    params,
+    headers: getAuthHeaders(),
+  })
+  return res.data
+}
+
+export async function getMyActivity(opts?: {
+  actions?: AuditAction[]
+  limit?: number
+  offset?: number
+}): Promise<{ activities: UserActivity[]; total: number }> {
+  const params: Record<string, string | number> = {
+    limit: opts?.limit ?? 30,
+    offset: opts?.offset ?? 0,
+  }
+  if (opts?.actions?.length) params.actions = opts.actions.join(",")
+  const res = await axios.get(${API}/api/audit/my-activity, {
+    params,
+    headers: getAuthHeaders(),
+  })
+  return res.data
+}
+
+export async function getAuditStats(): Promise<{
+  totalEvents: number
+  todayEvents: number
+  topAction: AuditAction | null
+}> {
+  const res = await axios.get(${API}/api/audit/stats, { headers: getAuthHeaders() })
   return res.data
 }
