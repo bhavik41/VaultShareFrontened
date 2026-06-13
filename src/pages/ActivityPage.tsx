@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Activity,
@@ -21,7 +21,7 @@ import { getMyActivity, type UserActivity, type AuditAction } from "@/store/audi
 
 const PAGE_SIZE = 30;
 
-type FilterTab = "all" | "upload" | "download" | "view" | "share";
+type FilterTab = "all" | "upload" | "download" | "view" | "share" | "delete";
 
 const TABS: { id: FilterTab; label: string; actions?: AuditAction[] }[] = [
   { id: "all", label: "All activity" },
@@ -215,7 +215,7 @@ export default function ActivityPage() {
           <div className="flex items-center justify-center py-24">
             <div className="flex flex-col items-center gap-3 text-slate-500">
               <Loader2 size={28} className="animate-spin" />
-              <span className="text-sm">Loading activity…</span>
+              <span className="text-sm">Loading activityâ€¦</span>
             </div>
           </div>
         )}
@@ -313,6 +313,7 @@ export default function ActivityPage() {
   );
 }
 
-// June 14 â€” added "delete" tab to ActivityPage filter bar
+// June 14 Ã¢â‚¬â€ added "delete" tab to ActivityPage filter bar
 // TABS array updated to include delete action filter
+
 
