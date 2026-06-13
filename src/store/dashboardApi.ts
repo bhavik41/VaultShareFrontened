@@ -1,30 +1,31 @@
-import api from "./api"
+﻿import axios from "axios"
+
+const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000"
 
 export interface DashboardCollaborator {
-  id: string
   userId: string
   name: string
-  email: string
-  role: "editor" | "viewer"
+  role: string
 }
 
 export interface DashboardDocument {
   id: string
   name: string
-  mimeType: string
   size: number
-  ownerId: string
-  ownerName: string
-  ownerEmail: string
-  ownership: "owned" | "shared"
-  accessLevel: "owner" | "editor" | "viewer"
-  permissionStatus: string
+  mimeType: string
   createdAt: string
-  sharedAt?: string
+  ownership: "owned" | "shared"
+  ownerName?: string
+  accessLevel?: string
   collaborators: DashboardCollaborator[]
 }
 
+function getAuthHeaders() {
+  const token = localStorage.getItem("token")
+  return token ? { Authorization: Bearer  } : {}
+}
+
 export async function getDashboardDocuments(): Promise<DashboardDocument[]> {
-  const res = await api.get<{ documents: DashboardDocument[] }>("/dashboard/documents")
-  return res.data.documents
+  const res = await axios.get(${API}/api/dashboard/documents, { headers: getAuthHeaders() })
+  return res.data.documents ?? []
 }
