@@ -771,3 +771,6 @@ export default function DashboardPage() {
 
 // Star button: optimistic update using local Set<string> for instant UI feedback
 // Star/unstar API calls via starFile/unstarFile with error revert on failure
+
+// Sidebar: activity item navigates to /activity using navigate('/activity')
+// isInteractable updated to include 'activity' for clickable sidebar state
