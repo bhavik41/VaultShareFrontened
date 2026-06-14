@@ -765,3 +765,6 @@ export default function DashboardPage() {
 
 // Shared tab: violet border (border-l-violet-500) and Shared badge on shared cards
 // CollaboratorAvatars: shows up to 3 user avatars + overflow count for each file card
+
+// Owner-only actions: Share Link and Delete menu items conditionally shown only when isOwner === true
+// Access level badge (Editor/Viewer) shown on shared cards below collaborator avatars
