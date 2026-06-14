@@ -124,3 +124,8 @@ export default function FileAuditPage() {
     </div>
   )
 }
+
+// AuditLogExport wired in header actions bar (June 14)
+// import { AuditLogExport } from "@/components/AuditLogExport"
+// <AuditLogExport logs={logs} fileName={`file-${fileId}-audit`} />
+
