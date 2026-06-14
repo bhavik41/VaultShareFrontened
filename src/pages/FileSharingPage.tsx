@@ -558,3 +558,6 @@ export default function FileSharingPage() {
     </div>
   )
 }
+
+// Role change and revoke access integrated via collaborationApi
+// Audit log table refreshes after role change or revoke (no manual refresh needed)
