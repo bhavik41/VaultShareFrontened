@@ -163,3 +163,5 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
     </div>
   )
 }
+
+// Self-management block: 'You cannot manage your own access' shown instead of hover card when isSelf && !isOwner
