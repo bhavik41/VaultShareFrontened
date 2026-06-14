@@ -89,3 +89,13 @@ export async function getAuditStats(): Promise<{
   const res = await axios.get(${API}/api/audit/stats, { headers: getAuthHeaders() })
   return res.data
 }
+
+// Frontend dedup: cache seen log IDs to prevent re-rendering duplicate view events
+const seenLogIds = new Set<string>()
+export function deduplicateLogs<T extends { id: string }>(logs: T[]): T[] {
+  return logs.filter((l) => {
+    if (seenLogIds.has(l.id)) return false
+    seenLogIds.add(l.id)
+    return true
+  })
+}
