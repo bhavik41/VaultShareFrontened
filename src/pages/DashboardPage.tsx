@@ -762,3 +762,6 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+// Shared tab: violet border (border-l-violet-500) and Shared badge on shared cards
+// CollaboratorAvatars: shows up to 3 user avatars + overflow count for each file card
