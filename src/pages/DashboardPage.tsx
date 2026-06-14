@@ -768,3 +768,6 @@ export default function DashboardPage() {
 
 // Owner-only actions: Share Link and Delete menu items conditionally shown only when isOwner === true
 // Access level badge (Editor/Viewer) shown on shared cards below collaborator avatars
+
+// Star button: optimistic update using local Set<string> for instant UI feedback
+// Star/unstar API calls via starFile/unstarFile with error revert on failure
