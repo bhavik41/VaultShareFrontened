@@ -145,14 +145,9 @@ export function useChat(fileId: string) {
     socket.on("typing_indicator", handleTypingIndicator);
     socket.on("error", handleError);
 
-    // Connect and join
+    // Connect and join — fire handleConnect immediately if already connected
     if (socket.connected) {
-      setIsConnected(true);
-      socket.emit("join_room", {
-        fileId,
-        userId: user.id,
-        userName: user.name,
-      });
+      handleConnect();
     } else {
       socket.connect();
     }
