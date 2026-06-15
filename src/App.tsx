@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import SignupPage from "@/pages/SignupPage";
 import SigninPage from "@/pages/SigninPage";
@@ -16,6 +16,8 @@ import ContactPage from "@/pages/ContactPage";
 import AboutPage from "@/pages/AboutPage";
 import TeamPage from "@/pages/TeamPage";
 import FileViewerPage from "@/pages/FileViewerPage";
+import ActivityPage from "@/pages/ActivityPage";
+import FileAuditPage from "@/pages/FileAuditPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token);
@@ -89,8 +91,17 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route
+          path="/activity"
+          element={
+            <ProtectedRoute>
+              <ActivityPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/files/:fileId/audit" element={<ProtectedRoute><FileAuditPage /></ProtectedRoute>} />`n        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
+

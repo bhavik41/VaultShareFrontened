@@ -5,6 +5,7 @@ import { useAppSelector } from "@/store/hooks"
 import { getFileSignedUrl } from "@/store/filesApi"
 import { useAppDispatch } from "@/store/hooks"
 import { listFilesThunk } from "@/store/filesSlice"
+import AuditLogViewer from "@/components/ui/AuditLogViewer"
 
 const TABS = ["Files", "Shared", "Activity", "Audit Log"]
 
@@ -57,8 +58,6 @@ export default function FileViewerPage() {
   const file = uploadedFiles.find((f) => f.id === id)
   const mimeType = file?.mimeType ?? ""
   const isImage = mimeType.startsWith("image/")
-  const isPdf = mimeType === "application/pdf"
-  const isText = mimeType.startsWith("text/")
   const totalPages = 12
 
   useEffect(() => {
@@ -153,8 +152,12 @@ export default function FileViewerPage() {
 
       {/* Body */}
       <div className="flex flex-1 overflow-hidden">
-        {/* File Viewer */}
-        <div className="flex flex-1 flex-col overflow-hidden border-r border-white/5">
+        {activeTab === "Audit Log" && id ? (
+          <AuditLogViewer fileId={id} />
+        ) : (
+          <>
+            {/* File Viewer */}
+            <div className="flex flex-1 flex-col overflow-hidden border-r border-white/5">
           {/* Viewer toolbar */}
           <div className="flex shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a18] px-5 py-2">
             <span className="text-xs text-slate-400">Page</span>
@@ -318,6 +321,8 @@ export default function FileViewerPage() {
             </form>
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   )

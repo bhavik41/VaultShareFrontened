@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+﻿import { useEffect, useState } from "react"
 import { Link as RouterLink, useNavigate } from "react-router-dom"
 import {
   Check,
@@ -187,7 +187,7 @@ export default function CollaborationPage() {
                           <p className="mt-1 text-xs text-slate-500">
                             Created {formatDate(invitation.createdAt)}
                             {invitation.respondedAt
-                              ? ` • Responded ${formatDate(invitation.respondedAt)}`
+                              ? ` â€¢ Responded ${formatDate(invitation.respondedAt)}`
                               : ""}
                           </p>
                         </div>
@@ -305,3 +305,4 @@ export default function CollaborationPage() {
     </div>
   )
 }
+
