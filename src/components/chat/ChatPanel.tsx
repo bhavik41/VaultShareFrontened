@@ -1,12 +1,13 @@
 // src/components/chat/ChatPanel.tsx
 import { useEffect, useRef } from "react";
-import { MessageSquare, X, Wifi, WifiOff } from "lucide-react";
+import { MessageSquare, X, Wifi, WifiOff, AlertCircle } from "lucide-react";
 import { useChat } from "@/hooks/useChat";
 import ChatMessage from "./ChatMessage";
 import OnlineUserBadge from "./OnlineUserBadge";
 import TypingIndicator from "./TypingIndicator";
 import ChatInput from "./ChatInput";
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { setError } from "@/store/chatSlice";
 
 interface ChatPanelProps {
   fileId: string;
@@ -55,6 +56,7 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
     currentUserId,
   } = useChat(fileId);
 
+  const dispatch = useAppDispatch();
   const error = useAppSelector((s) => s.chat.error);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const onlineUserIds = new Set<string>(onlineUsers.map((u) => u.userId));
@@ -102,8 +104,15 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
       {/* Error banner */}
       {error && (
         <div className="flex items-center gap-2 px-4 py-2.5 bg-rose-950/30 border-b border-rose-900/40 flex-shrink-0">
-          <span className="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0" />
-          <span className="text-xs text-rose-400 font-medium">{error}</span>
+          <AlertCircle size={13} className="text-rose-400 flex-shrink-0" />
+          <span className="text-xs text-rose-400 font-medium flex-1">{error}</span>
+          <button
+            onClick={() => dispatch(setError(null))}
+            className="bg-transparent border-0 p-0.5 text-rose-500 hover:text-rose-300 cursor-pointer"
+            title="Dismiss"
+          >
+            <X size={12} />
+          </button>
         </div>
       )}
 
