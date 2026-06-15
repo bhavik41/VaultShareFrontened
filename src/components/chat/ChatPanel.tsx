@@ -120,13 +120,16 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
       <div className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-3">
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center h-full gap-4 text-center py-12">
-            <div className="w-12 h-12 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center">
-              <MessageSquare size={22} className="text-slate-600" />
+            <div className="relative">
+              <div className="w-14 h-14 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center">
+                <MessageSquare size={24} className="text-slate-600" />
+              </div>
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-violet-600/80 flex items-center justify-center text-[8px] text-white font-bold">0</span>
             </div>
-            <div className="flex flex-col gap-1 max-w-[200px]">
-              <span className="text-sm font-semibold text-slate-400">No messages yet</span>
-              <span className="text-xs text-slate-600 leading-relaxed">
-                Start the conversation!
+            <div className="flex flex-col gap-1.5 max-w-[200px]">
+              <span className="text-sm font-semibold text-slate-300">No messages yet</span>
+              <span className="text-xs text-slate-500 leading-relaxed">
+                Start the conversation! Your messages are end-to-end encrypted.
               </span>
             </div>
           </div>
