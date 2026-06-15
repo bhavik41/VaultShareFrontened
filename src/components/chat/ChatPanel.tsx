@@ -23,7 +23,13 @@ function formatDateSeparator(iso: string): string {
 
     if (date.toDateString() === today.toDateString()) return "Today";
     if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
-    return date.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric" });
+    const sameYear = date.getFullYear() === today.getFullYear();
+    return date.toLocaleDateString([], {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      ...(sameYear ? {} : { year: "numeric" }),
+    });
   } catch {
     return "";
   }
