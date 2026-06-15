@@ -51,7 +51,7 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
 
   const error = useAppSelector((s) => s.chat.error);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const onlineUserIds = new Set(onlineUsers.map((u) => u.userId));
+  const onlineUserIds = new Set<string>(onlineUsers.map((u) => u.userId));
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
