@@ -76,12 +76,17 @@ export function useChat(fileId: string) {
     }
 
     function handleReconnect() {
-      // Re-join the room on reconnect
+      // Re-join the room after socket.io Manager reconnects
+      setIsConnected(true);
       socket.emit("join_room", {
         fileId,
         userId: user!.id,
         userName: user!.name,
       });
+    }
+
+    function handleConnectError() {
+      setIsConnected(false);
     }
 
     function handleMessageReceived(msg: ChatMessage) {
@@ -130,6 +135,7 @@ export function useChat(fileId: string) {
     // Register listeners
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
+    socket.on("connect_error", handleConnectError);
     socket.io.on("reconnect", handleReconnect);
     socket.on("message_received", handleMessageReceived);
     socket.on("message_history", handleMessageHistory);
@@ -156,6 +162,7 @@ export function useChat(fileId: string) {
       socket.emit("leave_room", { fileId, userId: user!.id });
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
+      socket.off("connect_error", handleConnectError);
       socket.io.off("reconnect", handleReconnect);
       socket.off("message_received", handleMessageReceived);
       socket.off("message_history", handleMessageHistory);
