@@ -72,10 +72,10 @@ export default function ChatMessage({
             {isSelf ? "You" : message.userName}
           </span>
           <div
-            className={`px-3 py-2 rounded-2xl text-sm leading-relaxed break-words ${
+            className={`px-3 py-2 rounded-2xl text-sm leading-relaxed break-words shadow-sm ${
               isSelf
-                ? "bg-violet-600 text-white rounded-br-sm"
-                : "bg-slate-800 text-slate-100 rounded-bl-sm"
+                ? "bg-violet-600 text-white rounded-br-sm shadow-violet-900/30"
+                : "bg-slate-800 text-slate-100 rounded-bl-sm shadow-black/30"
             }`}
           >
             {message.content}
