@@ -89,6 +89,11 @@ const chatSlice = createSlice({
       state.unreadCountByFile[fileId] = 0;
     },
 
+    incrementUnread(state, action: PayloadAction<string>) {
+      const fileId = action.payload;
+      state.unreadCountByFile[fileId] = (state.unreadCountByFile[fileId] ?? 0) + 1;
+    },
+
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
@@ -107,6 +112,7 @@ export const {
   removeTypingUser,
   clearRoom,
   clearUnread,
+  incrementUnread,
   setError,
   setLoading,
 } = chatSlice.actions;
