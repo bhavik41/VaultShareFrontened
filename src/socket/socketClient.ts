@@ -1,7 +1,9 @@
 // src/socket/socketClient.ts
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+// Strip /api suffix — Socket.IO connects to the root server, not /api
+const _rawUrl = (import.meta.env.VITE_API_URL ?? "http://localhost:5003/api") as string;
+const SOCKET_URL = _rawUrl.replace(/\/api$/, "");
 
 let socket: Socket | null = null;
 

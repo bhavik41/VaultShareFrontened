@@ -13,7 +13,8 @@ import {
 import { connectSocket } from "@/socket/socketClient";
 import type { ChatMessage, OnlineUser } from "@/types/chat";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+// VITE_API_URL already includes the /api suffix (e.g. http://localhost:5003/api)
+const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:5003/api";
 
 export function useChat(fileId: string) {
   const dispatch = useAppDispatch();
@@ -25,12 +26,14 @@ export function useChat(fileId: string) {
   const unreadCount = useAppSelector((s) => s.chat.unreadCountByFile[fileId] ?? 0);
 
   const [isConnected, setIsConnected] = useState(false);
+  const [adminOnlyChat, setAdminOnlyChat] = useState(false);
+  const [ownerId, setOwnerId] = useState<string | null>(null);
   const isChatOpen = useRef(true);
 
   // Fetch REST message history on mount
   useEffect(() => {
     if (!fileId || !token) return;
-    fetch(`${API_BASE}/api/chat/${fileId}/messages?limit=50`, {
+    fetch(`${API_BASE}/chat/${fileId}/messages?limit=50`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -132,6 +135,16 @@ export function useChat(fileId: string) {
       dispatch(setError(data.message));
     }
 
+    function handleAdminOnlyChanged(data: {
+      fileId: string;
+      adminOnly: boolean;
+      ownerId: string | null;
+    }) {
+      if (data.fileId !== fileId) return;
+      setAdminOnlyChat(!!data.adminOnly);
+      setOwnerId(data.ownerId);
+    }
+
     // Register listeners
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
@@ -143,6 +156,7 @@ export function useChat(fileId: string) {
     socket.on("user_left", handleUserLeft);
     socket.on("online_users", handleOnlineUsers);
     socket.on("typing_indicator", handleTypingIndicator);
+    socket.on("admin_only_changed", handleAdminOnlyChanged);
     socket.on("error", handleError);
 
     // Connect and join — fire handleConnect immediately if already connected
@@ -165,6 +179,7 @@ export function useChat(fileId: string) {
       socket.off("user_left", handleUserLeft);
       socket.off("online_users", handleOnlineUsers);
       socket.off("typing_indicator", handleTypingIndicator);
+      socket.off("admin_only_changed", handleAdminOnlyChanged);
       socket.off("error", handleError);
     };
   }, [fileId, user, dispatch]);
@@ -177,6 +192,7 @@ export function useChat(fileId: string) {
         fileId,
         userId: user.id,
         userName: user.name,
+        userEmail: user.email,
         content: content.trim(),
       });
     },
@@ -202,6 +218,19 @@ export function useChat(fileId: string) {
     });
   }, [fileId, user]);
 
+  const setAdminOnly = useCallback(
+    (adminOnly: boolean) => {
+      if (!user) return;
+      const socket = connectSocket();
+      socket.emit("set_admin_only", {
+        fileId,
+        userId: user.id,
+        adminOnly,
+      });
+    },
+    [fileId, user]
+  );
+
   return {
     messages,
     onlineUsers,
@@ -211,6 +240,9 @@ export function useChat(fileId: string) {
     sendMessage,
     emitTyping,
     emitStopTyping,
+    adminOnlyChat,
+    ownerId,
+    setAdminOnly,
     currentUserId: user?.id ?? "",
   };
 }

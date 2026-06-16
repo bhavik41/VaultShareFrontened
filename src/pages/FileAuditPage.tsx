@@ -12,11 +12,11 @@ import { useAppSelector } from "@/store/hooks"
 import axios from "axios"
 
 const DEFAULT_PAGE_SIZE = 10
-const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000"
+const API = import.meta.env.VITE_API_URL ?? "http://localhost:5003/api"
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token")
-  return token ? { Authorization: Bearer  } : {}
+  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 export default function FileAuditPage() {
@@ -62,7 +62,7 @@ export default function FileAuditPage() {
   const handleRoleChange = async (userId: string, role: "editor" | "viewer") => {
     if (!fileId) return
     try {
-      await axios.patch(${API}/api/collaboration//role/, { role }, { headers: getAuthHeaders() })
+      await axios.patch(`${API}/collaboration/${fileId}/role/${userId}`, { role }, { headers: getAuthHeaders() })
       await load()
     } catch (e: any) {
       alert(e?.response?.data?.message ?? "Failed to change role.")
@@ -72,7 +72,7 @@ export default function FileAuditPage() {
   const handleRevokeAccess = async (userId: string) => {
     if (!fileId || !confirm("Revoke this user's access?")) return
     try {
-      await axios.delete(${API}/api/collaboration//revoke/, { headers: getAuthHeaders() })
+      await axios.delete(`${API}/collaboration/${fileId}/revoke/${userId}`, { headers: getAuthHeaders() })
       await load()
     } catch (e: any) {
       alert(e?.response?.data?.message ?? "Failed to revoke access.")
@@ -92,7 +92,7 @@ export default function FileAuditPage() {
             <Link to="/dashboard" className="text-lg font-bold text-white">VaultShare</Link>
           </div>
           <div className="flex items-center gap-3">
-            {!loading && !error && logs.length > 0 && <AuditLogExport logs={logs} fileName={ile--audit} />}
+            {!loading && !error && logs.length > 0 && <AuditLogExport logs={logs} fileName={`file-${fileId}-audit`} />}
             <button onClick={load} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-400 transition-colors hover:text-white">
               <RefreshCw size={13} /> Refresh
             </button>

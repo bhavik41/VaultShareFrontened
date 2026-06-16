@@ -1,4 +1,4 @@
-﻿import React from "react"
+import React from "react"
 import { Download } from "lucide-react"
 import type { AuditLog } from "@/store/auditApi"
 
@@ -18,12 +18,13 @@ export const AuditLogExport: React.FC<AuditLogExportProps> = ({ logs, fileName =
       new Date(l.timestamp).toISOString(),
       l.fileOwnerName,
     ])
-    const csv = [headers, ...rows].map((r) => r.map((v) => "").join(",")).join("\n")
+    const csvEscape = (v: string) => `"${v.replace(/"/g, '""')}"`
+    const csv = [headers, ...rows].map((r) => r.map(csvEscape).join(",")).join("\n")
     const blob = new Blob([csv], { type: "text/csv" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = ${fileName}.csv
+    a.download = `${fileName}.csv`
     a.click()
     URL.revokeObjectURL(url)
   }

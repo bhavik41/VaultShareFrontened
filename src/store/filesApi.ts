@@ -2,6 +2,7 @@ import api from "./api"
 
 export interface UploadedFile {
   id: string
+  userId: string
   name: string
   mimeType: string
   size: number
@@ -14,12 +15,16 @@ export async function getMyFiles() {
   return res.data.files
 }
 
+// Fetches the file bytes (with auth) and returns a local object URL suitable
+// for previewing in an <img>/<iframe>. The caller is responsible for revoking
+// the returned URL when the preview is no longer needed.
 export async function getFileSignedUrl(fileId: string) {
-  const res = await api.get<{ url: string; expiresIn: number }>(
-    `/files/${fileId}/signed-url`,
-  )
+  const res = await api.get<Blob>(`/files/${fileId}/download`, {
+    responseType: "blob",
+  })
 
-  return res.data
+  const url = window.URL.createObjectURL(res.data)
+  return { url, expiresIn: 0 }
 }
 
 export async function downloadFile(fileId: string, fileName: string) {

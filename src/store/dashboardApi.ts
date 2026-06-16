@@ -22,10 +22,10 @@ export interface DashboardDocument {
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token")
-  return token ? { Authorization: Bearer  } : {}
+  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 export async function getDashboardDocuments(): Promise<DashboardDocument[]> {
-  const res = await axios.get(${API}/api/dashboard/documents, { headers: getAuthHeaders() })
+  const res = await axios.get(`${API}/dashboard/documents`, { headers: getAuthHeaders() })
   return res.data.documents ?? []
 }

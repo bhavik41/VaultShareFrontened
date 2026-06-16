@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react"
+import React, { useState } from "react"
 import {
   UploadCloud, Download, Eye, Share2, ShieldAlert, Trash2,
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Crown,
@@ -58,13 +58,13 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => onFilterChange("")}
-            className={ounded-full border px-3 py-1 text-xs font-medium transition-colors }
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${filterAction === "" ? "border-violet-500/50 bg-violet-500/10 text-violet-300" : "border-white/10 bg-white/5 text-slate-400 hover:text-white"}`}
           >All</button>
           {ACTIONS.map((a) => {
             const meta = ACTION_META[a]
             return (
               <button key={a} onClick={() => onFilterChange(a)}
-                className={lex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors }
+                className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${filterAction === a ? meta.color : "border-white/10 bg-white/5 text-slate-400 hover:text-white"}`}
               >
                 {meta.icon}{meta.label}
               </button>
@@ -95,7 +95,7 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
             const isSelf = log.userId === currentUserId
             const showHoverCard = hoveredUserId === log.userId && !isOwner && !isSelf && onRoleChange && onRevokeAccess
             return (
-              <div key={log.id} className={elative grid grid-cols-[1fr_1fr_160px_200px] gap-4 items-center px-5 py-3.5 hover:bg-white/5 transition-colors }>
+              <div key={log.id} className={`relative grid grid-cols-[1fr_1fr_160px_200px] gap-4 items-center px-5 py-3.5 hover:bg-white/5 transition-colors ${idx < logs.length - 1 ? "border-b border-white/5" : ""}`}>
                 {/* User column */}
                 <div
                   className="flex items-center gap-2.5 min-w-0 cursor-pointer"
@@ -129,7 +129,7 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
                   <span className="truncate text-xs text-slate-400">{log.fileOwnerName}</span>
                 </div>
                 {/* Action */}
-                <span className={lex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold }>
+                <span className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${meta.color}`}>
                   {meta.icon}{meta.label}
                 </span>
                 {/* Timestamp */}
@@ -152,7 +152,7 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const p = Math.max(1, Math.min(page - 2, totalPages - 4)) + i
               return (
-                <button key={p} onClick={() => onPageChange(p)} className={lex h-7 w-7 items-center justify-center rounded-lg border text-xs font-semibold transition-colors }>{p}</button>
+                <button key={p} onClick={() => onPageChange(p)} className={`flex h-7 w-7 items-center justify-center rounded-lg border text-xs font-semibold transition-colors ${p === page ? "border-violet-500 bg-violet-500/20 text-violet-300" : "border-white/10 text-slate-400 hover:text-white"}`}>{p}</button>
               )
             })}
             <button onClick={() => onPageChange(page + 1)} disabled={page === totalPages} className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 hover:text-white disabled:opacity-40"><ChevronRight size={13} /></button>
@@ -163,5 +163,3 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
     </div>
   )
 }
-
-// Self-management block: 'You cannot manage your own access' shown instead of hover card when isSelf && !isOwner

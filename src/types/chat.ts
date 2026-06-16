@@ -5,6 +5,7 @@ export interface ChatMessage {
   fileId: string;
   userId: string;
   userName: string;
+  userEmail: string;
   content: string;
   timestamp: string; // ISO string
 }

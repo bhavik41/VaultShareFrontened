@@ -1,4 +1,4 @@
-﻿import React from "react"
+import React from "react"
 import type { AuditAction } from "@/store/auditApi"
 
 interface AuditLogBadgeProps {
@@ -19,9 +19,11 @@ const ACTION_COLORS: Record<string, string> = {
 }
 
 export const AuditLogBadge: React.FC<AuditLogBadgeProps> = ({ count, topAction }) => {
-  const colorClass = topAction ? ACTION_COLORS[topAction] ?? "bg-slate-500/10 text-slate-400 border-slate-500/20" : "bg-slate-500/10 text-slate-400 border-slate-500/20"
+  const colorClass = topAction
+    ? (ACTION_COLORS[topAction] ?? "bg-slate-500/10 text-slate-400 border-slate-500/20")
+    : "bg-slate-500/10 text-slate-400 border-slate-500/20"
   return (
-    <span className={lex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold }>
+    <span className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${colorClass}`}>
       {count} event{count !== 1 ? "s" : ""}
     </span>
   )
