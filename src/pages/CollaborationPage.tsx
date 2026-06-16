@@ -187,7 +187,7 @@ export default function CollaborationPage() {
                           <p className="mt-1 text-xs text-slate-500">
                             Created {formatDate(invitation.createdAt)}
                             {invitation.respondedAt
-                              ? ` â€¢ Responded ${formatDate(invitation.respondedAt)}`
+                              ? ` • Responded ${formatDate(invitation.respondedAt)}`
                               : ""}
                           </p>
                         </div>

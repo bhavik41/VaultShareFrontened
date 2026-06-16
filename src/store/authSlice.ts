@@ -54,9 +54,14 @@ function saveTokens(token: string, refreshToken?: string) {
   if (refreshToken) localStorage.setItem("refreshToken", refreshToken)
 }
 
+function saveUserEmail(email: string) {
+  localStorage.setItem("userEmail", email)
+}
+
 function clearTokens() {
   localStorage.removeItem("token")
   localStorage.removeItem("refreshToken")
+  localStorage.removeItem("userEmail")
 }
 
 async function apiPost<T>(url: string, body: object, headers?: Record<string, string>): Promise<T> {
@@ -285,6 +290,7 @@ const authSlice = createSlice({
         s.refreshToken = a.payload.refreshToken
         s.user = a.payload.user
         saveTokens(a.payload.token, a.payload.refreshToken)
+        saveUserEmail(a.payload.user.email)
       })
       .addCase(signupThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Signup failed." })
 
@@ -303,6 +309,7 @@ const authSlice = createSlice({
           s.requires2fa = false
           s.tempToken = null
           saveTokens(a.payload.token, a.payload.refreshToken)
+          saveUserEmail(a.payload.user.email)
         }
       })
       .addCase(signinThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Sign in failed." })
@@ -322,7 +329,7 @@ const authSlice = createSlice({
     // ── fetchMe ────────────────────────────────────────────────────────────────
     builder
       .addCase(fetchMeThunk.pending, (s) => { s.loading = true })
-      .addCase(fetchMeThunk.fulfilled, (s, a) => { s.loading = false; s.user = a.payload })
+      .addCase(fetchMeThunk.fulfilled, (s, a) => { s.loading = false; s.user = a.payload; saveUserEmail(a.payload.email) })
       .addCase(fetchMeThunk.rejected, (s) => {
         s.loading = false; s.token = null; s.user = null
         clearTokens()
@@ -364,6 +371,7 @@ const authSlice = createSlice({
         s.tempToken = null
         s.twoFactorEnabled = true
         saveTokens(a.payload.token, a.payload.refreshToken)
+        saveUserEmail(a.payload.user.email)
       })
       .addCase(validate2faThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Validation failed." })
 

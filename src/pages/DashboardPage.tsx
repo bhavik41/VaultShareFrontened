@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import ChatSidebar from "@/components/chat/ChatSidebar";
 import { Button } from "@/components/ui/button";
 import {
   LogOut,
@@ -30,6 +31,7 @@ import {
   Lock,
   Eye,
   BadgeCheck,
+  MessageSquare,
 } from "lucide-react";
 import { logout, disable2faThunk, fetchMeThunk } from "@/store/authSlice";
 import {
@@ -202,6 +204,17 @@ export default function DashboardPage() {
   const cardMenuRef = useRef<HTMLDivElement>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // Chat sidebar
+  const [chatFileId, setChatFileId] = useState<string | null>(null);
+  const [chatFileName, setChatFileName] = useState<string>("");
+  const [chatOpen, setChatOpen] = useState(false);
+  const openChat = useCallback((fileId: string, fileName: string) => {
+    setChatFileId(fileId);
+    setChatFileName(fileName);
+    setChatOpen(true);
+  }, []);
+  const toggleChat = useCallback(() => setChatOpen((o) => !o), []);
 
   // Dashboard documents (owned + shared)
   const [allDocs, setAllDocs] = useState<DashboardDocument[]>([]);
@@ -450,6 +463,14 @@ export default function DashboardPage() {
                 {doc.accessLevel}
               </span>
             )}
+            <button
+              onClick={(e) => { e.stopPropagation(); openChat(doc.id, doc.name); }}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 text-violet-400 border-0 cursor-pointer transition-colors"
+              title="Open chat for this file"
+            >
+              <MessageSquare size={12} />
+              <span className="text-[10px] font-semibold">Chat</span>
+            </button>
           </div>
         </div>
       </div>
@@ -758,6 +779,16 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Chat sidebar — mounted only when a file has been selected */}
+      {chatFileId && (
+        <ChatSidebar
+          fileId={chatFileId}
+          fileName={chatFileName}
+          isOpen={chatOpen}
+          onToggle={toggleChat}
+        />
       )}
     </div>
   );

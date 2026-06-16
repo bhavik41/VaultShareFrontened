@@ -1,6 +1,6 @@
-﻿import axios from "axios"
+import axios from "axios"
 
-const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000"
+const API = import.meta.env.VITE_API_URL ?? "http://localhost:5003/api"
 
 export type AuditAction =
   | "upload"
@@ -46,7 +46,7 @@ export interface UserActivity {
 
 function getAuthHeaders(): Record<string, string> {
   const token = localStorage.getItem("token")
-  return token ? { Authorization: Bearer  } : {}
+  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 export async function getFileAuditHistory(
@@ -57,7 +57,7 @@ export async function getFileAuditHistory(
 ): Promise<{ logs: AuditLog[]; total: number; fileOwnerName: string; fileOwnerId: string; summary: AuditSummary }> {
   const params: Record<string, string | number> = { limit, offset }
   if (action) params.action = action
-  const res = await axios.get(${API}/api/files//audit, {
+  const res = await axios.get(`${API}/files/${fileId}/audit`, {
     params,
     headers: getAuthHeaders(),
   })
@@ -74,7 +74,7 @@ export async function getMyActivity(opts?: {
     offset: opts?.offset ?? 0,
   }
   if (opts?.actions?.length) params.actions = opts.actions.join(",")
-  const res = await axios.get(${API}/api/audit/my-activity, {
+  const res = await axios.get(`${API}/audit/my-activity`, {
     params,
     headers: getAuthHeaders(),
   })
@@ -86,11 +86,10 @@ export async function getAuditStats(): Promise<{
   todayEvents: number
   topAction: AuditAction | null
 }> {
-  const res = await axios.get(${API}/api/audit/stats, { headers: getAuthHeaders() })
+  const res = await axios.get(`${API}/audit/stats`, { headers: getAuthHeaders() })
   return res.data
 }
 
-// Frontend dedup: cache seen log IDs to prevent re-rendering duplicate view events
 const seenLogIds = new Set<string>()
 export function deduplicateLogs<T extends { id: string }>(logs: T[]): T[] {
   return logs.filter((l) => {

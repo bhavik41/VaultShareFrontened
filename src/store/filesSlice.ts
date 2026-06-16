@@ -7,6 +7,7 @@ import api from "./api";
 
 export interface UploadedFile {
   id: string;
+  userId: string;
   name: string;
   mimeType: string;
   size: number; // bytes
@@ -131,9 +132,9 @@ export const downloadFileThunk = createAsyncThunk<
 
 /**
  * getSignedUrlThunk
- * GET /api/files/:id/signed-url
- * Returns a fresh short-lived (1 hour) GCS signed URL.
- * Use this for in-browser preview or handing a shareable link to someone.
+ * Fetches the file bytes (with auth) and returns a local object URL for
+ * in-browser preview. Files are served from the backend's authenticated
+ * download endpoint, so we materialize a blob URL rather than a remote link.
  */
 export const getSignedUrlThunk = createAsyncThunk<
   { id: string; url: string; expiresIn: number },
@@ -141,13 +142,13 @@ export const getSignedUrlThunk = createAsyncThunk<
   { rejectValue: string }
 >("files/signedUrl", async (fileId, { rejectWithValue }) => {
   try {
-    const response = await api.get<{ url: string; expiresIn: number }>(
-      `/files/${fileId}/signed-url`,
-    );
+    const response = await api.get<Blob>(`/files/${fileId}/download`, {
+      responseType: "blob",
+    });
     return {
       id: fileId,
-      url: response.data.url,
-      expiresIn: response.data.expiresIn,
+      url: URL.createObjectURL(response.data),
+      expiresIn: 0,
     };
   } catch (err: any) {
     return rejectWithValue(

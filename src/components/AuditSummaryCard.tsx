@@ -1,4 +1,4 @@
-﻿import React from "react"
+import React from "react"
 import type { AuditSummary } from "@/store/auditApi"
 import { UploadCloud, Download, Eye, Share2, ShieldAlert, Trash2, Users, Clock } from "lucide-react"
 
@@ -34,7 +34,7 @@ export const AuditSummaryCard: React.FC<AuditSummaryCardProps> = ({ summary }) =
         <div className="mt-1 flex items-center gap-1.5">
           <Clock size={14} className="text-slate-400" />
           <p className="text-sm font-semibold text-slate-200">
-            {summary.lastActivityAt ? new Date(summary.lastActivityAt).toLocaleDateString() : "â€”"}
+            {summary.lastActivityAt ? new Date(summary.lastActivityAt).toLocaleDateString() : "—"}
           </p>
         </div>
       </div>
@@ -48,7 +48,7 @@ export const AuditSummaryCard: React.FC<AuditSummaryCardProps> = ({ summary }) =
             .map(([action, count]) => {
               const meta = ACTION_ICONS[action]
               return (
-                <div key={action} className={lex items-center gap-1.5 text-xs }>
+                <div key={action} className={`flex items-center gap-1.5 text-xs ${meta?.color ?? "text-slate-400"}`}>
                   {meta?.icon}
                   <span className="flex-1 capitalize">{action.replace("_", " ")}</span>
                   <span className="font-bold text-white">{count}</span>

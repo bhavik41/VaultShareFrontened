@@ -1,22 +1,14 @@
 import { useEffect, useRef, useState } from "react"
 import { Link, useParams, useNavigate } from "react-router-dom"
-import { AtSign, ChevronRight, Loader2, Minus, Plus, Send } from "lucide-react"
+import { AtSign, ChevronRight, Download, Loader2, Lock, Minus, Plus, Reply, Send, ShieldCheck, X } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
-import { getFileSignedUrl } from "@/store/filesApi"
+import { getFileSignedUrl, downloadFile } from "@/store/filesApi"
+import { useChat } from "@/hooks/useChat"
 import { useAppDispatch } from "@/store/hooks"
 import { listFilesThunk } from "@/store/filesSlice"
 import AuditLogViewer from "@/components/ui/AuditLogViewer"
 
 const TABS = ["Files", "Shared", "Activity", "Audit Log"]
-
-interface ChatMessage {
-  id: string
-  sender: string
-  initials: string
-  time: string
-  text: string
-  isMe: boolean
-}
 
 interface Comment {
   id: string
@@ -26,39 +18,59 @@ interface Comment {
   text: string
 }
 
-const INITIAL_MESSAGES: ChatMessage[] = [
-  { id: "1", sender: "Sarah Chen", initials: "SC", time: "10:30 AM", text: "Added comments on the exec summary. Let's review the financial projections.", isMe: false },
-  { id: "2", sender: "Me", initials: "Me", time: "10:32 AM", text: "Sure, I'll go through them now.", isMe: true },
-  { id: "3", sender: "David Kim", initials: "DK", time: "10:35 AM", text: "Agree — market analysis needs more data points.", isMe: false },
-]
 
-const INITIAL_COMMENTS: Comment[] = [
-  { id: "1", label: "Comment #1 — Financial Performance", author: "Sarah Chen", time: "10:38 AM", text: "Revenue figures on page 2 look off. Can we cross-check with the Q2 baseline?" },
-  { id: "2", label: "Comment #2 — Market Analysis", author: "David Kim", time: "10:38 AM", text: "Competitor section needs citations. I'll pull from the Q3 research doc." },
-  { id: "3", label: "Comment #3 — Action Items", author: "You", time: "10:40 AM", text: "I'll compile all revision notes by EOD." },
-  { id: "4", label: "Comment #4 — Encryption", author: "Alex M.", time: "10:41 AM", text: "Confirmed AES-256 is applied to all attachments." },
-]
+const INITIAL_COMMENTS: Comment[] = []
 
 export default function FileViewerPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { items: uploadedFilesRaw } = useAppSelector((s) => s.files)
+  const authUser = useAppSelector((s) => s.auth.user)
+  const myEmail = authUser?.email ?? localStorage.getItem("userEmail") ?? ""
   const uploadedFiles = uploadedFilesRaw ?? []
 
   const [activeTab, setActiveTab] = useState("Files")
   const [zoom, setZoom] = useState(100)
   const [page] = useState(2)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
-  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES)
   const [comments] = useState<Comment[]>(INITIAL_COMMENTS)
   const [input, setInput] = useState("")
+  const [replyTo, setReplyTo] = useState<{ id: string; userName: string; content: string } | null>(null)
+  const [reactions, setReactions] = useState<Record<string, Record<string, string[]>>>({}) // msgId -> emoji -> userEmails
+  const [emojiPickerFor, setEmojiPickerFor] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const EMOJI_OPTIONS = ["👍", "❤️", "😂", "😮", "😢", "🔥"]
+
+  // Real-time, persisted chat for this file (socket-backed)
+  const {
+    messages: chatMessages,
+    sendMessage: sendChatMessage,
+    isConnected: chatConnected,
+    adminOnlyChat,
+    ownerId,
+    setAdminOnly,
+    currentUserId,
+  } = useChat(id ?? "")
 
   const file = uploadedFiles.find((f) => f.id === id)
   const mimeType = file?.mimeType ?? ""
   const isImage = mimeType.startsWith("image/")
+  const isPdf = mimeType === "application/pdf"
+  const isText =
+    mimeType.startsWith("text/") ||
+    mimeType === "application/json" ||
+    mimeType === "application/xml"
+  // Only these render inline in the browser. Everything else (Word, Excel,
+  // zip, etc.) would trigger a download if placed in an <iframe>, so we show
+  // a "preview not available" panel instead.
+  const isPreviewable = isImage || isPdf || isText
   const totalPages = 12
+  // Owner (admin) is the file uploader. ownerId comes from the server via the
+  // socket, so it is authoritative even for collaborators who don't have the
+  // file in their own list.
+  const isOwner = !!authUser && !!ownerId && ownerId === authUser.id
+  const canSendMessage = !adminOnlyChat || isOwner
 
   useEffect(() => {
     dispatch(listFilesThunk())
@@ -66,30 +78,53 @@ export default function FileViewerPage() {
 
   useEffect(() => {
     if (!id) return
+    let objectUrl: string | null = null
     getFileSignedUrl(id)
-      .then(({ url }) => setFileUrl(url))
+      .then(({ url }) => {
+        objectUrl = url
+        setFileUrl(url)
+      })
       .catch(() => {})
+    return () => {
+      if (objectUrl) window.URL.revokeObjectURL(objectUrl)
+    }
   }, [id])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+  }, [chatMessages])
+
+  useEffect(() => {
+    if (!emojiPickerFor) return
+    const close = () => setEmojiPickerFor(null)
+    document.addEventListener("click", close)
+    return () => document.removeEventListener("click", close)
+  }, [emojiPickerFor])
 
   function sendMessage(e: React.FormEvent) {
     e.preventDefault()
-    if (!input.trim()) return
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: String(Date.now()),
-        sender: "Me",
-        initials: "Me",
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        text: input.trim(),
-        isMe: true,
-      },
-    ])
+    if (!input.trim() || !canSendMessage) return
+    const content = replyTo
+      ? `↩ ${replyTo.userName}: "${replyTo.content.slice(0, 40)}${replyTo.content.length > 40 ? "…" : ""}"\n${input.trim()}`
+      : input.trim()
+    sendChatMessage(content)
     setInput("")
+    setReplyTo(null)
+  }
+
+  function toggleReaction(msgId: string, emoji: string) {
+    setReactions((prev) => {
+      const msgReactions = { ...(prev[msgId] ?? {}) }
+      const users = msgReactions[emoji] ?? []
+      if (users.includes(myEmail)) {
+        msgReactions[emoji] = users.filter((e) => e !== myEmail)
+        if (msgReactions[emoji].length === 0) delete msgReactions[emoji]
+      } else {
+        msgReactions[emoji] = [...users, myEmail]
+      }
+      return { ...prev, [msgId]: msgReactions }
+    })
+    setEmojiPickerFor(null)
   }
 
   return (
@@ -203,13 +238,31 @@ export default function FileViewerPage() {
                     className="rounded-lg shadow-2xl transition-transform duration-200"
                   />
                 </div>
-              ) : (
+              ) : isPreviewable ? (
                 <iframe
                   src={fileUrl}
                   title={file?.name ?? "File"}
                   className="border-0"
                   style={{ width: "100%", height: "100%", flex: 1 }}
                 />
+              ) : (
+                <div className="flex flex-1 items-center justify-center p-8">
+                  <div className="flex flex-col items-center gap-4 text-center text-slate-400">
+                    <Download size={32} className="text-slate-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-200">Preview not available</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        This file type can't be displayed in the browser.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => file && downloadFile(file.id, file.name)}
+                      className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-500 transition-colors"
+                    >
+                      <Download size={14} /> Download file
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -233,48 +286,207 @@ export default function FileViewerPage() {
         {/* Comments & Chat Panel */}
         <div className="flex w-80 shrink-0 flex-col bg-[#0a0a18]">
           {/* Panel header */}
-          <div className="flex shrink-0 items-center justify-between border-b border-white/5 px-4 py-3">
-            <div className="flex items-center gap-2">
+          <div className="flex shrink-0 flex-col border-b border-white/5 px-4 py-3 gap-2">
+            <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-white">Comments & Chat</h3>
-              <span className="rounded-full bg-blue-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                4 new
-              </span>
+              <div className="flex gap-1 text-slate-500">
+                <span className="text-xs">· · ·</span>
+              </div>
             </div>
-            <div className="flex gap-1 text-slate-500">
-              <span className="text-xs">· · ·</span>
-            </div>
+            {/* Admin-only chat toggle — visible only to file owner */}
+            {isOwner && (
+              <div
+                className={`flex items-center justify-between rounded-lg border px-3 py-2 transition-colors duration-200 ${
+                  adminOnlyChat
+                    ? "border-amber-500/60 bg-amber-500/15"
+                    : "border-slate-700 bg-slate-800/50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {adminOnlyChat ? (
+                    <Lock size={13} className="text-amber-400" />
+                  ) : (
+                    <ShieldCheck size={13} className="text-slate-500" />
+                  )}
+                  <div className="flex flex-col leading-tight">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${adminOnlyChat ? "text-amber-300" : "text-slate-400"}`}>
+                      Admin Only
+                    </span>
+                    <span className={`text-[10px] ${adminOnlyChat ? "text-amber-400/80" : "text-slate-500"}`}>
+                      {adminOnlyChat ? "Active · only you can send" : "Off · everyone can chat"}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setAdminOnly(!adminOnlyChat)}
+                  role="switch"
+                  aria-checked={adminOnlyChat}
+                  className={`relative inline-flex h-5 w-10 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+                    adminOnlyChat ? "bg-amber-500" : "bg-slate-600"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                      adminOnlyChat ? "translate-x-[22px]" : "translate-x-0.5"
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
+            {/* Banner shown to non-owners when admin-only mode is active */}
+            {adminOnlyChat && !isOwner && (
+              <div className="flex items-center gap-2 rounded-lg border border-amber-500/50 bg-amber-500/15 px-3 py-2">
+                <Lock size={13} className="shrink-0 text-amber-400" />
+                <span className="text-[11px] font-medium text-amber-300">Admin-only mode · read only</span>
+              </div>
+            )}
           </div>
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto">
             {/* Chat messages */}
             <div className="space-y-3 p-4">
-              {messages.map((msg) => (
-                <div key={msg.id} className={`flex gap-2 ${msg.isMe ? "flex-row-reverse" : ""}`}>
-                  {!msg.isMe && (
-                    <div className="h-7 w-7 shrink-0 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white">
-                      {msg.initials}
-                    </div>
-                  )}
-                  <div className={`max-w-[85%] ${msg.isMe ? "items-end" : "items-start"} flex flex-col`}>
-                    {!msg.isMe && (
-                      <span className="mb-0.5 text-[10px] font-semibold text-slate-300">
-                        {msg.sender}{" "}
-                        <span className="font-normal text-slate-500">{msg.time}</span>
-                      </span>
+              {chatMessages.length === 0 && (
+                <p className="text-center text-[11px] text-slate-600 py-4">
+                  No messages yet. Start the conversation.
+                </p>
+              )}
+              {chatMessages.map((msg, idx) => {
+                const isMe = !!myEmail && !!msg.userEmail && msg.userEmail === myEmail
+                const initials = (msg.userName || "?")
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2)
+                const msgDate = new Date(msg.timestamp)
+                const time = msgDate.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+
+                const prevMsg = idx > 0 ? chatMessages[idx - 1] : null
+                const prevDate = prevMsg ? new Date(prevMsg.timestamp) : null
+                const showDateSeparator = !prevDate ||
+                  msgDate.toDateString() !== prevDate.toDateString()
+
+                const formatDate = (date: Date) => {
+                  const today = new Date()
+                  const yesterday = new Date(today)
+                  yesterday.setDate(yesterday.getDate() - 1)
+
+                  if (date.toDateString() === today.toDateString()) {
+                    return "Today"
+                  } else if (date.toDateString() === yesterday.toDateString()) {
+                    return "Yesterday"
+                  } else {
+                    return date.toLocaleDateString([], {
+                      month: "short",
+                      day: "numeric",
+                    })
+                  }
+                }
+
+                const msgReactions = reactions[msg.id] ?? {}
+                const lines = msg.content.split("\n")
+                const isReply = lines.length > 1 && lines[0].startsWith("↩ ")
+                const replyPreview = isReply ? lines[0] : null
+                const mainContent = isReply ? lines.slice(1).join("\n") : msg.content
+
+                return (
+                  <div key={msg.id}>
+                    {showDateSeparator && (
+                      <div className="flex items-center gap-3 my-3">
+                        <div className="flex-1 h-px bg-slate-700" />
+                        <span className="text-[10px] text-slate-500 font-medium">
+                          {formatDate(msgDate)}
+                        </span>
+                        <div className="flex-1 h-px bg-slate-700" />
+                      </div>
                     )}
-                    <div
-                      className={`rounded-xl px-3 py-2 text-xs leading-relaxed ${
-                        msg.isMe
-                          ? "rounded-tr-sm bg-blue-600 text-white"
-                          : "rounded-tl-sm bg-slate-800 text-slate-200"
-                      }`}
-                    >
-                      {msg.text}
+                    <div className={`group flex items-end gap-1 mb-1 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+                      {!isMe && (
+                        <div className="h-7 w-7 shrink-0 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white">
+                          {initials}
+                        </div>
+                      )}
+                      <div className={`flex flex-col max-w-[72%] ${isMe ? "items-end" : "items-start"}`}>
+                        {!isMe && (
+                          <span className="mb-0.5 text-[10px] font-semibold text-slate-300">
+                            {msg.userName}
+                          </span>
+                        )}
+                        <div
+                          className={`rounded-xl px-3 py-2 text-xs leading-relaxed break-words ${
+                            isMe
+                              ? "rounded-tr-sm bg-blue-600 text-white"
+                              : "rounded-tl-sm bg-slate-800 text-slate-200"
+                          }`}
+                        >
+                          {replyPreview && (
+                            <div className={`mb-1.5 rounded-lg px-2 py-1 text-[10px] border-l-2 ${isMe ? "border-blue-300 bg-blue-700/50 text-blue-100" : "border-slate-500 bg-slate-700/60 text-slate-400"}`}>
+                              {replyPreview}
+                            </div>
+                          )}
+                          {mainContent}
+                        </div>
+                        {/* Reactions */}
+                        {Object.keys(msgReactions).length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {Object.entries(msgReactions).map(([emoji, users]) => (
+                              <button
+                                key={emoji}
+                                onClick={() => toggleReaction(msg.id, emoji)}
+                                className={`flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] border transition-colors ${
+                                  users.includes(myEmail)
+                                    ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                                    : "border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-500"
+                                }`}
+                              >
+                                {emoji} <span>{users.length}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                        <span className="text-[9px] mt-0.5 text-slate-500">{time}</span>
+                      </div>
+
+                      {/* Hover action buttons */}
+                      <div className={`relative flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity mb-5 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+                        <button
+                          onClick={() => setReplyTo({ id: msg.id, userName: msg.userName, content: mainContent })}
+                          className="rounded p-1 text-slate-500 hover:bg-slate-700 hover:text-slate-200"
+                          title="Reply"
+                        >
+                          <Reply size={12} />
+                        </button>
+                        <div className="relative">
+                          <button
+                            onClick={() => setEmojiPickerFor(emojiPickerFor === msg.id ? null : msg.id)}
+                            className="rounded p-1 text-slate-500 hover:bg-slate-700 hover:text-slate-200 text-[11px]"
+                            title="React"
+                          >
+                            😊
+                          </button>
+                          {emojiPickerFor === msg.id && (
+                            <div className={`absolute bottom-7 z-20 flex gap-1 rounded-xl border border-slate-600 bg-slate-800 p-1.5 shadow-xl ${isMe ? "right-0" : "left-0"}`}>
+                              {EMOJI_OPTIONS.map((emoji) => (
+                                <button
+                                  key={emoji}
+                                  onClick={() => toggleReaction(msg.id, emoji)}
+                                  className="rounded-lg p-1 text-base hover:bg-slate-700 transition-colors"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
               <div ref={messagesEndRef} />
             </div>
 
@@ -301,20 +513,58 @@ export default function FileViewerPage() {
 
           {/* Input */}
           <div className="shrink-0 border-t border-white/5 p-3">
+            {/* Admin-only mode status shown right above the message box */}
+            {adminOnlyChat && (
+              <div
+                className={`flex items-center gap-2 mb-2 rounded-lg border px-3 py-1.5 ${
+                  isOwner
+                    ? "border-amber-500/50 bg-amber-500/10"
+                    : "border-amber-500/50 bg-amber-500/15"
+                }`}
+              >
+                <Lock size={12} className="shrink-0 text-amber-400" />
+                <span className="text-[11px] font-medium text-amber-300">
+                  {isOwner
+                    ? "Admin-only mode is ON — only you can send messages"
+                    : "Admin-only mode is ON — only the owner can send messages"}
+                </span>
+              </div>
+            )}
+            {replyTo && (
+              <div className="flex items-center justify-between mb-2 rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-1.5">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Reply size={11} className="shrink-0 text-blue-400" />
+                  <span className="text-[10px] text-slate-400 truncate">
+                    <span className="font-semibold text-slate-300">{replyTo.userName}</span>: {replyTo.content.slice(0, 50)}{replyTo.content.length > 50 ? "…" : ""}
+                  </span>
+                </div>
+                <button onClick={() => setReplyTo(null)} className="ml-2 shrink-0 text-slate-500 hover:text-slate-300">
+                  <X size={12} />
+                </button>
+              </div>
+            )}
             <form onSubmit={sendMessage} className="flex items-center gap-2">
               <input
                 type="text"
-                placeholder="Add a comment or message..."
+                placeholder={
+                  !canSendMessage
+                    ? "Admin-only mode — you cannot send messages"
+                    : chatConnected
+                    ? "Add a comment or message..."
+                    : "Connecting…"
+                }
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                disabled={!canSendMessage}
+                className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
               />
-              <button type="button" className="text-slate-500 hover:text-slate-300">
+              <button type="button" disabled={!canSendMessage} className="text-slate-500 hover:text-slate-300 disabled:opacity-40">
                 <AtSign size={15} />
               </button>
               <button
                 type="submit"
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-500"
+                disabled={!canSendMessage}
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Send size={12} />
               </button>
