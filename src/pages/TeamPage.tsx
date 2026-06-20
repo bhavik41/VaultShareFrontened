@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Copy, X } from "lucide-react"
+import { Copy } from "lucide-react"
 
 const NAV_LINKS = ["Features", "Security", "Pricing", "Docs"]
 
