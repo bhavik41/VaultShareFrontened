@@ -8,6 +8,7 @@ import {
   Share2,
   ShieldAlert,
   Trash2,
+  Crown,
   History,
   Loader2,
   FileText,
@@ -29,6 +30,7 @@ const TABS: { id: FilterTab; label: string; actions?: AuditAction[] }[] = [
   { id: "download", label: "Downloads", actions: ["download"] },
   { id: "view", label: "Views", actions: ["view"] },
   { id: "share", label: "Shares", actions: ["share", "permission_change"] },
+  { id: "delete", label: "Deletes", actions: ["delete", "revoke_access"] },
 ];
 
 const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; color: string }> = {
@@ -61,6 +63,21 @@ const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; c
     label: "Deleted",
     icon: <Trash2 size={14} />,
     color: "text-red-400 bg-red-500/10 border-red-500/20",
+  },
+  revoke_access: {
+    label: "Access revoked",
+    icon: <ShieldAlert size={14} />,
+    color: "text-rose-400 bg-rose-500/10 border-rose-500/20",
+  },
+  star: {
+    label: "Starred",
+    icon: <Crown size={14} />,
+    color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+  },
+  invitation_accepted: {
+    label: "Invite accepted",
+    icon: <Share2 size={14} />,
+    color: "text-teal-400 bg-teal-500/10 border-teal-500/20",
   },
 };
 
