@@ -14,9 +14,10 @@ import {
 import type { UploadedFile } from "@/store/filesApi"
 import type {
   CollaborationInvitation,
+  ShareLink,
+  ShareLinkPermissionMode,
   SharedRole,
   SharedUser,
-  ShareLink,
 } from "@/store/collaborationApi"
 import { getMyFiles } from "@/store/filesApi"
 import {
@@ -67,7 +68,9 @@ export default function FileSharingPage() {
   const [inviteRole, setInviteRole] = useState<SharedRole>("viewer")
   const [shareEmail, setShareEmail] = useState("")
   const [shareRole, setShareRole] = useState<SharedRole>("viewer")
-  const [linkRole, setLinkRole] = useState<SharedRole>("viewer")
+  const [linkPermissionMode, setLinkPermissionMode] = useState<ShareLinkPermissionMode>(
+    "viewer",
+  )
   const [linkExpiresAt, setLinkExpiresAt] = useState("")
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
@@ -170,10 +173,10 @@ export default function FileSharingPage() {
 
     runAction(async () => {
       await createShareLink(selectedFileId, {
-        role: linkRole,
+        permissionMode: linkPermissionMode,
         expiresAt: linkExpiresAt || undefined,
       })
-      setLinkRole("viewer")
+      setLinkPermissionMode("viewer")
       setLinkExpiresAt("")
     }, "Share link created.")
   }
@@ -259,12 +262,12 @@ export default function FileSharingPage() {
             Loading files...
           </div>
         ) : files.length === 0 ? (
-          <div className="rounded-lg border border-white/10 bg-white/[0.03] p-5 text-sm text-slate-400">
+          <div className="rounded-lg border border-white/10 bg-white/3 p-5 text-sm text-slate-400">
             Upload a file first before managing sharing.
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-            <aside className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+            <aside className="rounded-lg border border-white/10 bg-white/3 p-5">
               <h2 className="mb-4 text-lg font-semibold">Your Files</h2>
               <div className="space-y-2">
                 {files.map((file) => (
@@ -289,7 +292,7 @@ export default function FileSharingPage() {
 
             <section className="space-y-6">
               {selectedFile && (
-                <div className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+                <div className="rounded-lg border border-white/10 bg-white/3 p-5">
                   <p className="text-sm text-slate-400">Selected file</p>
                   <h2 className="mt-1 text-xl font-semibold">
                     {selectedFile.name}
@@ -303,7 +306,7 @@ export default function FileSharingPage() {
               <div className="grid gap-6 lg:grid-cols-2">
                 <form
                   onSubmit={handleInvite}
-                  className="rounded-lg border border-white/10 bg-white/[0.03] p-5"
+                  className="rounded-lg border border-white/10 bg-white/3 p-5"
                 >
                   <div className="mb-4 flex items-center gap-2">
                     <UserPlus size={18} className="text-violet-300" />
@@ -322,7 +325,7 @@ export default function FileSharingPage() {
                   <select
                     value={inviteRole}
                     onChange={(e) => setInviteRole(e.target.value as SharedRole)}
-                    className="mb-4 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-violet-400"
+                    className="rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-violet-400"
                   >
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
@@ -340,7 +343,7 @@ export default function FileSharingPage() {
 
                 <form
                   onSubmit={handleDirectShare}
-                  className="rounded-lg border border-white/10 bg-white/[0.03] p-5"
+                  className="rounded-lg border border-white/10 bg-white/3 p-5"
                 >
                   <div className="mb-4 flex items-center gap-2">
                     <Share2 size={18} className="text-violet-300" />
@@ -376,7 +379,7 @@ export default function FileSharingPage() {
                 </form>
               </div>
 
-              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-lg border border-white/10 bg-white/3 p-5">
                 <div className="mb-4 flex items-center gap-2">
                   <Mail size={18} className="text-violet-300" />
                   <h2 className="text-lg font-semibold">Sent Invitations</h2>
@@ -414,7 +417,7 @@ export default function FileSharingPage() {
                 )}
               </div>
 
-              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-lg border border-white/10 bg-white/3 p-5">
                 <div className="mb-4 flex items-center gap-2">
                   <Users size={18} className="text-violet-300" />
                   <h2 className="text-lg font-semibold">Collaborators</h2>
@@ -466,7 +469,7 @@ export default function FileSharingPage() {
                 )}
               </div>
 
-              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-lg border border-white/10 bg-white/3 p-5">
                 <div className="mb-4 flex items-center gap-2">
                   <Link size={18} className="text-violet-300" />
                   <h2 className="text-lg font-semibold">Share Links</h2>
@@ -477,12 +480,16 @@ export default function FileSharingPage() {
                   className="mb-5 grid gap-3 md:grid-cols-[1fr_1fr_auto]"
                 >
                   <select
-                    value={linkRole}
-                    onChange={(e) => setLinkRole(e.target.value as SharedRole)}
+                    value={linkPermissionMode}
+                    onChange={(e) =>
+                      setLinkPermissionMode(e.target.value as ShareLinkPermissionMode)
+                    }
                     className="rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-violet-400"
                   >
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
+                    <option value="download">Download</option>
+                    <option value="admin-download">Admin download</option>
                   </select>
 
                   <input
@@ -519,7 +526,7 @@ export default function FileSharingPage() {
                               {buildPublicShareUrl(shareLink.token)}
                             </p>
                             <p className="mt-1 text-xs text-slate-400">
-                              Role: {shareLink.role} - Expires{" "}
+                              Mode: {shareLink.permissionMode} - Expires{" "}
                               {formatDate(shareLink.expiresAt)}
                               {shareLink.revokedAt ? " - Revoked" : ""}
                             </p>
