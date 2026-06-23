@@ -380,7 +380,7 @@ function FileCard({
           {/* 🔗 Share — get a 1-hour signed URL */}
           <button
             onClick={() => onShareLink(file.id)}
-            title="Get a 1-hour shareable link"
+            title="Create a temporary preview link"
             style={{
               padding: "4px 10px",
               borderRadius: 6,
@@ -483,7 +483,7 @@ function UrlModal({ url, onClose }: { url: string; onClose: () => void }) {
           <h3
             style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#fff" }}
           >
-            Shareable Link
+            Temporary Preview Link
           </h3>
           <button
             onClick={onClose}
@@ -500,9 +500,8 @@ function UrlModal({ url, onClose }: { url: string; onClose: () => void }) {
           </button>
         </div>
         <p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
-          This signed GCS link expires in{" "}
-          <strong style={{ color: "#e2e8f0" }}>1 hour</strong>. Anyone with this
-          link can download the file.
+          This preview URL only works in your current browser session. Use Manage
+          Sharing for permissioned share links.
         </p>
         <div
           style={{
@@ -647,7 +646,7 @@ export default function UploadPage() {
     dispatch(downloadFileThunk({ fileId, fileName }));
   };
 
-  // ── Share — fetch a fresh 1-hour signed GCS URL ────────────────────────────
+  // ── Preview — fetch a temporary object URL for this browser session ────────
   const handleShareLink = async (fileId: string) => {
     const result = await dispatch(getSignedUrlThunk(fileId))
       .unwrap()
