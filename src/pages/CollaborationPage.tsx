@@ -156,7 +156,7 @@ export default function CollaborationPage() {
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
-            <section className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+            <section className="rounded-lg border border-white/10 bg-white/3 p-5">
               <div className="mb-4 flex items-center gap-2">
                 <Mail size={18} className="text-violet-300" />
                 <h2 className="text-lg font-semibold">Invitation History</h2>
@@ -241,7 +241,7 @@ export default function CollaborationPage() {
               )}
             </section>
 
-            <section className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+            <section className="rounded-lg border border-white/10 bg-white/3 p-5">
               <div className="mb-4 flex items-center gap-2">
                 <FileText size={18} className="text-violet-300" />
                 <h2 className="text-lg font-semibold">Shared With Me</h2>
