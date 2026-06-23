@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState, useCallback } from "react"
 import { useNavigate, useParams, Link } from "react-router-dom"
-import { ShieldCheck, ChevronLeft, Loader2, AlertCircle, RefreshCw, Crown } from "lucide-react"
+import { ShieldCheck, ChevronLeft, Loader2, AlertCircle, RefreshCw } from "lucide-react"
 import {
   getFileAuditHistory, type AuditLog, type AuditAction, type AuditSummary,
 } from "@/store/auditApi"
