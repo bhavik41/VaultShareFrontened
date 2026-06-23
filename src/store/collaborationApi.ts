@@ -54,11 +54,17 @@ export interface SharedUser {
   updatedAt: string
 }
 
+export type ShareLinkPermissionMode =
+  | "viewer"
+  | "editor"
+  | "download"
+  | "admin-download"
+
 export interface ShareLink {
   id: string
   fileId: string
   token: string
-  role: SharedRole
+  permissionMode: ShareLinkPermissionMode
   expiresAt: string
   revokedAt: string | null
   createdAt: string
@@ -72,9 +78,8 @@ export interface ShareLinkFile {
   ownerId: string
   ownerName: string
   ownerEmail: string
-  role: SharedRole
+  permissionMode: ShareLinkPermissionMode
   createdAt: string
-  url: string
 }
 
 // ── Invitation functions ──────────────────────────────────────────────────────
@@ -175,7 +180,7 @@ export async function getShareLinks(fileId: string): Promise<ShareLink[]> {
 
 export async function createShareLink(
   fileId: string,
-  body: { role: SharedRole; expiresAt?: string },
+  body: { permissionMode: ShareLinkPermissionMode; expiresAt?: string },
 ): Promise<ShareLink> {
   const res = await axios.post(
     `${API}/collaboration/files/${fileId}/share-links`,

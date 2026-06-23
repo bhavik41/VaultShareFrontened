@@ -132,9 +132,8 @@ export const downloadFileThunk = createAsyncThunk<
 
 /**
  * getSignedUrlThunk
- * Fetches the file bytes (with auth) and returns a local object URL for
- * in-browser preview. Files are served from the backend's authenticated
- * download endpoint, so we materialize a blob URL rather than a remote link.
+ * Fetches file bytes from the authenticated preview endpoint and returns a
+ * local object URL for in-browser preview.
  */
 export const getSignedUrlThunk = createAsyncThunk<
   { id: string; url: string; expiresIn: number },
@@ -142,7 +141,7 @@ export const getSignedUrlThunk = createAsyncThunk<
   { rejectValue: string }
 >("files/signedUrl", async (fileId, { rejectWithValue }) => {
   try {
-    const response = await api.get<Blob>(`/files/${fileId}/download`, {
+    const response = await api.get<Blob>(`/files/${fileId}/preview`, {
       responseType: "blob",
     });
     return {

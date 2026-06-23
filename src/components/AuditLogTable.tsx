@@ -106,7 +106,11 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-slate-100 flex items-center gap-1.5">
                       {log.userName}
-                      {isOwner && <Crown size={12} className="text-amber-400 shrink-0" title="File Owner" />}
+                      {isOwner && (
+                        <span title="File Owner" className="inline-flex shrink-0">
+                          <Crown size={12} className="text-amber-400" />
+                        </span>
+                      )}
                     </p>
                     <p className="truncate text-xs text-slate-500">{log.userEmail}</p>
                   </div>

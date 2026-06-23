@@ -364,6 +364,7 @@ export default function DashboardPage() {
     const isMenuOpen = activeMenuId === doc.id;
     const isStarred = starredIds.has(doc.id);
     const isOwner = doc.ownership === "owned";
+    const canDownload = isOwner || doc.accessLevel === "editor";
     const borderClass = doc.ownership === "shared"
       ? "border-l-4 border-l-violet-500"
       : typeInfo.borderColor;
@@ -412,9 +413,11 @@ export default function DashboardPage() {
                   <button onClick={() => { setActiveMenuId(null); navigate(`/files/${doc.id}`); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-900/60 hover:text-white transition-colors">
                     <Eye size={13} /><span>View</span>
                   </button>
-                  <button onClick={() => handleDownload(doc.id, doc.name)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-900/60 hover:text-white transition-colors">
-                    <Download size={13} /><span>Download</span>
-                  </button>
+                  {canDownload && (
+                    <button onClick={() => handleDownload(doc.id, doc.name)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-900/60 hover:text-white transition-colors">
+                      <Download size={13} /><span>Download</span>
+                    </button>
+                  )}
                   {isOwner && (
                     <button onClick={() => handleShareLink(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-900/60 hover:text-white transition-colors">
                       <Share2 size={13} /><span>Share Link</span>
@@ -759,11 +762,11 @@ export default function DashboardPage() {
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-950 border border-slate-850 rounded-2xl p-6 w-full max-w-md flex flex-col gap-4 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-white m-0">Shareable GCS Link</h3>
+              <h3 className="text-base font-bold text-white m-0">Temporary Preview Link</h3>
               <button onClick={() => setShareUrl(null)} className="bg-transparent border-0 text-slate-500 hover:text-slate-350 cursor-pointer text-sm font-semibold p-1">✕</button>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed m-0">
-              Anyone with this link can access and download this file. Expires in <strong className="text-slate-300">1 hour</strong>.
+              This preview URL only works in your current browser session. Use Manage Sharing for permissioned share links.
             </p>
             <div className="bg-[#131224]/40 border border-slate-900 rounded-xl p-3 text-xs text-violet-400 font-mono break-all line-clamp-3 select-all leading-normal">{shareUrl}</div>
             <div className="flex gap-3 mt-1.5">

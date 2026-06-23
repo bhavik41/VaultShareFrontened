@@ -50,7 +50,6 @@ export default function FileViewerPage() {
     adminOnlyChat,
     ownerId,
     setAdminOnly,
-    currentUserId,
   } = useChat(id ?? "")
 
   const file = uploadedFiles.find((f) => f.id === id)

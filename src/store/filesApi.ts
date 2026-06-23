@@ -19,7 +19,7 @@ export async function getMyFiles() {
 // for previewing in an <img>/<iframe>. The caller is responsible for revoking
 // the returned URL when the preview is no longer needed.
 export async function getFileSignedUrl(fileId: string) {
-  const res = await api.get<Blob>(`/files/${fileId}/download`, {
+  const res = await api.get<Blob>(`/files/${fileId}/preview`, {
     responseType: "blob",
   })
 
