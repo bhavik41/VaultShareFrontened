@@ -19,6 +19,7 @@ import FileViewerPage from "@/pages/FileViewerPage";
 import ActivityPage from "@/pages/ActivityPage";
 import FileAuditPage from "@/pages/FileAuditPage";
 import ChatPage from "@/pages/ChatPage";
+import GroupsPage from "@/pages/GroupsPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token);
@@ -106,6 +107,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ChatPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/groups"
+          element={
+            <ProtectedRoute>
+              <GroupsPage />
             </ProtectedRoute>
           }
         />
