@@ -12,6 +12,53 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+// Security: Client-side file validation (server-side is primary defense)
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
+const ALLOWED_FILE_TYPES = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'text/plain',
+  'text/csv',
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'video/mp4',
+  'video/webm',
+  'video/quicktime',
+  'audio/mpeg',
+  'audio/wav',
+  'audio/ogg',
+  'application/zip',
+  'application/x-zip-compressed',
+  'application/x-rar-compressed',
+  'application/x-tar',
+  'application/gzip',
+  'application/x-7z-compressed',
+  'application/json',
+  'application/xml',
+  'text/xml',
+];
+
+function validateFile(file: File): { valid: boolean; error?: string } {
+  // Check file size
+  if (file.size > MAX_FILE_SIZE) {
+    return { valid: false, error: `File too large. Maximum size is 50 MB.` };
+  }
+
+  // Check file type
+  if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+    return { valid: false, error: `File type "${file.type}" is not allowed.` };
+  }
+
+  return { valid: true };
+}
+
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
@@ -590,6 +637,29 @@ export default function UploadPage() {
     (rawFiles: FileList | null) => {
       if (!rawFiles) return;
       Array.from(rawFiles).forEach((file) => {
+        // Security: Validate file before upload
+        const validation = validateFile(file);
+        if (!validation.valid) {
+          const localId = randomId();
+          const color = FILE_COLORS[colorIdx.current % FILE_COLORS.length];
+          colorIdx.current += 1;
+          
+          setLocalUploads((prev) => [...prev, {
+            localId,
+            name: file.name,
+            size: formatBytes(file.size),
+            color,
+            status: "error",
+            errorMsg: validation.error,
+          }]);
+          
+          // Remove error after 5 seconds
+          setTimeout(() => {
+            setLocalUploads((prev) => prev.filter((e) => e.localId !== localId));
+          }, 5000);
+          return;
+        }
+
         const localId = randomId();
         const color = FILE_COLORS[colorIdx.current % FILE_COLORS.length];
         colorIdx.current += 1;
