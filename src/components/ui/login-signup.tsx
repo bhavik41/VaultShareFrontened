@@ -123,7 +123,7 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={8}
                   />
                   <Button
                     type="button"
@@ -135,6 +135,7 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
+                <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
               </div>
 
               {/* Terms */}
