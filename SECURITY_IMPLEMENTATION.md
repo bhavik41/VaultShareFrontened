@@ -150,19 +150,71 @@ This document outlines the security measures implemented in the VaultShare front
   - Backend error details not exposed to UI
   - Proper error boundaries (React best practice)
 
+### 9. Client-Side File Upload Validation
+
+#### File Type and Size Validation
+- **Status**: ✅ Implemented (June 25, 2026)
+- **Location**: `src/pages/UploadPage.tsx`
+- **Commit**: `560e30f`
+- **Details**:
+  - File size validation (50MB maximum)
+  - File type allowlist check before upload
+  - Immediate user feedback for invalid files
+  - Prevents unnecessary server requests
+  - Server-side validation remains primary defense
+
+### 10. Security Utilities
+
+#### Comprehensive Security Helper Functions
+- **Status**: ✅ Implemented (June 25, 2026)
+- **Location**: `src/utils/security.ts`
+- **Commit**: `59d54ab`
+- **Details**:
+  - Input sanitization for XSS prevention
+  - Filename sanitization for safe display
+  - Email format validation
+  - URL validation (prevents open redirects)
+  - Client-side rate limiting helper
+  - Secure random ID generation
+  - Share token validation
+  - Safe JSON parsing
+  - Download URL validation
+
+### 11. Environment Configuration
+
+#### Environment Variable Validation
+- **Status**: ✅ Implemented (June 25, 2026)
+- **Location**: `src/config/env.ts`
+- **Commit**: `0040513`
+- **Details**:
+  - Fail-fast if required variables missing
+  - VITE_API_URL required at startup
+  - HTTPS warning in production
+  - Typed environment exports
+  - `.env.example` template provided
+
 ## 🔒 Browser Security Features
 
 ### Content Security Policy (CSP)
-- **Status**: ✅ Implemented (Backend)
-- **Details**: Backend sends CSP headers via helmet middleware
+- **Status**: ✅ Implemented (June 25, 2026)
+- **Location**: `index.html`
+- **Commit**: `73121b0`
+- **Details**: 
+  - CSP meta tag in HTML
+  - Restricts script sources
+  - Prevents inline script execution (except trusted)
+  - Controls resource loading origins
+  - Frame-ancestors none (clickjacking protection)
 
 ### HTTP Security Headers
-- **Status**: ✅ Implemented (Backend)
+- **Status**: ✅ Implemented (June 25, 2026)
+- **Location**: `index.html`
+- **Commit**: `73121b0`
 - **Details**: 
   - X-Content-Type-Options: nosniff
-  - X-Frame-Options: DENY
-  - Strict-Transport-Security (HSTS)
-  - All managed by backend helmet middleware
+  - X-XSS-Protection: 1; mode=block
+  - Referrer-Policy: strict-origin-when-cross-origin
+  - Backend sends additional headers via helmet
 
 ### HTTPS/TLS
 - **Status**: ⚠️ Production Requirement
@@ -269,13 +321,16 @@ If using a CDN (recommended):
 | Token Management | ✅ Complete | Automatic refresh, secure storage |
 | Socket.IO Auth | ✅ Complete | JWT authentication on handshake |
 | Password Security | ✅ Complete | 8+ char minimum, 2FA support |
-| XSS Protection | ✅ Complete | React built-in escaping |
+| XSS Protection | ✅ Complete | React built-in + CSP headers |
 | CSRF Protection | ✅ Complete | JWT tokens (not cookies) |
 | Input Validation | ✅ Complete | Client + server validation |
+| File Upload Validation | ✅ Complete | Size and type checks |
 | Error Handling | ✅ Complete | Secure error messages |
 | File Handling | ✅ Complete | Server-side validation |
+| Security Utilities | ✅ Complete | Comprehensive helper functions |
+| Environment Config | ✅ Complete | Fail-fast validation |
+| HTTP Security Headers | ✅ Complete | CSP, XSS protection, referrer policy |
 | HTTPS/TLS | ⚠️ Prod Only | Required for production |
-| Security Headers | ✅ Complete | Via backend helmet |
 
 ## 🔐 Known Limitations
 
@@ -329,8 +384,14 @@ git log --oneline origin/security
 ```
 
 Key commits:
-- `9bb05fc` - Password minimum length 8 characters
-- `584eb38` - JWT authentication on Socket.IO
+- `2d7d363` - .env.example template (#81)
+- `0040513` - Environment variable validation (#82)
+- `59d54ab` - Security utility functions
+- `560e30f` - Client-side file validation (#29, #35)
+- `73121b0` - HTTP security headers in HTML (#43-48)
+- `9bb05fc` - Password minimum length 8 characters (#14)
+- `584eb38` - JWT authentication on Socket.IO (#23)
+- `b76d903` - Comprehensive security documentation
 
 ## 📖 References
 
