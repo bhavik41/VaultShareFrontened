@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Security: Content Security Policy to prevent XSS attacks -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.vaultshare.com http://localhost:5003 ws://localhost:5003 wss://api.vaultshare.com https://prod.spline.design https://unpkg.com; base-uri 'self'; form-action 'self';">
+    <!-- Security headers in development - more permissive for Spline and other libraries -->
+    <!-- In production, use HTTP headers from backend (helmet) instead of meta tags -->
     <!-- Security: Prevent MIME type sniffing -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <!-- Security: Enable XSS protection in older browsers -->
