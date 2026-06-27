@@ -344,7 +344,7 @@ function FileCard({
 }: {
   file: UploadedFile;
   isDownloading: boolean;
-  onDownload: (id: string, name: string) => void;
+  onDownload: (id: string, name: string, isEncrypted: boolean, mimeType: string) => void;
   onShareLink: (id: string) => void;
   onDelete: (id: string) => void;
 }) {
@@ -403,9 +403,9 @@ function FileCard({
         <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
           {/* ↓ Download — streams actual bytes from GCS through the backend */}
           <button
-            onClick={() => onDownload(file.id, file.name)}
+            onClick={() => onDownload(file.id, file.name, file.isEncrypted, file.mimeType)}
             disabled={isDownloading}
-            title="Download file from GCS"
+            title={file.isEncrypted ? "Download and decrypt file" : "Download file from GCS"}
             style={{
               padding: "4px 10px",
               borderRadius: 6,
@@ -473,6 +473,12 @@ function FileCard({
         </span>
         <span style={{ color: "rgba(255,255,255,0.15)", fontSize: 10 }}>·</span>
         <span style={{ fontSize: 11, color: "#10b981" }}>Uploaded ✓</span>
+        {file.isEncrypted && (
+          <>
+            <span style={{ color: "rgba(255,255,255,0.15)", fontSize: 10 }}>·</span>
+            <span style={{ fontSize: 11, color: "#a78bfa" }}>🔐 Encrypted</span>
+          </>
+        )}
         <span style={{ color: "rgba(255,255,255,0.15)", fontSize: 10 }}>·</span>
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
           {new Date(file.createdAt).toLocaleDateString()}
@@ -624,6 +630,7 @@ export default function UploadPage() {
   const [localUploads, setLocalUploads] = useState<LocalUploadEntry[]>([]);
   const [dragging, setDragging] = useState(false);
   const [modalUrl, setModalUrl] = useState<string | null>(null);
+  const [encryptUploads, setEncryptUploads] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const colorIdx = useRef(0);
 
@@ -637,6 +644,25 @@ export default function UploadPage() {
     (rawFiles: FileList | null) => {
       if (!rawFiles) return;
       Array.from(rawFiles).forEach((file) => {
+        const shouldEncrypt = encryptUploads;
+        // Skip client-side MIME check for encrypted uploads — content is opaque ciphertext
+        if (shouldEncrypt) {
+          const localId = randomId();
+          const color = FILE_COLORS[colorIdx.current % FILE_COLORS.length];
+          colorIdx.current += 1;
+          const entry: LocalUploadEntry = { localId, name: file.name, size: formatBytes(file.size), color, status: "uploading" };
+          setLocalUploads((prev) => [...prev, entry]);
+          dispatch(uploadFileThunk({ file, localId, encrypt: true }))
+            .unwrap()
+            .then(() => {
+              setLocalUploads((prev) => prev.map((e) => e.localId === localId ? { ...e, status: "done" } : e));
+              setTimeout(() => setLocalUploads((prev) => prev.filter((e) => e.localId !== localId)), 1500);
+            })
+            .catch((msg: string) => {
+              setLocalUploads((prev) => prev.map((e) => e.localId === localId ? { ...e, status: "error", errorMsg: msg } : e));
+            });
+          return;
+        }
         // Security: Validate file before upload
         const validation = validateFile(file);
         if (!validation.valid) {
@@ -673,7 +699,7 @@ export default function UploadPage() {
         };
         setLocalUploads((prev) => [...prev, entry]);
 
-        dispatch(uploadFileThunk({ file, localId }))
+        dispatch(uploadFileThunk({ file, localId, encrypt: shouldEncrypt }))
           .unwrap()
           .then(() => {
             setLocalUploads((prev) =>
@@ -699,7 +725,7 @@ export default function UploadPage() {
           });
       });
     },
-    [dispatch],
+    [dispatch, encryptUploads],
   );
 
   const onDrop = useCallback(
@@ -711,9 +737,9 @@ export default function UploadPage() {
     [startUploads],
   );
 
-  // ── Download — streams file bytes from GCS through backend ─────────────────
-  const handleDownload = (fileId: string, fileName: string) => {
-    dispatch(downloadFileThunk({ fileId, fileName }));
+  // ── Download — decrypts in-browser when isEncrypted ───────────────────────
+  const handleDownload = (fileId: string, fileName: string, isEncrypted: boolean, mimeType: string) => {
+    dispatch(downloadFileThunk({ fileId, fileName, isEncrypted, mimeType }));
   };
 
   // ── Preview — fetch a temporary object URL for this browser session ────────
@@ -894,6 +920,59 @@ export default function UploadPage() {
             style={{ display: "none" }}
             onChange={(e) => startUploads(e.target.files)}
           />
+        </div>
+
+        {/* Encryption toggle */}
+        <div
+          style={{
+            marginTop: 14,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            padding: "10px 14px",
+            borderRadius: 10,
+            background: encryptUploads
+              ? "rgba(124,58,237,0.12)"
+              : "rgba(255,255,255,0.03)",
+            border: `1px solid ${encryptUploads ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.07)"}`,
+            cursor: "pointer",
+            userSelect: "none",
+            transition: "all 0.2s",
+          }}
+          onClick={() => setEncryptUploads((v) => !v)}
+        >
+          <div
+            style={{
+              width: 34,
+              height: 20,
+              borderRadius: 10,
+              background: encryptUploads ? "#7c3aed" : "rgba(255,255,255,0.12)",
+              position: "relative",
+              transition: "background 0.2s",
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: 2,
+                left: encryptUploads ? 16 : 2,
+                width: 16,
+                height: 16,
+                borderRadius: "50%",
+                background: "#fff",
+                transition: "left 0.2s",
+              }}
+            />
+          </div>
+          <div>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: encryptUploads ? "#c4b5fd" : "#e2e8f0" }}>
+              🔐 Encrypt uploads (E2E)
+            </p>
+            <p style={{ margin: 0, fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
+              Files are encrypted in your browser — the server never sees plaintext
+            </p>
+          </div>
         </div>
 
         {/* Active upload rows */}

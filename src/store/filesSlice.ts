@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import api from "./api";
+import { decryptBuffer, loadKey } from "@/utils/crypto";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -13,6 +14,7 @@ export interface UploadedFile {
   size: number; // bytes
   url: string; // 7-day signed URL stored at upload time
   createdAt: string;
+  isEncrypted: boolean;
 }
 
 interface FilesState {
@@ -44,12 +46,26 @@ const initialState: FilesState = {
  */
 export const uploadFileThunk = createAsyncThunk<
   UploadedFile,
-  { file: File; localId: string },
+  { file: File; localId: string; encrypt?: boolean },
   { rejectValue: string }
->("files/upload", async ({ file, localId }, { dispatch, rejectWithValue }) => {
+>("files/upload", async ({ file, localId, encrypt }, { dispatch, rejectWithValue }) => {
   try {
+    let uploadFile = file;
+    let encKeyBase64url: string | null = null;
+
+    if (encrypt) {
+      const { encryptFile } = await import("@/utils/crypto");
+      const result = await encryptFile(file);
+      uploadFile = result.encryptedFile;
+      encKeyBase64url = result.keyBase64url;
+    }
+
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", uploadFile);
+    if (encrypt) {
+      formData.append("encrypted", "true");
+      formData.append("originalMimeType", file.type);
+    }
 
     const response = await api.post<{ file: UploadedFile }>(
       "/files/upload",
@@ -64,6 +80,11 @@ export const uploadFileThunk = createAsyncThunk<
         },
       },
     );
+
+    if (encrypt && encKeyBase64url) {
+      const { storeKey } = await import("@/utils/crypto");
+      storeKey(response.data.file.id, encKeyBase64url);
+    }
 
     return response.data.file;
   } catch (err: any) {
@@ -100,33 +121,37 @@ export const listFilesThunk = createAsyncThunk<
  */
 export const downloadFileThunk = createAsyncThunk<
   void,
-  { fileId: string; fileName: string },
+  { fileId: string; fileName: string; isEncrypted?: boolean; mimeType?: string },
   { rejectValue: string }
->("files/download", async ({ fileId, fileName }, { rejectWithValue }) => {
+>("files/download", async ({ fileId, fileName, isEncrypted, mimeType }, { rejectWithValue }) => {
   try {
     const response = await api.get(`/files/${fileId}/download`, {
       responseType: "blob",
     });
 
-    // Build a temporary object URL and click a hidden anchor to save the file
-    const blob = new Blob([response.data as BlobPart], {
-      type:
-        (response.headers["content-type"] as string) ??
-        "application/octet-stream",
+    let blob: Blob = new Blob([response.data as BlobPart], {
+      type: (response.headers["content-type"] as string) ?? "application/octet-stream",
     });
-    const objectUrl = URL.createObjectURL(blob);
 
+    if (isEncrypted) {
+      const keyBase64url = loadKey(fileId);
+      if (!keyBase64url) {
+        return rejectWithValue("Encryption key not found. Cannot decrypt this file.");
+      }
+      const encBuffer = await blob.arrayBuffer();
+      blob = await decryptBuffer(encBuffer, keyBase64url, mimeType ?? "application/octet-stream");
+    }
+
+    const objectUrl = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = objectUrl;
     anchor.download = fileName;
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);
-
-    // Clean up the object URL after a short delay
     setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
   } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message ?? "Download failed.");
+    return rejectWithValue(err.response?.data?.message ?? err.message ?? "Download failed.");
   }
 });
 

@@ -68,6 +68,7 @@ export interface ShareLink {
   expiresAt: string
   revokedAt: string | null
   createdAt: string
+  passwordProtected: boolean
 }
 
 export interface ShareLinkFile {
@@ -180,7 +181,7 @@ export async function getShareLinks(fileId: string): Promise<ShareLink[]> {
 
 export async function createShareLink(
   fileId: string,
-  body: { permissionMode: ShareLinkPermissionMode; expiresAt?: string },
+  body: { permissionMode: ShareLinkPermissionMode; expiresAt?: string; password?: string },
 ): Promise<ShareLink> {
   const res = await axios.post(
     `${API}/collaboration/files/${fileId}/share-links`,
@@ -188,6 +189,14 @@ export async function createShareLink(
     { headers: getAuthHeaders() },
   )
   return res.data.shareLink
+}
+
+export async function unlockShareLink(
+  token: string,
+  password: string,
+): Promise<string> {
+  const res = await axios.post(`${API}/collaboration/share-links/${token}/unlock`, { password })
+  return res.data.unlockToken
 }
 
 export async function revokeShareLink(token: string): Promise<void> {

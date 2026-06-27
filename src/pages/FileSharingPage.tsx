@@ -72,6 +72,7 @@ export default function FileSharingPage() {
     "viewer",
   )
   const [linkExpiresAt, setLinkExpiresAt] = useState("")
+  const [linkPassword, setLinkPassword] = useState("")
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
   const [error, setError] = useState("")
@@ -175,9 +176,11 @@ export default function FileSharingPage() {
       await createShareLink(selectedFileId, {
         permissionMode: linkPermissionMode,
         expiresAt: linkExpiresAt || undefined,
+        password: linkPassword || undefined,
       })
       setLinkPermissionMode("viewer")
       setLinkExpiresAt("")
+      setLinkPassword("")
     }, "Share link created.")
   }
 
@@ -477,7 +480,7 @@ export default function FileSharingPage() {
 
                 <form
                   onSubmit={handleCreateShareLink}
-                  className="mb-5 grid gap-3 md:grid-cols-[1fr_1fr_auto]"
+                  className="mb-5 grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto]"
                 >
                   <select
                     value={linkPermissionMode}
@@ -496,6 +499,14 @@ export default function FileSharingPage() {
                     type="datetime-local"
                     value={linkExpiresAt}
                     onChange={(e) => setLinkExpiresAt(e.target.value)}
+                    className="rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-violet-400"
+                  />
+
+                  <input
+                    type="password"
+                    placeholder="Password (optional)"
+                    value={linkPassword}
+                    onChange={(e) => setLinkPassword(e.target.value)}
                     className="rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-violet-400"
                   />
 
@@ -525,10 +536,15 @@ export default function FileSharingPage() {
                             <p className="text-sm font-medium">
                               {buildPublicShareUrl(shareLink.token)}
                             </p>
-                            <p className="mt-1 text-xs text-slate-400">
+                            <p className="mt-1 flex items-center gap-2 text-xs text-slate-400">
                               Mode: {shareLink.permissionMode} - Expires{" "}
                               {formatDate(shareLink.expiresAt)}
                               {shareLink.revokedAt ? " - Revoked" : ""}
+                              {shareLink.passwordProtected && (
+                                <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-300">
+                                  🔒 Password
+                                </span>
+                              )}
                             </p>
                           </div>
 

@@ -8,6 +8,7 @@ export interface UploadedFile {
   size: number
   url: string
   createdAt: string
+  isEncrypted: boolean
 }
 
 export async function getMyFiles() {
