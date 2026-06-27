@@ -1,5 +1,7 @@
 ﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useAppSelector } from "@/store/hooks";
+import { useEffect } from "react";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { fetchMeThunk } from "@/store/authSlice";
 import SignupPage from "@/pages/SignupPage";
 import SigninPage from "@/pages/SigninPage";
 import DashboardPage from "@/pages/DashboardPage";
@@ -32,6 +34,17 @@ function RootRoute() {
 }
 
 export default function App() {
+  const dispatch = useAppDispatch();
+  const { token, user } = useAppSelector((state) => state.auth);
+
+  // Initialize authentication on app load
+  useEffect(() => {
+    // If we have a token but no user, fetch the current user
+    if (token && !user) {
+      dispatch(fetchMeThunk());
+    }
+  }, [dispatch, token, user]);
+
   return (
     <BrowserRouter>
       <Routes>
