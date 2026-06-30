@@ -15,14 +15,17 @@ import type { ChatMessage, OnlineUser } from "@/types/chat";
 
 // VITE_API_URL already includes the /api suffix (e.g. http://localhost:5003/api)
 const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:5003/api";
+const EMPTY_MESSAGES: ChatMessage[] = [];
+const EMPTY_ONLINE_USERS: OnlineUser[] = [];
+const EMPTY_TYPING_USERS: string[] = [];
 
 export function useChat(fileId: string) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((s) => s.auth.user);
   const token = useAppSelector((s) => s.auth.token);
-  const messages = useAppSelector((s) => s.chat.messagesByFile[fileId] ?? []);
-  const onlineUsers = useAppSelector((s) => s.chat.onlineUsersByFile[fileId] ?? []);
-  const typingUsers = useAppSelector((s) => s.chat.typingByFile[fileId] ?? []);
+  const messages = useAppSelector((s) => s.chat.messagesByFile[fileId] ?? EMPTY_MESSAGES);
+  const onlineUsers = useAppSelector((s) => s.chat.onlineUsersByFile[fileId] ?? EMPTY_ONLINE_USERS);
+  const typingUsers = useAppSelector((s) => s.chat.typingByFile[fileId] ?? EMPTY_TYPING_USERS);
   const unreadCount = useAppSelector((s) => s.chat.unreadCountByFile[fileId] ?? 0);
 
   const [isConnected, setIsConnected] = useState(false);
