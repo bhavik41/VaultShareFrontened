@@ -13,6 +13,12 @@ function fromBase64url(s: string): Uint8Array {
   return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 }
 
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  return copy.buffer;
+}
+
 export async function generateKey(): Promise<CryptoKey> {
   return crypto.subtle.generateKey(ALG, true, ["encrypt", "decrypt"]);
 }
@@ -23,7 +29,7 @@ export async function exportKey(key: CryptoKey): Promise<string> {
 }
 
 export async function importKey(base64url: string): Promise<CryptoKey> {
-  const raw = fromBase64url(base64url);
+  const raw = toArrayBuffer(fromBase64url(base64url));
   return crypto.subtle.importKey("raw", raw, ALG, false, ["decrypt"]);
 }
 
@@ -34,14 +40,18 @@ export async function encryptFile(
   const key = await generateKey();
   const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
   const plaintext = await file.arrayBuffer();
-  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plaintext);
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: toArrayBuffer(iv) },
+    key,
+    plaintext,
+  );
 
   const combined = new Uint8Array(IV_BYTES + ciphertext.byteLength);
   combined.set(iv, 0);
   combined.set(new Uint8Array(ciphertext), IV_BYTES);
 
   const encryptedFile = new File(
-    [combined],
+    [combined.buffer],
     file.name,
     { type: "application/vaultshare-encrypted" },
   );
@@ -59,7 +69,11 @@ export async function decryptBuffer(
   const bytes = new Uint8Array(encryptedBuffer);
   const iv = bytes.slice(0, IV_BYTES);
   const ciphertext = bytes.slice(IV_BYTES);
-  const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  const plaintext = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: toArrayBuffer(iv) },
+    key,
+    toArrayBuffer(ciphertext),
+  );
   return new Blob([plaintext], { type: mimeType });
 }
 
