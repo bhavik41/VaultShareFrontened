@@ -323,17 +323,17 @@ export default function VersionHistoryPanel({
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-slate-200">
-                          {uploaderName(v.uploadedBy)}
+                        <span className="text-sm font-medium text-slate-200 truncate">
+                          {v.originalName || fileName}
                         </span>
                         {v.isActive && (
-                          <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                          <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300 shrink-0">
                             <ShieldCheck size={10} /> Active
                           </span>
                         )}
                       </div>
                       <p className="mt-0.5 truncate text-[11px] text-slate-500">
-                        {formatBytes(v.size)} · {formatDate(v.createdAt)}
+                        {uploaderName(v.uploadedBy)} · {formatBytes(v.size)} · {formatDate(v.createdAt)}
                         {v.changeNote ? ` · "${v.changeNote}"` : ""}
                       </p>
                     </div>

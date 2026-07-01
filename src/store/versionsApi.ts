@@ -8,6 +8,7 @@ export interface FileVersion {
   fileId: string
   versionNumber: number
   uploadedBy: string
+  originalName: string
   size: number
   mimeType: string
   changeNote?: string
