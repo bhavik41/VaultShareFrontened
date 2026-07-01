@@ -32,6 +32,7 @@ import {
   Eye,
   BadgeCheck,
   MessageSquare,
+  History,
 } from "lucide-react";
 import { logout, disable2faThunk, fetchMeThunk } from "@/store/authSlice";
 import {
@@ -44,6 +45,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getDashboardDocuments, type DashboardDocument, type DashboardCollaborator } from "@/store/dashboardApi";
 import { getStarredFileIds, starFile, unstarFile } from "@/store/starredApi";
+import NotificationBell from "@/components/NotificationBell";
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -354,10 +356,16 @@ export default function DashboardPage() {
     { id: "starred", label: "Starred", icon: <Star size={18} /> },
     { id: "vault", label: "Encrypted Vault", icon: <Lock size={18} />, badge: "Secure" },
     { id: "team", label: "Team / Sharing", icon: <Users size={18} /> },
+    { id: "version-requests", label: "Version Requests", icon: <History size={18} /> },
     { id: "activity", label: "Activity", icon: <Activity size={18} /> },
     { id: "settings", label: "Settings", icon: <Settings size={18} /> },
   ];
-  const isInteractable = (id: string) => ["dashboard", "files", "settings", "starred"].includes(id) || id === "shared" || id === "team" || id === "activity";
+  const isInteractable = (id: string) =>
+    ["dashboard", "files", "settings", "starred"].includes(id) ||
+    id === "shared" ||
+    id === "team" ||
+    id === "activity" ||
+    id === "version-requests";
 
   function FileCard({ doc }: { doc: DashboardDocument }) {
     const typeInfo = getFileTypeInfo(doc.name);
@@ -501,6 +509,7 @@ export default function DashboardPage() {
                     if (id === "shared") navigate("/collaboration");
                     else if (id === "team") navigate("/file-sharing");
                     else if (id === "activity") navigate("/activity");
+                    else if (id === "version-requests") navigate("/version-requests");
                     else if (clickable) setActiveTab(id);
                   }}
                   disabled={!clickable}
@@ -556,6 +565,7 @@ export default function DashboardPage() {
             <button onClick={triggerUpload} className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-98 transition-all duration-150">
               <Plus size={16} strokeWidth={2.5} /><span>Upload</span>
             </button>
+            <NotificationBell />
             <ProfileDropdown name={user?.name ?? "User"} email={user?.email ?? ""} is2faEnabled={is2faEnabled} onLogout={handleLogout} onChangeTab={(tab) => setActiveTab(tab)} />
           </div>
         </header>

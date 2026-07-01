@@ -7,8 +7,9 @@ import { useChat } from "@/hooks/useChat"
 import { useAppDispatch } from "@/store/hooks"
 import { listFilesThunk } from "@/store/filesSlice"
 import AuditLogViewer from "@/components/ui/AuditLogViewer"
+import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel"
 
-const TABS = ["Files", "Shared", "Activity", "Audit Log"]
+const TABS = ["Files", "Shared", "Activity", "Versions", "Audit Log"]
 
 interface Comment {
   id: string
@@ -146,6 +147,7 @@ export default function FileViewerPage() {
                   onClick={() => {
                     setActiveTab(tab)
                     if (tab === "Files") navigate("/dashboard")
+                    if (tab === "Activity") navigate("/activity")
                   }}
                   className={`relative px-4 py-4 text-sm font-medium transition-colors ${
                     activeTab === tab
@@ -188,6 +190,13 @@ export default function FileViewerPage() {
       <div className="flex flex-1 overflow-hidden">
         {activeTab === "Audit Log" && id ? (
           <AuditLogViewer fileId={id} />
+        ) : activeTab === "Versions" && id ? (
+          <VersionHistoryPanel
+            fileId={id}
+            fileOwnerId={file?.userId ?? ""}
+            versionPolicy={file?.versionPolicy ?? "admin_only"}
+            fileName={file?.name ?? "file"}
+          />
         ) : (
           <>
             {/* File Viewer */}
