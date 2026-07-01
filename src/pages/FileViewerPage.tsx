@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom"
 import { AtSign, ChevronRight, Download, Loader2, Lock, Minus, Plus, Reply, Send, ShieldCheck, X } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import { getFileSignedUrl, downloadFile } from "@/store/filesApi"
+import api from "@/store/api"
 import { useChat } from "@/hooks/useChat"
 import { useAppDispatch } from "@/store/hooks"
 import { listFilesThunk } from "@/store/filesSlice"
@@ -54,7 +55,36 @@ export default function FileViewerPage() {
   } = useChat(id ?? "")
 
   const file = uploadedFiles.find((f) => f.id === id)
-  const mimeType = file?.mimeType ?? ""
+
+  // For collaborators the file won't be in uploadedFiles (that's owner-only).
+  // Fetch the minimal details we need from the view endpoint instead.
+  const [remoteFile, setRemoteFile] = useState<{
+    userId: string;
+    name: string;
+    mimeType: string;
+    versionPolicy: "admin_only" | "role_gated" | "open";
+  } | null>(null)
+
+  useEffect(() => {
+    if (!id || file) return
+    api.get<{ file: { userId: string; originalName: string; mimeType: string; versionPolicy?: string } }>(`/files/${id}/view`)
+      .then((res) => {
+        const f = res.data.file
+        setRemoteFile({
+          userId: f.userId,
+          name: f.originalName,
+          mimeType: f.mimeType,
+          versionPolicy: (f.versionPolicy as "admin_only" | "role_gated" | "open") ?? "admin_only",
+        })
+      })
+      .catch(() => {})
+  }, [id, file])
+
+  const effectiveFile = file
+    ? { userId: file.userId, name: file.name, mimeType: file.mimeType, versionPolicy: file.versionPolicy ?? "admin_only" }
+    : remoteFile
+
+  const mimeType = effectiveFile?.mimeType ?? ""
   const isImage = mimeType.startsWith("image/")
   const isPdf = mimeType === "application/pdf"
   const isText =
@@ -178,7 +208,7 @@ export default function FileViewerPage() {
           <span className="text-xs text-slate-400">Project Alpha</span>
           <ChevronRight size={12} className="text-slate-600" />
           <span className="text-xs text-white font-medium">
-            {file?.name ?? "Q3 Report - Draft v2.pdf"}
+            {effectiveFile?.name ?? "Loading…"}
           </span>
           <span className="ml-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-300">
             AES-256
@@ -193,9 +223,9 @@ export default function FileViewerPage() {
         ) : activeTab === "Versions" && id ? (
           <VersionHistoryPanel
             fileId={id}
-            fileOwnerId={file?.userId ?? ""}
-            versionPolicy={file?.versionPolicy ?? "admin_only"}
-            fileName={file?.name ?? "file"}
+            fileOwnerId={effectiveFile?.userId ?? ""}
+            versionPolicy={effectiveFile?.versionPolicy ?? "admin_only"}
+            fileName={effectiveFile?.name ?? "file"}
           />
         ) : (
           <>
