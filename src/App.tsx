@@ -22,6 +22,7 @@ import ActivityPage from "@/pages/ActivityPage";
 import FileAuditPage from "@/pages/FileAuditPage";
 import ChatPage from "@/pages/ChatPage";
 import GroupsPage from "@/pages/GroupsPage";
+import VersionRequestsPage from "@/pages/VersionRequestsPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token);
@@ -128,6 +129,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <GroupsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/version-requests"
+          element={
+            <ProtectedRoute>
+              <VersionRequestsPage />
             </ProtectedRoute>
           }
         />
