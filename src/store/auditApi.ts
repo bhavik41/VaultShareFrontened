@@ -12,6 +12,12 @@ export type AuditAction =
   | "revoke_access"
   | "star"
   | "invitation_accepted"
+  | "version_upload"
+  | "version_request"
+  | "version_approved"
+  | "version_rejected"
+  | "version_activated"
+  | "version_deleted"
 
 export interface AuditLog {
   id: string

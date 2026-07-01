@@ -15,6 +15,8 @@ export interface UploadedFile {
   url: string; // 7-day signed URL stored at upload time
   createdAt: string;
   isEncrypted: boolean;
+  versionPolicy?: "admin_only" | "role_gated" | "open";
+  activeVersionId?: string | null;
 }
 
 interface FilesState {

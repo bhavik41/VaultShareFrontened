@@ -9,6 +9,8 @@ export interface UploadedFile {
   url: string
   createdAt: string
   isEncrypted: boolean
+  versionPolicy?: "admin_only" | "role_gated" | "open"
+  activeVersionId?: string | null
 }
 
 export async function getMyFiles() {
