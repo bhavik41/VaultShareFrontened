@@ -7,6 +7,7 @@ import {
   Mail,
   RefreshCw,
   Share2,
+  ShieldCheck,
   Trash2,
   UserPlus,
   Users,
@@ -31,6 +32,17 @@ import {
   shareFileWithUser,
   updateCollaboratorPermission,
 } from "@/store/collaborationApi"
+import { updateVersionPolicy, type VersionPolicy } from "@/store/versionsApi"
+
+const POLICY_OPTIONS: { value: VersionPolicy; label: string; description: string }[] = [
+  { value: "admin_only", label: "Admin Only", description: "Only you can upload new versions." },
+  {
+    value: "role_gated",
+    label: "Role-Gated (Editors request, you approve)",
+    description: "Editors can request a version upload; it's held until you approve or reject it.",
+  },
+  { value: "open", label: "Open", description: "Anyone with at least viewer access can upload a new version directly." },
+]
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString(undefined, {
@@ -77,6 +89,7 @@ export default function FileSharingPage() {
   const [actionLoading, setActionLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [policySaving, setPolicySaving] = useState(false)
 
   const selectedFile = files.find((file) => file.id === selectedFileId)
 
@@ -211,6 +224,23 @@ export default function FileSharingPage() {
     setSuccess("Share link copied.")
   }
 
+  async function handlePolicyChange(policy: VersionPolicy) {
+    if (!selectedFileId) return
+    setPolicySaving(true)
+    setError("")
+    try {
+      await updateVersionPolicy(selectedFileId, policy)
+      setFiles((prev) =>
+        prev.map((f) => (f.id === selectedFileId ? { ...f, versionPolicy: policy } : f)),
+      )
+      setSuccess("Version upload policy updated.")
+    } catch {
+      setError("Failed to update version upload policy.")
+    } finally {
+      setPolicySaving(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <header className="border-b border-white/10 bg-slate-950/95">
@@ -302,6 +332,37 @@ export default function FileSharingPage() {
                   </h2>
                   <p className="mt-1 text-sm text-slate-400">
                     {selectedFile.mimeType} - {formatSize(selectedFile.size)}
+                  </p>
+                </div>
+              )}
+
+              {selectedFile && (
+                <div className="rounded-lg border border-white/10 bg-white/3 p-5">
+                  <div className="mb-3 flex items-center gap-2">
+                    <ShieldCheck size={18} className="text-violet-300" />
+                    <h2 className="text-lg font-semibold">Version Upload Policy</h2>
+                  </div>
+                  <p className="mb-3 text-xs text-slate-400">
+                    Controls who can upload a new version of this file, and whether it requires your
+                    approval first.
+                  </p>
+                  <select
+                    value={selectedFile.versionPolicy ?? "admin_only"}
+                    disabled={policySaving}
+                    onChange={(e) => handlePolicyChange(e.target.value as VersionPolicy)}
+                    className="w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-violet-400 disabled:opacity-50"
+                  >
+                    {POLICY_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-2 text-xs text-slate-500">
+                    {
+                      POLICY_OPTIONS.find((o) => o.value === (selectedFile.versionPolicy ?? "admin_only"))
+                        ?.description
+                    }
                   </p>
                 </div>
               )}
