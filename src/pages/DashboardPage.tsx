@@ -46,6 +46,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getDashboardDocuments, type DashboardDocument, type DashboardCollaborator } from "@/store/dashboardApi";
 import { getStarredFileIds, starFile, unstarFile } from "@/store/starredApi";
 import NotificationBell from "@/components/NotificationBell";
+import FileSettingsModal from "@/components/FileSettingsModal";
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -204,6 +205,7 @@ export default function DashboardPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const cardMenuRef = useRef<HTMLDivElement>(null);
+  const [settingsFile, setSettingsFile] = useState<{ id: string; name: string } | null>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -429,6 +431,11 @@ export default function DashboardPage() {
                   {isOwner && (
                     <button onClick={() => handleShareLink(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-900/60 hover:text-white transition-colors">
                       <Share2 size={13} /><span>Share Link</span>
+                    </button>
+                  )}
+                  {isOwner && (
+                    <button onClick={() => { setActiveMenuId(null); setSettingsFile({ id: doc.id, name: doc.name }); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-900/60 hover:text-white transition-colors">
+                      <Settings size={13} /><span>Settings</span>
                     </button>
                   )}
                   {isOwner && (
@@ -801,6 +808,15 @@ export default function DashboardPage() {
           fileName={chatFileName}
           isOpen={chatOpen}
           onToggle={toggleChat}
+        />
+      )}
+
+      {/* File Settings Modal */}
+      {settingsFile && (
+        <FileSettingsModal
+          fileId={settingsFile.id}
+          fileName={settingsFile.name}
+          onClose={() => setSettingsFile(null)}
         />
       )}
     </div>
