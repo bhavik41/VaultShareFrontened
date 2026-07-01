@@ -16,6 +16,10 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  GitBranch,
 } from "lucide-react";
 import { getFileAuditHistory, type AuditLog, type AuditAction } from "@/store/auditApi";
 import {
@@ -37,6 +41,12 @@ const ACTION_ICONS: Record<string, React.ReactNode> = {
   share: <Share2 size={16} className="text-indigo-400" />,
   permission_change: <ShieldAlert size={16} className="text-orange-400" />,
   delete: <Trash2 size={16} className="text-red-400" />,
+  version_upload: <GitBranch size={16} className="text-blue-400" />,
+  version_request: <Clock size={16} className="text-amber-400" />,
+  version_approved: <CheckCircle2 size={16} className="text-emerald-400" />,
+  version_rejected: <XCircle size={16} className="text-rose-400" />,
+  version_activated: <History size={16} className="text-violet-400" />,
+  version_deleted: <Trash2 size={16} className="text-red-400" />,
 };
 
 const ACTION_LABELS: Record<string, string> = {
@@ -46,6 +56,12 @@ const ACTION_LABELS: Record<string, string> = {
   share: "Shared",
   permission_change: "Permission Changed",
   delete: "File Deleted",
+  version_upload: "Version Uploaded",
+  version_request: "Version Requested",
+  version_approved: "Version Approved",
+  version_rejected: "Version Rejected",
+  version_activated: "Version Activated",
+  version_deleted: "Version Deleted",
 };
 
 const ACTION_FILTER_OPTIONS: { value: AuditAction | "all"; label: string }[] = [
@@ -56,6 +72,12 @@ const ACTION_FILTER_OPTIONS: { value: AuditAction | "all"; label: string }[] = [
   { value: "share", label: "Shares" },
   { value: "permission_change", label: "Permission changes" },
   { value: "delete", label: "Deletes" },
+  { value: "version_upload", label: "Version uploads" },
+  { value: "version_request", label: "Version requests" },
+  { value: "version_approved", label: "Version approvals" },
+  { value: "version_rejected", label: "Version rejections" },
+  { value: "version_activated", label: "Version activations" },
+  { value: "version_deleted", label: "Version deletions" },
 ];
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];

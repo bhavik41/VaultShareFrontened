@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import {
   UploadCloud, Download, Eye, Share2, ShieldAlert, Trash2,
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Crown,
+  Clock, CheckCircle2, XCircle, History, GitBranch,
 } from "lucide-react"
 import type { AuditLog, AuditAction } from "@/store/auditApi"
 
@@ -15,9 +16,18 @@ const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; c
   revoke_access:     { label: "Revoked access",    icon: <ShieldAlert size={12} />, color: "text-rose-400 bg-rose-500/10 border-rose-500/20" },
   star:              { label: "Starred",           icon: <Crown size={12} />,        color: "text-amber-400 bg-amber-500/10 border-amber-500/20" },
   invitation_accepted: { label: "Invite accepted", icon: <Share2 size={12} />,      color: "text-teal-400 bg-teal-500/10 border-teal-500/20" },
+  version_upload:    { label: "Version uploaded",  icon: <GitBranch size={12} />,    color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
+  version_request:   { label: "Version requested", icon: <Clock size={12} />,        color: "text-amber-400 bg-amber-500/10 border-amber-500/20" },
+  version_approved:  { label: "Version approved",  icon: <CheckCircle2 size={12} />, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
+  version_rejected:  { label: "Version rejected",  icon: <XCircle size={12} />,      color: "text-rose-400 bg-rose-500/10 border-rose-500/20" },
+  version_activated: { label: "Version activated", icon: <History size={12} />,      color: "text-violet-400 bg-violet-500/10 border-violet-500/20" },
+  version_deleted:   { label: "Version deleted",   icon: <Trash2 size={12} />,       color: "text-red-400 bg-red-500/10 border-red-500/20" },
 }
 
-const ACTIONS: AuditAction[] = ["upload", "download", "view", "share", "permission_change", "delete", "revoke_access", "star", "invitation_accepted"]
+const ACTIONS: AuditAction[] = [
+  "upload", "download", "view", "share", "permission_change", "delete", "revoke_access", "star", "invitation_accepted",
+  "version_upload", "version_request", "version_approved", "version_rejected", "version_activated", "version_deleted",
+]
 const PAGE_SIZE_OPTIONS = [10, 25, 50]
 
 interface AuditLogTableProps {

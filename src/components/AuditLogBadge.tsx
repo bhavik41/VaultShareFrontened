@@ -16,6 +16,12 @@ const ACTION_COLORS: Record<string, string> = {
   revoke_access: "bg-rose-500/10 text-rose-400 border-rose-500/20",
   star: "bg-amber-500/10 text-amber-400 border-amber-500/20",
   invitation_accepted: "bg-teal-500/10 text-teal-400 border-teal-500/20",
+  version_upload: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  version_request: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  version_approved: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  version_rejected: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+  version_activated: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+  version_deleted: "bg-red-500/10 text-red-400 border-red-500/20",
 }
 
 export const AuditLogBadge: React.FC<AuditLogBadgeProps> = ({ count, topAction }) => {

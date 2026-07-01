@@ -17,6 +17,10 @@ import {
   Code,
   ChevronLeft,
   RefreshCw,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  GitBranch,
 } from "lucide-react";
 import { getMyActivity, type UserActivity, type AuditAction } from "@/store/auditApi";
 
@@ -78,6 +82,36 @@ const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; c
     label: "Invite accepted",
     icon: <Share2 size={14} />,
     color: "text-teal-400 bg-teal-500/10 border-teal-500/20",
+  },
+  version_upload: {
+    label: "Version uploaded",
+    icon: <GitBranch size={14} />,
+    color: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+  },
+  version_request: {
+    label: "Version requested",
+    icon: <Clock size={14} />,
+    color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+  },
+  version_approved: {
+    label: "Version approved",
+    icon: <CheckCircle2 size={14} />,
+    color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+  },
+  version_rejected: {
+    label: "Version rejected",
+    icon: <XCircle size={14} />,
+    color: "text-rose-400 bg-rose-500/10 border-rose-500/20",
+  },
+  version_activated: {
+    label: "Version activated",
+    icon: <History size={14} />,
+    color: "text-violet-400 bg-violet-500/10 border-violet-500/20",
+  },
+  version_deleted: {
+    label: "Version deleted",
+    icon: <Trash2 size={14} />,
+    color: "text-red-400 bg-red-500/10 border-red-500/20",
   },
 };
 
