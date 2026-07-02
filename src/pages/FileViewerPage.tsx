@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { AtSign, ChevronRight, Download, Loader2, Lock, Minus, Plus, Reply, Send, ShieldCheck, X } from "lucide-react"
+import { AtSign, ChevronLeft, ChevronRight, Download, Loader2, Lock, Minus, Plus, Reply, Send, ShieldCheck, X } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import { getFileSignedUrl, downloadFile } from "@/store/filesApi"
 import api from "@/store/api"
@@ -164,7 +164,15 @@ export default function FileViewerPage() {
       {/* Top Header */}
       <header className="shrink-0 border-b border-white/5 bg-[#0a0a18]">
         <div className="flex items-center justify-between px-5 py-0">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors shrink-0"
+            >
+              <ChevronLeft size={15} />
+              Back
+            </button>
+            <div className="w-px h-5 bg-slate-800 shrink-0" />
             <div className="flex items-center">
               {TABS.map((tab) => (
                 <button
