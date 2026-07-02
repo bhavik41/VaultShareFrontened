@@ -206,11 +206,19 @@ export default function VersionHistoryPanel({
             Version History
           </h2>
           {uploadMode !== "denied" && (
-            myPendingRequest ? (
+            myPendingRequest?.status === "pending" ? (
               <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-300 cursor-default">
                 <Clock size={14} />
                 Request Pending
               </div>
+            ) : myPendingRequest?.status === "rejected" ? (
+              <button
+                onClick={() => { setMyPendingRequest(null); setShowUploadForm(true); }}
+                className="flex items-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 transition-colors"
+              >
+                <X size={14} />
+                Request Rejected — Try Again
+              </button>
             ) : (
               <button
                 onClick={() => setShowUploadForm((v) => !v)}
@@ -270,8 +278,8 @@ export default function VersionHistoryPanel({
           </form>
         )}
 
-        {/* My pending request (collaborator view) */}
-        {!isOwner && myPendingRequest && (
+        {/* My request status (collaborator view) */}
+        {!isOwner && myPendingRequest?.status === "pending" && (
           <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
             <Clock size={16} className="mt-0.5 shrink-0 text-amber-400" />
             <div className="min-w-0">
@@ -283,6 +291,23 @@ export default function VersionHistoryPanel({
                 {myPendingRequest.changeNote ? ` · "${myPendingRequest.changeNote}"` : ""}
               </p>
               <p className="mt-1 text-[11px] text-slate-500">Waiting for the owner to approve or reject your upload.</p>
+            </div>
+          </div>
+        )}
+        {!isOwner && myPendingRequest?.status === "rejected" && (
+          <div className="flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 p-4">
+            <X size={16} className="mt-0.5 shrink-0 text-rose-400" />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-rose-300">Request Rejected</p>
+              <p className="mt-1 text-[11px] text-slate-400">
+                <span className="font-medium text-slate-300">{myPendingRequest.originalName}</span>
+                {" · "}{formatBytes(myPendingRequest.size)}
+                {" · submitted "}{formatDate(myPendingRequest.createdAt)}
+                {myPendingRequest.changeNote ? ` · "${myPendingRequest.changeNote}"` : ""}
+              </p>
+              <p className="mt-1 text-[11px] text-slate-500">
+                The owner rejected your upload. You can submit a new request using the button above.
+              </p>
             </div>
           </div>
         )}
