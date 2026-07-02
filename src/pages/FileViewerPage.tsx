@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Link, useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { AtSign, ChevronRight, Download, Loader2, Lock, Minus, Plus, Reply, Send, ShieldCheck, X } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import { getFileSignedUrl, downloadFile } from "@/store/filesApi"
@@ -160,18 +160,11 @@ export default function FileViewerPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-[#080810] text-white overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden">
       {/* Top Header */}
       <header className="shrink-0 border-b border-white/5 bg-[#0a0a18]">
         <div className="flex items-center justify-between px-5 py-0">
           <div className="flex items-center gap-6">
-            <Link to="/dashboard" className="flex items-center gap-2 py-4">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-violet-600 to-indigo-600 text-xs font-extrabold text-white">
-                V
-              </div>
-              <span className="text-sm font-bold text-white">VaultShare</span>
-            </Link>
-
             <div className="flex items-center">
               {TABS.map((tab) => (
                 <button
