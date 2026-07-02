@@ -36,6 +36,7 @@ export default function FileViewerPage() {
   const [zoom, setZoom] = useState(100)
   const [page] = useState(2)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
+  const [previewError, setPreviewError] = useState(false)
   const [comments] = useState<Comment[]>(INITIAL_COMMENTS)
   const [input, setInput] = useState("")
   const [replyTo, setReplyTo] = useState<{ id: string; userName: string; content: string } | null>(null)
@@ -116,7 +117,7 @@ export default function FileViewerPage() {
         objectUrl = url
         setFileUrl(url)
       })
-      .catch(() => {})
+      .catch(() => { setPreviewError(true) })
     return () => {
       if (objectUrl) window.URL.revokeObjectURL(objectUrl)
     }
@@ -208,10 +209,8 @@ export default function FileViewerPage() {
             My Files
           </button>
           <ChevronRight size={12} className="text-slate-600" />
-          <span className="text-xs text-slate-400">Project Alpha</span>
-          <ChevronRight size={12} className="text-slate-600" />
-          <span className="text-xs text-white font-medium">
-            {effectiveFile?.name ?? "Loading…"}
+          <span className="text-xs text-white font-medium truncate max-w-[320px]">
+            {effectiveFile?.name ?? "…"}
           </span>
           <span className="ml-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-300">
             AES-256
@@ -264,7 +263,25 @@ export default function FileViewerPage() {
           <div className="flex flex-1 overflow-hidden bg-[#0d0d1a]">
             {/* Main file viewer */}
             <div className="flex flex-1 overflow-hidden">
-              {!fileUrl ? (
+              {previewError ? (
+                <div className="flex flex-1 items-center justify-center p-8">
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    <Download size={32} className="text-slate-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-200">Preview unavailable</p>
+                      <p className="mt-1 text-xs text-slate-500">The file could not be loaded for preview.</p>
+                    </div>
+                    {effectiveFile && id && (
+                      <button
+                        onClick={() => downloadFile(id, effectiveFile.name)}
+                        className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-500 transition-colors"
+                      >
+                        <Download size={14} /> Download file
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : !fileUrl ? (
                 <div className="flex flex-1 items-center justify-center">
                   <div className="flex flex-col items-center gap-3 text-slate-500">
                     <Loader2 className="animate-spin" size={24} />
