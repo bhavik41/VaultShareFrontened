@@ -59,21 +59,20 @@ function randomId(): string {
 const getFileTypeInfo = (fileName: string) => {
   const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
   if (ext === "pdf")
-    return { label: "PDF", borderColor: "border-l-4 border-l-cyan-400", bgColor: "bg-cyan-500/10", textColor: "text-cyan-400", icon: <FileText size={18} className="text-cyan-400" /> };
+    return { label: "PDF", borderColor: "border-l-4 border-l-cyan-400", bgColor: "bg-cyan-50", textColor: "text-cyan-700", icon: <FileText size={18} className="text-cyan-600" /> };
   if (ext === "fig")
-    return { label: "FIG", borderColor: "border-l-4 border-l-purple-500", bgColor: "bg-purple-500/10", textColor: "text-purple-400", icon: <FileText size={18} className="text-purple-400" /> };
+    return { label: "FIG", borderColor: "border-l-4 border-l-purple-500", bgColor: "bg-purple-50", textColor: "text-purple-700", icon: <FileText size={18} className="text-purple-600" /> };
   if (["doc", "docx", "txt", "rtf", "odt"].includes(ext))
-    return { label: "DOC", borderColor: "border-l-4 border-l-amber-500", bgColor: "bg-amber-500/10", textColor: "text-amber-600", icon: <FileText size={18} className="text-amber-600" /> };
+    return { label: "DOC", borderColor: "border-l-4 border-l-amber-500", bgColor: "bg-amber-50", textColor: "text-amber-700", icon: <FileText size={18} className="text-amber-600" /> };
   if (["zip", "rar", "7z", "tar", "gz"].includes(ext))
-    return { label: "ZIP", borderColor: "border-l-4 border-l-indigo-400", bgColor: "bg-indigo-500/10", textColor: "text-indigo-600", icon: <FileArchive size={18} className="text-indigo-600" /> };
+    return { label: "ZIP", borderColor: "border-l-4 border-l-indigo-400", bgColor: "bg-indigo-50", textColor: "text-indigo-700", icon: <FileArchive size={18} className="text-indigo-600" /> };
   if (["json", "js", "ts", "html", "css", "xml", "cpp", "py"].includes(ext))
-    return { label: "CODE", borderColor: "border-l-4 border-l-emerald-500", bgColor: "bg-emerald-500/10", textColor: "text-emerald-600", icon: <Code size={18} className="text-emerald-600" /> };
+    return { label: "CODE", borderColor: "border-l-4 border-l-emerald-500", bgColor: "bg-emerald-50", textColor: "text-emerald-700", icon: <Code size={18} className="text-emerald-600" /> };
   if (["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(ext))
-    return { label: "IMG", borderColor: "border-l-4 border-l-pink-500", bgColor: "bg-pink-500/10", textColor: "text-pink-400", icon: <Image size={18} className="text-pink-400" /> };
-  return { label: "FILE", borderColor: "border-l-4 border-l-slate-400", bgColor: "bg-slate-500/10", textColor: "text-slate-400", icon: <FileText size={18} className="text-slate-400" /> };
+    return { label: "IMG", borderColor: "border-l-4 border-l-pink-500", bgColor: "bg-pink-50", textColor: "text-pink-700", icon: <Image size={18} className="text-pink-600" /> };
+  return { label: "FILE", borderColor: "border-l-4 border-l-slate-300", bgColor: "bg-slate-50", textColor: "text-slate-600", icon: <FileText size={18} className="text-slate-500" /> };
 };
 
-// Stacked avatar row for collaborators
 function CollaboratorAvatars({ collaborators }: { collaborators: DashboardCollaborator[] }) {
   const visible = collaborators.slice(0, 3);
   const overflow = collaborators.length - visible.length;
@@ -85,7 +84,7 @@ function CollaboratorAvatars({ collaborators }: { collaborators: DashboardCollab
           key={c.userId}
           title={`${c.name} (${c.role})`}
           style={{ marginLeft: i === 0 ? 0 : -6, zIndex: visible.length - i }}
-          className={`flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br ${colors[i % colors.length]} text-[9px] font-bold text-slate-900 ring-2 ring-[#131224]`}
+          className={`flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br ${colors[i % colors.length]} text-[9px] font-bold text-white ring-2 ring-white`}
         >
           {c.name.charAt(0).toUpperCase()}
         </div>
@@ -93,7 +92,7 @@ function CollaboratorAvatars({ collaborators }: { collaborators: DashboardCollab
       {overflow > 0 && (
         <div
           style={{ marginLeft: -6 }}
-          className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-gray-300 px-1 text-[9px] font-bold text-slate-600 ring-2 ring-[#131224]"
+          className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-slate-200 px-1 text-[9px] font-bold text-slate-600 ring-2 ring-white"
         >
           +{overflow}
         </div>
@@ -134,9 +133,9 @@ function ProfileDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
+        className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all duration-200"
       >
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-slate-900 shadow-md">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-white shadow-sm">
           {initials}
         </div>
         <span className="text-base text-slate-700 font-medium max-w-[100px] truncate">{name}</span>
@@ -144,12 +143,12 @@ function ProfileDropdown({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2.5 w-60 bg-gray-50 border border-gray-200 rounded-xl p-1.5 z-[100] shadow-2xl shadow-black/80">
-          <div className="p-3 pb-3 border-b border-gray-200 mb-1">
+        <div className="absolute right-0 top-full mt-2.5 w-60 bg-white border border-slate-200 rounded-xl p-1.5 z-[100] shadow-xl">
+          <div className="p-3 pb-3 border-b border-slate-100 mb-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-slate-900">{initials}</div>
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-white">{initials}</div>
               <div className="min-w-0">
-                <div className="text-base font-semibold text-slate-700 truncate">{name}</div>
+                <div className="text-base font-semibold text-slate-800 truncate">{name}</div>
                 <div className="text-sm text-slate-500 truncate">{email}</div>
               </div>
             </div>
@@ -164,17 +163,17 @@ function ProfileDropdown({
             { icon: <KeyRound size={15} />, label: "Change Password", sub: "Reset via email", action: () => navigate("/forgot-password") },
             { icon: <Home size={15} />, label: "Home Page", sub: "Go to landing page", action: () => navigate("/") },
           ].map(({ icon, label, sub, action }) => (
-            <button key={label} onClick={action} className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-gray-100 transition-colors group">
-              <span className="text-slate-500 group-hover:text-slate-600">{icon}</span>
+            <button key={label} onClick={action} className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-slate-50 transition-colors group">
+              <span className="text-slate-400 group-hover:text-slate-600">{icon}</span>
               <div>
                 <div className="text-sm font-semibold text-slate-700">{label}</div>
-                <div className="text-[10px] text-slate-500">{sub}</div>
+                <div className="text-[11px] text-slate-400">{sub}</div>
               </div>
             </button>
           ))}
 
-          <div className="border-t border-gray-200 mt-1.5 pt-1.5">
-            <button onClick={() => { setOpen(false); onLogout(); }} className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-rose-950/20 transition-colors">
+          <div className="border-t border-slate-100 mt-1.5 pt-1.5">
+            <button onClick={() => { setOpen(false); onLogout(); }} className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-rose-50 transition-colors">
               <LogOut size={15} className="text-rose-500" />
               <span className="text-sm font-semibold text-rose-500">Sign Out</span>
             </button>
@@ -212,7 +211,6 @@ export default function DashboardPage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  // Chat sidebar
   const [chatFileId, setChatFileId] = useState<string | null>(null);
   const [chatFileName, setChatFileName] = useState<string>("");
   const [chatOpen, setChatOpen] = useState(false);
@@ -223,11 +221,9 @@ export default function DashboardPage() {
   }, []);
   const toggleChat = useCallback(() => setChatOpen((o) => !o), []);
 
-  // Dashboard documents (owned + shared)
   const [allDocs, setAllDocs] = useState<DashboardDocument[]>([]);
   const [docsLoading, setDocsLoading] = useState(false);
 
-  // Starred
   const [starredIds, setStarredIds] = useState<Set<string>>(new Set());
   const [starLoading, setStarLoading] = useState<string | null>(null);
 
@@ -239,7 +235,6 @@ export default function DashboardPage() {
     if (token) dispatch(listFilesThunk());
   }, [token, dispatch]);
 
-  // Fetch dashboard documents + starred whenever upload list changes
   useEffect(() => {
     if (!token) return;
     setDocsLoading(true);
@@ -313,7 +308,6 @@ export default function DashboardPage() {
     if (starLoading) return;
     setStarLoading(fileId);
     const wasStarred = starredIds.has(fileId);
-    // Optimistic update
     setStarredIds((prev) => {
       const next = new Set(prev);
       wasStarred ? next.delete(fileId) : next.add(fileId);
@@ -323,7 +317,6 @@ export default function DashboardPage() {
       if (wasStarred) await unstarFile(fileId);
       else await starFile(fileId);
     } catch {
-      // revert
       setStarredIds((prev) => {
         const next = new Set(prev);
         wasStarred ? next.add(fileId) : next.delete(fileId);
@@ -348,7 +341,6 @@ export default function DashboardPage() {
 
   const starredDocs = allDocs.filter((d) => starredIds.has(d.id));
 
-
   function FileCard({ doc }: { doc: DashboardDocument }) {
     const typeInfo = getFileTypeInfo(doc.name);
     const isMenuOpen = activeMenuId === doc.id;
@@ -360,7 +352,7 @@ export default function DashboardPage() {
       : typeInfo.borderColor;
 
     return (
-      <div className={`bg-[#131224]/30 border border-gray-200 rounded-2xl p-5 flex flex-col gap-4 relative hover:border-gray-300 transition-all duration-200 ${borderClass} ${doc.ownership === "shared" ? "bg-violet-500/[0.03]" : ""}`}>
+      <div className={`bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-4 relative hover:border-slate-300 hover:shadow-sm transition-all duration-200 ${borderClass} ${doc.ownership === "shared" ? "bg-violet-50/30" : ""}`}>
         {/* Top row */}
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-2 flex-wrap">
@@ -368,7 +360,7 @@ export default function DashboardPage() {
               {typeInfo.label}
             </span>
             {doc.ownership === "shared" && (
-              <span className="flex items-center gap-1 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded bg-violet-500/15 text-violet-600">
+              <span className="flex items-center gap-1 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded bg-violet-100 text-violet-700">
                 <BadgeCheck size={10} />
                 Shared
               </span>
@@ -376,52 +368,50 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-0.5">
-            {/* Star button */}
             <button
               onClick={(e) => handleToggleStar(e, doc.id)}
               disabled={starLoading === doc.id}
-              className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 transition-colors"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 transition-colors border-0 bg-transparent cursor-pointer"
               title={isStarred ? "Unstar" : "Star"}
             >
               <Star
                 size={14}
-                className={isStarred ? "fill-amber-400 text-amber-600" : ""}
+                className={isStarred ? "fill-amber-400 text-amber-500" : ""}
               />
             </button>
 
-            {/* Action menu */}
             <div className="relative">
               <button
                 onClick={(e) => { e.stopPropagation(); setActiveMenuId(isMenuOpen ? null : doc.id); }}
-                className="bg-transparent border-0 cursor-pointer text-slate-600 hover:text-slate-800 p-1.5"
+                className="bg-transparent border-0 cursor-pointer text-slate-400 hover:text-slate-700 p-1.5"
               >
                 <MoreVertical size={16} />
               </button>
 
               {isMenuOpen && (
-                <div ref={cardMenuRef} className="absolute right-0 top-full mt-1.5 w-36 bg-gray-50 border border-slate-850 rounded-xl p-1 z-50 shadow-xl">
-                  <button onClick={() => { setActiveMenuId(null); navigate(`/files/${doc.id}`); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
+                <div ref={cardMenuRef} className="absolute right-0 top-full mt-1.5 w-36 bg-white border border-slate-200 rounded-xl p-1 z-50 shadow-lg">
+                  <button onClick={() => { setActiveMenuId(null); navigate(`/files/${doc.id}`); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors">
                     <Eye size={13} /><span>View</span>
                   </button>
                   {canDownload && (
-                    <button onClick={() => handleDownload(doc.id, doc.name)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
+                    <button onClick={() => handleDownload(doc.id, doc.name)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors">
                       <Download size={13} /><span>Download</span>
                     </button>
                   )}
                   {isOwner && (
-                    <button onClick={() => handleShareLink(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
+                    <button onClick={() => handleShareLink(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors">
                       <Share2 size={13} /><span>Share Link</span>
                     </button>
                   )}
                   {isOwner && (
-                    <button onClick={() => { setActiveMenuId(null); setSettingsFile({ id: doc.id, name: doc.name }); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
+                    <button onClick={() => { setActiveMenuId(null); setSettingsFile({ id: doc.id, name: doc.name }); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors">
                       <Settings size={13} /><span>Settings</span>
                     </button>
                   )}
                   {isOwner && (
                     <>
-                      <div className="border-t border-gray-200 my-1" />
-                      <button onClick={() => handleDelete(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-rose-500 text-sm font-semibold cursor-pointer hover:bg-rose-950/20 transition-colors">
+                      <div className="border-t border-slate-100 my-1" />
+                      <button onClick={() => handleDelete(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-rose-500 text-sm font-semibold cursor-pointer hover:bg-rose-50 transition-colors">
                         <Trash2 size={13} /><span>Delete</span>
                       </button>
                     </>
@@ -446,8 +436,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Bottom row */}
-        <div className="flex items-center justify-between border-t border-gray-200/40 pt-3">
-          <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-500/5 px-2 py-1 rounded-lg border border-emerald-500/10">
+        <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+          <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
             <Lock size={12} />
             <span className="text-[10px] font-bold uppercase tracking-wider">Encrypted</span>
           </div>
@@ -457,13 +447,13 @@ export default function DashboardPage() {
               <CollaboratorAvatars collaborators={doc.collaborators} />
             )}
             {doc.ownership === "shared" && (
-              <span className="text-[10px] font-semibold capitalize text-violet-600 bg-violet-500/10 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-semibold capitalize text-violet-700 bg-violet-100 px-1.5 py-0.5 rounded">
                 {doc.accessLevel}
               </span>
             )}
             <button
               onClick={(e) => { e.stopPropagation(); openChat(doc.id, doc.name); }}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 text-violet-600 border-0 cursor-pointer transition-colors"
+              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-violet-50 hover:bg-violet-100 text-violet-600 border-0 cursor-pointer transition-colors"
               title="Open chat for this file"
             >
               <MessageSquare size={12} />
@@ -479,20 +469,20 @@ export default function DashboardPage() {
     <>
       {/* Main */}
       <main className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-gray-200 px-6 flex items-center justify-between bg-slate-50 sticky top-0 z-30">
+        <header className="h-16 border-b border-slate-200 px-6 flex items-center justify-between bg-white sticky top-0 z-30">
           <div className="relative w-72 max-w-full">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Search files..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#131224]/30 border border-slate-850 rounded-xl py-2 pl-10 pr-4 text-base text-slate-700 placeholder:text-gray-400 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all duration-200"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-base text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-300 transition-all duration-200"
             />
           </div>
           <div className="flex items-center gap-4">
             <input type="file" ref={fileInputRef} multiple onChange={handleFileChange} className="hidden" />
-            <button onClick={triggerUpload} className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-base font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-98 transition-all duration-150">
+            <button onClick={triggerUpload} className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-base font-semibold cursor-pointer shadow-sm active:scale-[0.98] transition-all duration-150">
               <Plus size={16} strokeWidth={2.5} /><span>Upload</span>
             </button>
             <NotificationBell />
@@ -500,7 +490,7 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
 
           {/* ── Files Tab ── */}
           {activeTab === "files" && (
@@ -515,7 +505,7 @@ export default function DashboardPage() {
                   <button
                     key={filter}
                     onClick={() => setActiveFilter(filter)}
-                    className={`px-4 py-1.5 rounded-lg border-0 text-sm font-semibold tracking-wide cursor-pointer transition-all duration-150 ${activeFilter === filter ? "bg-violet-600 text-slate-900 shadow-md shadow-violet-600/20" : "bg-[#131224]/50 text-slate-400 hover:bg-gray-100 hover:text-slate-700"}`}
+                    className={`px-4 py-1.5 rounded-lg border-0 text-sm font-semibold tracking-wide cursor-pointer transition-all duration-150 whitespace-nowrap ${activeFilter === filter ? "bg-violet-600 text-white shadow-sm" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
                   >
                     {filter}
                   </button>
@@ -523,19 +513,19 @@ export default function DashboardPage() {
               </div>
 
               {localUploads.length > 0 && (
-                <div className="flex flex-col gap-3 p-4 bg-gray-100 border border-gray-200 rounded-2xl">
-                  <span className="text-sm font-semibold text-slate-400 flex items-center gap-2">
+                <div className="flex flex-col gap-3 p-4 bg-white border border-slate-200 rounded-2xl">
+                  <span className="text-sm font-semibold text-slate-600 flex items-center gap-2">
                     <Loader2 size={13} className="animate-spin text-violet-600" />Uploading files...
                   </span>
                   <div className="flex flex-col gap-2">
                     {localUploads.map((entry) => {
                       const progress = uploadProgress[entry.localId] ?? 0;
                       return (
-                        <div key={entry.localId} className="flex items-center justify-between text-sm p-2.5 rounded-xl bg-gray-100 border border-slate-850">
+                        <div key={entry.localId} className="flex items-center justify-between text-sm p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                           <span className="text-slate-700 truncate max-w-sm">{entry.name}</span>
                           <div className="flex items-center gap-3">
                             <span className="text-slate-500">{entry.size}</span>
-                            <div className="w-20 h-1.5 rounded-full bg-gray-50 overflow-hidden">
+                            <div className="w-20 h-1.5 rounded-full bg-slate-200 overflow-hidden">
                               <div className="h-full bg-violet-500 rounded-full" style={{ width: `${progress}%` }} />
                             </div>
                             <span className="text-[10px] font-bold text-violet-600">{progress}%</span>
@@ -556,8 +546,8 @@ export default function DashboardPage() {
                   {filteredFiles.map((doc) => <FileCard key={doc.id} doc={doc} />)}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center p-12 bg-gray-50/10 border border-gray-200 rounded-3xl text-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-slate-500"><Folder size={24} /></div>
+                <div className="flex flex-col items-center justify-center p-12 bg-white border border-slate-200 rounded-3xl text-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400"><Folder size={24} /></div>
                   <div className="flex flex-col gap-1 max-w-sm">
                     <h3 className="text-base font-semibold text-slate-700">No files found</h3>
                     <p className="text-sm text-slate-500 leading-relaxed">
@@ -565,7 +555,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   {!searchQuery && (
-                    <button onClick={triggerUpload} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-600 hover:text-slate-900 hover:bg-slate-850 text-sm font-semibold cursor-pointer transition-all">
+                    <button onClick={triggerUpload} className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-sm font-semibold cursor-pointer transition-all">
                       Upload First File
                     </button>
                   )}
@@ -579,27 +569,27 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-0.5">
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0 flex items-center gap-2">
-                  <Star size={22} className="fill-amber-400 text-amber-600" />Starred Files
+                  <Star size={22} className="fill-amber-400 text-amber-500" />Starred Files
                 </h1>
                 <span className="text-sm text-slate-500">Files you've marked as important.</span>
               </div>
 
               {docsLoading ? (
                 <div className="flex items-center justify-center py-20">
-                  <Loader2 size={24} className="animate-spin text-amber-600" />
+                  <Loader2 size={24} className="animate-spin text-amber-500" />
                 </div>
               ) : starredDocs.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {starredDocs.map((doc) => (
-                    <div key={doc.id} className="ring-1 ring-amber-500/20 rounded-2xl">
+                    <div key={doc.id} className="ring-1 ring-amber-300 rounded-2xl">
                       <FileCard doc={doc} />
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center p-12 bg-gray-50/10 border border-gray-200 rounded-3xl text-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
-                    <Star size={24} className="text-amber-600" />
+                <div className="flex flex-col items-center justify-center p-12 bg-white border border-slate-200 rounded-3xl text-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
+                    <Star size={24} className="text-amber-500" />
                   </div>
                   <div className="flex flex-col gap-1 max-w-sm">
                     <h3 className="text-base font-semibold text-slate-700">No starred files</h3>
@@ -618,30 +608,30 @@ export default function DashboardPage() {
                 <span className="text-sm text-slate-500">Your secure document dashboard and account overview.</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                <div className="bg-[#131224]/30 border border-gray-200 rounded-2xl p-5 flex flex-col gap-2.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Files Stored</span>
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-2.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Files Stored</span>
                   <span className="text-3xl font-extrabold text-slate-900">{allDocs.filter(d => d.ownership === "owned").length}</span>
-                  <span className="text-[10px] text-slate-500">Files you own</span>
+                  <span className="text-sm text-slate-500">Files you own</span>
                 </div>
-                <div className="bg-[#131224]/30 border border-gray-200 rounded-2xl p-5 flex flex-col gap-2.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Shared with me</span>
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-2.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Shared with me</span>
                   <span className="text-3xl font-extrabold text-slate-900">{allDocs.filter(d => d.ownership === "shared").length}</span>
-                  <span className="text-[10px] text-slate-500">Files others shared with you</span>
+                  <span className="text-sm text-slate-500">Files others shared with you</span>
                 </div>
-                <div className="bg-[#131224]/30 border border-gray-200 rounded-2xl p-5 flex flex-col gap-2.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Security Level</span>
-                  <span className={`text-sm font-bold flex items-center gap-1.5 ${is2faEnabled ? "text-emerald-600" : "text-amber-600"}`}>
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-2.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Security Level</span>
+                  <span className={`text-base font-bold flex items-center gap-1.5 ${is2faEnabled ? "text-emerald-600" : "text-amber-600"}`}>
                     {is2faEnabled ? <><ShieldCheck size={18} /><span>2FA Protected</span></> : <><ShieldAlert size={18} /><span>2FA Disabled</span></>}
                   </span>
-                  <span className="text-[10px] text-slate-500 mt-2">{is2faEnabled ? "Login requires OTP." : "Enable 2FA for better security."}</span>
+                  <span className="text-sm text-slate-500 mt-2">{is2faEnabled ? "Login requires OTP." : "Enable 2FA for better security."}</span>
                 </div>
               </div>
-              <div className="bg-[#131224]/10 border border-gray-200 rounded-2xl p-6 flex flex-col gap-4">
-                <h3 className="text-base font-semibold text-slate-700 m-0 border-b border-gray-200 pb-2">Quick Actions</h3>
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col gap-4">
+                <h3 className="text-base font-semibold text-slate-800 m-0 border-b border-slate-100 pb-2">Quick Actions</h3>
                 <div className="flex flex-wrap gap-3">
-                  <button onClick={() => setActiveTab("files")} className="px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-slate-900 text-sm font-semibold cursor-pointer active:scale-98 transition-all">View File Repository</button>
-                  <button onClick={() => setActiveTab("settings")} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-350 hover:bg-slate-850 hover:text-slate-900 text-sm font-semibold cursor-pointer active:scale-98 transition-all">Manage 2FA Protection</button>
-                  <button onClick={() => navigate("/activity")} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-350 hover:bg-slate-850 hover:text-slate-900 text-sm font-semibold cursor-pointer active:scale-98 transition-all">View My Activity</button>
+                  <button onClick={() => setActiveTab("files")} className="px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold cursor-pointer active:scale-[0.98] transition-all">View File Repository</button>
+                  <button onClick={() => setActiveTab("settings")} className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-semibold cursor-pointer active:scale-[0.98] transition-all">Manage 2FA Protection</button>
+                  <button onClick={() => navigate("/activity")} className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-semibold cursor-pointer active:scale-[0.98] transition-all">View My Activity</button>
                 </div>
               </div>
             </div>
@@ -654,13 +644,13 @@ export default function DashboardPage() {
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Account Settings</h1>
                 <span className="text-sm text-slate-500">Manage security protection options, active sessions, and verification methods.</span>
               </div>
-              <div className="bg-[#131224]/30 border border-gray-200 rounded-2xl p-6 flex flex-col gap-5">
-                <h2 className="text-base font-semibold text-slate-900 m-0 border-b border-gray-200 pb-3 flex items-center gap-2">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col gap-5">
+                <h2 className="text-base font-semibold text-slate-900 m-0 border-b border-slate-100 pb-3 flex items-center gap-2">
                   <Lock size={16} /><span>Security Settings</span>
                 </h2>
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-base font-semibold text-slate-700 m-0 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-800 m-0 flex items-center gap-2">
                       Two-Factor Authentication (2FA)
                       {is2faEnabled ? <ShieldCheck size={16} className="text-emerald-600" /> : <ShieldAlert size={16} className="text-amber-600" />}
                     </h3>
@@ -669,22 +659,22 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   {is2faEnabled ? (
-                    <Button size="sm" className="bg-rose-600 hover:bg-rose-500 text-slate-900 rounded-xl font-semibold border-0 py-2 cursor-pointer" onClick={() => setShowDisableForm(!showDisableForm)}>Disable</Button>
+                    <Button size="sm" className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-semibold border-0 py-2 cursor-pointer" onClick={() => setShowDisableForm(!showDisableForm)}>Disable</Button>
                   ) : (
-                    <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-slate-900 rounded-xl font-semibold border-0 py-2 cursor-pointer" onClick={() => navigate("/2fa-setup")}>Enable 2FA</Button>
+                    <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-semibold border-0 py-2 cursor-pointer" onClick={() => navigate("/2fa-setup")}>Enable 2FA</Button>
                   )}
                 </div>
                 {showDisableForm && is2faEnabled && (
-                  <div className="p-4 bg-gray-50/60 rounded-xl border border-slate-850 flex flex-col gap-3">
-                    <p className="text-sm text-slate-400 leading-relaxed m-0">Enter the 6-digit code from your authenticator app to disable 2FA.</p>
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col gap-3">
+                    <p className="text-sm text-slate-600 leading-relaxed m-0">Enter the 6-digit code from your authenticator app to disable 2FA.</p>
                     <form onSubmit={handleDisable2fa} className="flex gap-3">
                       <input
                         type="text" required maxLength={6} value={disableCode}
                         onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, ""))}
                         placeholder="000000"
-                        className="flex-1 bg-[#131224]/30 border border-slate-850 rounded-xl px-3 py-2 text-base text-slate-900 placeholder:text-slate-650 focus:outline-none focus:border-rose-500/50"
+                        className="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-2 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-400"
                       />
-                      <Button type="submit" variant="destructive" disabled={authLoading || disableCode.length < 6} className="bg-rose-600 hover:bg-rose-500 text-slate-900 border-0 font-semibold px-4 cursor-pointer rounded-xl min-w-[80px]">
+                      <Button type="submit" variant="destructive" disabled={authLoading || disableCode.length < 6} className="bg-rose-600 hover:bg-rose-500 text-white border-0 font-semibold px-4 cursor-pointer rounded-xl min-w-[80px]">
                         {authLoading ? <Loader2 size={14} className="animate-spin" /> : "Confirm"}
                       </Button>
                     </form>
@@ -699,24 +689,24 @@ export default function DashboardPage() {
 
       {/* Share link modal */}
       {shareUrl && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-gray-50 border border-slate-850 rounded-2xl p-6 w-full max-w-md flex flex-col gap-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-md flex flex-col gap-4 shadow-xl">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-900 m-0">Temporary Preview Link</h3>
-              <button onClick={() => setShareUrl(null)} className="bg-transparent border-0 text-slate-500 hover:text-slate-350 cursor-pointer text-base font-semibold p-1">✕</button>
+              <button onClick={() => setShareUrl(null)} className="bg-transparent border-0 text-slate-500 hover:text-slate-700 cursor-pointer text-base font-semibold p-1">✕</button>
             </div>
             <p className="text-sm text-slate-500 leading-relaxed m-0">
               This preview URL only works in your current browser session. Use Manage Sharing for permissioned share links.
             </p>
-            <div className="bg-[#131224]/40 border border-gray-200 rounded-xl p-3 text-sm text-violet-600 font-mono break-all line-clamp-3 select-all leading-normal">{shareUrl}</div>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-violet-700 font-mono break-all line-clamp-3 select-all leading-normal">{shareUrl}</div>
             <div className="flex gap-3 mt-1.5">
               <button
                 onClick={() => { navigator.clipboard.writeText(shareUrl).catch(() => {}); setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000); }}
-                className={`flex-1 py-2 border-0 rounded-xl text-sm font-semibold cursor-pointer transition-all ${copiedLink ? "bg-emerald-600 text-slate-900" : "bg-violet-600 hover:bg-violet-500 text-slate-900"}`}
+                className={`flex-1 py-2 border-0 rounded-xl text-sm font-semibold cursor-pointer transition-all ${copiedLink ? "bg-emerald-600 text-white" : "bg-violet-600 hover:bg-violet-500 text-white"}`}
               >
                 {copiedLink ? "✓ Copied" : "Copy Link"}
               </button>
-              <a href={shareUrl} target="_blank" rel="noreferrer" className="flex-1 py-2 border border-slate-850 rounded-xl text-sm text-slate-600 hover:text-slate-900 bg-gray-100 hover:bg-slate-850 text-center font-semibold no-underline transition-all flex items-center justify-center gap-1.5">
+              <a href={shareUrl} target="_blank" rel="noreferrer" className="flex-1 py-2 border border-slate-200 rounded-xl text-sm text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 text-center font-semibold no-underline transition-all flex items-center justify-center gap-1.5">
                 <span>Preview</span><ExternalLink size={12} />
               </a>
             </div>
@@ -724,7 +714,6 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Chat sidebar — mounted only when a file has been selected */}
       {chatFileId && (
         <ChatSidebar
           fileId={chatFileId}
@@ -734,7 +723,6 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* File Settings Modal */}
       {settingsFile && (
         <FileSettingsModal
           fileId={settingsFile.id}
@@ -745,15 +733,3 @@ export default function DashboardPage() {
     </>
   );
 }
-
-// Shared tab: violet border (border-l-violet-500) and Shared badge on shared cards
-// CollaboratorAvatars: shows up to 3 user avatars + overflow count for each file card
-
-// Owner-only actions: Share Link and Delete menu items conditionally shown only when isOwner === true
-// Access level badge (Editor/Viewer) shown on shared cards below collaborator avatars
-
-// Star button: optimistic update using local Set<string> for instant UI feedback
-// Star/unstar API calls via starFile/unstarFile with error revert on failure
-
-// Sidebar: activity item navigates to /activity using navigate('/activity')
-// isInteractable updated to include 'activity' for clickable sidebar state
