@@ -37,8 +37,8 @@ const POLICY_OPTIONS: { value: VersionPolicy; label: string; description: string
   { value: "admin_only", label: "Admin Only", description: "Only you can upload new versions." },
   {
     value: "role_gated",
-    label: "Role-Gated (Editors request, you approve)",
-    description: "Editors can request a version upload; it's held until you approve or reject it.",
+    label: "Role-Gated (Collaborators request, you approve)",
+    description: "Any collaborator can request a version upload; it's held until you approve or reject it.",
   },
   { value: "open", label: "Open", description: "Anyone with at least viewer access can upload a new version directly." },
 ]

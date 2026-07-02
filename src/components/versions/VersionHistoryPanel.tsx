@@ -52,7 +52,7 @@ function getUploadMode(policy: VersionPolicy, role: "owner" | "editor" | "viewer
   if (!role) return "denied";
   if (role === "owner") return "direct";
   if (policy === "admin_only") return "denied";
-  if (policy === "role_gated") return role === "editor" ? "request" : "denied";
+  if (policy === "role_gated") return "request";
   return "direct"; // open policy: editor or viewer
 }
 
