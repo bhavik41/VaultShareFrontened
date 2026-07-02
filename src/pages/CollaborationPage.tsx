@@ -114,7 +114,7 @@ export default function CollaborationPage() {
           <button
             type="button"
             onClick={loadCollaborationData}
-            className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-black/5"
           >
             <RefreshCw size={16} />
             Refresh
@@ -134,13 +134,13 @@ export default function CollaborationPage() {
         )}
 
         {loading ? (
-          <div className="flex items-center gap-2 text-slate-300">
+          <div className="flex items-center gap-2 text-slate-600">
             <Loader2 className="animate-spin" size={18} />
             Loading collaboration data...
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
-            <section className="rounded-lg border border-white/10 bg-white/3 p-5">
+            <section className="rounded-lg border border-gray-200 bg-black/3 p-5">
               <div className="mb-4 flex items-center gap-2">
                 <Mail size={18} className="text-violet-300" />
                 <h2 className="text-lg font-semibold">Invitation History</h2>
@@ -155,7 +155,7 @@ export default function CollaborationPage() {
                   {invitations.map((invitation) => (
                     <div
                       key={invitation.id}
-                      className="rounded-md border border-white/10 bg-slate-900 p-4"
+                      className="rounded-md border border-gray-200 bg-gray-100 p-4"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
@@ -196,7 +196,7 @@ export default function CollaborationPage() {
                                     "accepted",
                                   )
                                 }
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-60"
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-slate-900 hover:bg-emerald-500 disabled:opacity-60"
                                 title="Accept invitation"
                               >
                                 <Check size={16} />
@@ -210,7 +210,7 @@ export default function CollaborationPage() {
                                     "rejected",
                                   )
                                 }
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white hover:bg-red-500 disabled:opacity-60"
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-slate-900 hover:bg-red-500 disabled:opacity-60"
                                 title="Reject invitation"
                               >
                                 <X size={16} />
@@ -225,7 +225,7 @@ export default function CollaborationPage() {
               )}
             </section>
 
-            <section className="rounded-lg border border-white/10 bg-white/3 p-5">
+            <section className="rounded-lg border border-gray-200 bg-black/3 p-5">
               <div className="mb-4 flex items-center gap-2">
                 <FileText size={18} className="text-violet-300" />
                 <h2 className="text-lg font-semibold">Shared With Me</h2>
@@ -240,7 +240,7 @@ export default function CollaborationPage() {
                   {sharedFiles.map((file) => (
                     <div
                       key={file.id}
-                      className="rounded-md border border-white/10 bg-slate-900 p-4"
+                      className="rounded-md border border-gray-200 bg-gray-100 p-4"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
@@ -261,7 +261,7 @@ export default function CollaborationPage() {
                           <button
                             type="button"
                             onClick={() => navigate(`/files/${file.id}`)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/5 text-white hover:bg-white/10"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 bg-black/3 text-slate-900 hover:bg-black/5"
                             title="Open file"
                           >
                             <Eye size={16} />
@@ -271,7 +271,7 @@ export default function CollaborationPage() {
                             type="button"
                             disabled={actionLoading === file.id}
                             onClick={() => handleDownloadFile(file)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-60"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-violet-600 text-slate-900 hover:bg-violet-500 disabled:opacity-60"
                             title="Download file"
                           >
                             <Download size={16} />

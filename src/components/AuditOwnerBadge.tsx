@@ -12,7 +12,7 @@ export const AuditOwnerBadge: React.FC<AuditOwnerBadgeProps> = ({ ownerName, isC
       <Crown size={14} className="text-amber-400 shrink-0" />
       <div>
         <p className="text-xs font-semibold text-amber-300">
-          File Owner: <span className="text-white">{ownerName}</span>
+          File Owner: <span className="text-slate-900">{ownerName}</span>
           {isCurrentUser && <span className="ml-1 text-amber-500/70">(you)</span>}
         </p>
         <p className="text-[11px] text-slate-500">

@@ -85,7 +85,7 @@ export default function AppSidebar() {
 
   return (
     <aside
-      className={`${collapsed ? "w-16" : "w-64"} shrink-0 border-r border-slate-900 bg-[#090911]/90 flex flex-col justify-between transition-[width] duration-200 z-40 h-full overflow-hidden`}
+      className={`${collapsed ? "w-16" : "w-64"} shrink-0 border-r border-gray-200 bg-white/95 flex flex-col justify-between transition-[width] duration-200 z-40 h-full overflow-hidden`}
     >
       <div className="flex flex-col gap-5 p-3 overflow-hidden">
         {/* Logo row */}
@@ -94,22 +94,22 @@ export default function AppSidebar() {
             <button
               onClick={toggle}
               title="Expand sidebar"
-              className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shadow-lg shadow-violet-500/20 border-0 cursor-pointer hover:scale-105 transition-transform"
+              className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-slate-900 shadow-lg shadow-violet-500/20 border-0 cursor-pointer hover:scale-105 transition-transform"
             >
               V
             </button>
           ) : (
             <>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shadow-lg shadow-violet-500/20 shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-slate-900 shadow-lg shadow-violet-500/20 shrink-0">
                   V
                 </div>
-                <span className="font-bold text-base text-white tracking-tight whitespace-nowrap">VaultShare</span>
+                <span className="font-bold text-base text-slate-900 tracking-tight whitespace-nowrap">VaultShare</span>
               </div>
               <button
                 onClick={toggle}
                 title="Collapse sidebar"
-                className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-800 hover:text-slate-300 transition-colors border-0 bg-transparent cursor-pointer"
+                className="p-1.5 rounded-lg text-slate-500 hover:bg-gray-200 hover:text-slate-600 transition-colors border-0 bg-transparent cursor-pointer"
               >
                 <ChevronLeft size={15} />
               </button>
@@ -122,7 +122,7 @@ export default function AppSidebar() {
           <button
             onClick={toggle}
             title="Expand sidebar"
-            className="mx-auto p-1.5 rounded-lg text-slate-600 hover:bg-slate-800 hover:text-slate-400 transition-colors border-0 bg-transparent cursor-pointer"
+            className="mx-auto p-1.5 rounded-lg text-slate-600 hover:bg-gray-200 hover:text-slate-400 transition-colors border-0 bg-transparent cursor-pointer"
           >
             <ChevronRight size={14} />
           </button>
@@ -140,7 +140,7 @@ export default function AppSidebar() {
                 className={`w-full flex items-center ${collapsed ? "justify-center px-0 py-2.5" : "justify-between px-3 py-2.5"} rounded-xl border-0 font-medium text-sm transition-all duration-150 cursor-pointer
                   ${isActive
                     ? "bg-violet-600/10 text-violet-400"
-                    : "bg-transparent text-slate-400 hover:bg-slate-900/50 hover:text-slate-200"
+                    : "bg-transparent text-slate-400 hover:bg-gray-100 hover:text-slate-700"
                   }`}
               >
                 <div className={`flex items-center ${collapsed ? "" : "gap-3"}`}>
@@ -161,15 +161,15 @@ export default function AppSidebar() {
       {/* Storage widget — hidden when collapsed */}
       {!collapsed && (
         <div className="p-3">
-          <div className="bg-slate-950/40 border border-slate-900/60 rounded-2xl p-4 flex flex-col gap-3">
+          <div className="bg-gray-100 border border-gray-200 rounded-2xl p-4 flex flex-col gap-3">
             <div className="flex flex-col gap-1">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Storage used</span>
-              <div className="flex items-baseline gap-1 font-semibold text-slate-200">
+              <div className="flex items-baseline gap-1 font-semibold text-slate-700">
                 <span className="text-sm">{totalGB.toFixed(1)} GB</span>
                 <span className="text-xs text-slate-500">/ 10 GB</span>
               </div>
             </div>
-            <div className="w-full h-2 rounded-full bg-slate-900 overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full transition-all duration-500"
                 style={{ width: `${progressPct}%` }}

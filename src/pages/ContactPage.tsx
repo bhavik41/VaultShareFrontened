@@ -44,15 +44,15 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080810] text-white">
+    <div className="min-h-screen bg-[#080810] text-slate-900">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-white/5 bg-[#080810]/90 backdrop-blur">
+      <nav className="sticky top-0 z-50 border-b border-gray-200 bg-[#080810]/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-extrabold text-white">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-extrabold text-slate-900">
               V
             </div>
-            <span className="text-base font-bold text-white">VaultShare</span>
+            <span className="text-base font-bold text-slate-900">VaultShare</span>
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
@@ -60,7 +60,7 @@ export default function ContactPage() {
               <a
                 key={link}
                 href="#"
-                className="text-sm text-slate-400 transition-colors hover:text-white"
+                className="text-sm text-slate-400 transition-colors hover:text-slate-900"
               >
                 {link}
               </a>
@@ -70,13 +70,13 @@ export default function ContactPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/signin"
-              className="rounded-lg border border-white/10 px-4 py-1.5 text-sm text-slate-300 transition-colors hover:bg-white/5"
+              className="rounded-lg border border-gray-200 px-4 py-1.5 text-sm text-slate-600 transition-colors hover:bg-black/3"
             >
               Sign In
             </Link>
             <Link
               to="/signup"
-              className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
+              className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-blue-500"
             >
               Get Started
             </Link>
@@ -89,7 +89,7 @@ export default function ContactPage() {
         <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-cyan-400">
           Get in touch
         </p>
-        <h1 className="mb-3 text-5xl font-extrabold leading-tight text-white">
+        <h1 className="mb-3 text-5xl font-extrabold leading-tight text-slate-900">
           We'd love to<br />hear from you.
         </h1>
         <p className="text-slate-400">
@@ -122,12 +122,12 @@ export default function ContactPage() {
           ].map(({ icon, title, value, sub }) => (
             <div
               key={title}
-              className="rounded-xl border border-slate-800 bg-[#0f1020] p-6"
+              className="rounded-xl border border-gray-200 bg-[#0f1020] p-6"
             >
-              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-900">
+              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-gray-300 bg-gray-100">
                 {icon}
               </div>
-              <p className="mb-1 text-sm font-semibold text-slate-200">{title}</p>
+              <p className="mb-1 text-sm font-semibold text-slate-700">{title}</p>
               <p className="mb-1 text-sm font-medium text-cyan-400">{value}</p>
               <p className="text-xs text-slate-500">{sub}</p>
             </div>
@@ -139,8 +139,8 @@ export default function ContactPage() {
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
           {/* Form */}
-          <div className="rounded-xl border border-slate-800 bg-[#0f1020] p-8">
-            <h2 className="mb-6 text-xl font-bold text-white">Send us a message</h2>
+          <div className="rounded-xl border border-gray-200 bg-[#0f1020] p-8">
+            <h2 className="mb-6 text-xl font-bold text-slate-900">Send us a message</h2>
 
             {sent ? (
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
@@ -159,7 +159,7 @@ export default function ContactPage() {
                       placeholder="Alex"
                       value={form.firstName}
                       onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -171,7 +171,7 @@ export default function ContactPage() {
                       placeholder="Morgan"
                       value={form.lastName}
                       onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -186,7 +186,7 @@ export default function ContactPage() {
                     placeholder="alex@company.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
@@ -199,7 +199,7 @@ export default function ContactPage() {
                     placeholder="Acme Corp"
                     value={form.company}
                     onChange={(e) => setForm({ ...form, company: e.target.value })}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
@@ -212,7 +212,7 @@ export default function ContactPage() {
                     placeholder="Enterprise / Demo request / Support"
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
@@ -225,13 +225,13 @@ export default function ContactPage() {
                     placeholder="Tell us how we can help..."
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full resize-none rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                    className="w-full resize-none rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
+                  className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-blue-500"
                 >
                   Send Message →
                 </button>
@@ -241,14 +241,14 @@ export default function ContactPage() {
 
           {/* FAQ */}
           <div>
-            <h2 className="mb-5 text-xl font-bold text-white">Frequently Asked</h2>
+            <h2 className="mb-5 text-xl font-bold text-slate-900">Frequently Asked</h2>
             <div className="space-y-3">
               {FAQS.map(({ q, a }) => (
                 <div
                   key={q}
-                  className="rounded-xl border border-slate-800 bg-[#0f1020] p-5"
+                  className="rounded-xl border border-gray-200 bg-[#0f1020] p-5"
                 >
-                  <p className="mb-1.5 text-sm font-semibold text-white">{q}</p>
+                  <p className="mb-1.5 text-sm font-semibold text-slate-900">{q}</p>
                   <p className="text-sm text-slate-400">{a}</p>
                 </div>
               ))}

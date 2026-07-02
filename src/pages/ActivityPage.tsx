@@ -216,13 +216,13 @@ export default function ActivityPage() {
               <Activity size={20} className="text-violet-400" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">My Activity</h1>
+              <h1 className="text-xl font-bold text-slate-900">My Activity</h1>
               <p className="text-sm text-slate-500">Your file history across VaultShare</p>
             </div>
           </div>
           <button
             onClick={() => load(0, true)}
-            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-400 transition-colors hover:text-white"
+            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-3 py-1.5 text-xs text-slate-400 transition-colors hover:text-slate-900"
           >
             <RefreshCw size={13} />
             Refresh
@@ -230,7 +230,7 @@ export default function ActivityPage() {
         </div>
 
         {/* Filter tabs */}
-        <div className="mb-6 flex gap-1 rounded-xl border border-white/5 bg-slate-900/40 p-1">
+        <div className="mb-6 flex gap-1 rounded-xl border border-gray-200 bg-gray-100 p-1">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -238,7 +238,7 @@ export default function ActivityPage() {
               className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
                 tab === t.id
                   ? "bg-violet-600/20 text-violet-300"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-400 hover:text-slate-700"
               }`}
             >
               {t.label}
@@ -277,24 +277,24 @@ export default function ActivityPage() {
                 <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
                   {group.label}
                 </p>
-                <div className="overflow-hidden rounded-xl border border-white/5 bg-[#0d0d1a]">
+                <div className="overflow-hidden rounded-xl border border-gray-200 bg-slate-50">
                   {group.items.map((item, idx) => {
                     const meta = ACTION_META[item.action];
                     return (
                       <div
                         key={item.id}
-                        className={`flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-white/5 ${
-                          idx !== group.items.length - 1 ? "border-b border-white/5" : ""
+                        className={`flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-black/3 ${
+                          idx !== group.items.length - 1 ? "border-b border-gray-200" : ""
                         }`}
                       >
                         {/* File icon */}
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-800">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-200">
                           <FileIcon mimeType={item.mimeType} />
                         </div>
 
                         {/* File name + details */}
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-slate-100">
+                          <p className="truncate text-sm font-medium text-slate-800">
                             {item.fileName}
                           </p>
                           {item.details && (
@@ -327,7 +327,7 @@ export default function ActivityPage() {
                 <button
                   onClick={() => load(activities.length, false)}
                   disabled={loadingMore}
-                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-2 text-sm text-slate-400 transition-colors hover:text-white disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-5 py-2 text-sm text-slate-400 transition-colors hover:text-slate-900 disabled:opacity-50"
                 >
                   {loadingMore ? (
                     <Loader2 size={14} className="animate-spin" />

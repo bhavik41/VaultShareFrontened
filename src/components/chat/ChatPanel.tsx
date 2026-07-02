@@ -69,13 +69,13 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
   const isEmpty = messages.length === 0;
 
   return (
-    <div className="flex flex-col h-full bg-[#09090f] border-l border-slate-900">
+    <div className="flex flex-col h-full bg-[#09090f] border-l border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800/60 bg-[#0b0b14] flex-shrink-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200/60 bg-[#0b0b14] flex-shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
           <MessageSquare size={16} className="text-violet-400 flex-shrink-0" />
           <div className="min-w-0">
-            <span className="text-sm font-semibold text-slate-200 truncate block">
+            <span className="text-sm font-semibold text-slate-700 truncate block">
               {fileName ? `Chat — ${fileName}` : "Chat"}
             </span>
           </div>
@@ -92,7 +92,7 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
           {onClose && (
             <button
               onClick={onClose}
-              className="bg-transparent border-0 p-1 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 cursor-pointer transition-colors"
+              className="bg-transparent border-0 p-1 rounded-lg text-slate-500 hover:text-slate-600 hover:bg-gray-200 cursor-pointer transition-colors"
               title="Close chat"
             >
               <X size={15} />
@@ -121,13 +121,13 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center h-full gap-4 text-center py-12">
             <div className="relative">
-              <div className="w-14 h-14 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-gray-100 border border-gray-200 flex items-center justify-center">
                 <MessageSquare size={24} className="text-slate-600" />
               </div>
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-violet-600/80 flex items-center justify-center text-[8px] text-white font-bold">0</span>
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-violet-600/80 flex items-center justify-center text-[8px] text-slate-900 font-bold">0</span>
             </div>
             <div className="flex flex-col gap-1.5 max-w-[200px]">
-              <span className="text-sm font-semibold text-slate-300">No messages yet</span>
+              <span className="text-sm font-semibold text-slate-600">No messages yet</span>
               <span className="text-xs text-slate-500 leading-relaxed">
                 Start the conversation! Your messages are end-to-end encrypted.
               </span>

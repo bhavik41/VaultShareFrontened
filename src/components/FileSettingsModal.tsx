@@ -163,26 +163,26 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
-      <div className="w-full max-w-lg bg-[#0d0d1a] border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
+      <div className="w-full max-w-lg bg-slate-50 border border-gray-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800 flex-shrink-0">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center gap-2 min-w-0">
             <Settings size={16} className="text-violet-400 flex-shrink-0" />
             <div className="min-w-0">
               <p className="text-xs text-slate-500 font-medium">File Settings</p>
-              <p className="text-sm font-bold text-white truncate">{fileName}</p>
+              <p className="text-sm font-bold text-slate-900 truncate">{fileName}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-300 transition-colors p-1 rounded-lg hover:bg-slate-800 border-0 bg-transparent cursor-pointer flex-shrink-0"
+            className="text-slate-500 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-gray-200 border-0 bg-transparent cursor-pointer flex-shrink-0"
           >
             <X size={16} />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-800 flex-shrink-0">
+        <div className="flex border-b border-gray-200 flex-shrink-0">
           {TABS.map((tab) => (
             <button
               key={tab.id}
@@ -190,7 +190,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
               className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-0 cursor-pointer transition-colors flex-1 justify-center
                 ${activeTab === tab.id
                   ? "text-violet-400 border-b-2 border-violet-500 bg-violet-500/5"
-                  : "text-slate-500 hover:text-slate-300 bg-transparent"
+                  : "text-slate-500 hover:text-slate-600 bg-transparent"
                 }`}
             >
               {tab.icon}
@@ -214,14 +214,14 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                     placeholder="colleague@email.com"
                     value={inviteEmail}
                     onChange={(e) => { setInviteEmail(e.target.value); setInviteSuccess(false); setInviteError(null); }}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-violet-500"
+                    className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-gray-400 focus:outline-none focus:border-violet-500"
                     required
                   />
                   <div className="flex gap-2">
                     <select
                       value={inviteRole}
                       onChange={(e) => setInviteRole(e.target.value as SharedRole)}
-                      className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-violet-500"
+                      className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-violet-500"
                     >
                       <option value="viewer">Viewer</option>
                       <option value="editor">Editor</option>
@@ -229,7 +229,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                     <button
                       type="submit"
                       disabled={inviteLoading || !inviteEmail.trim()}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-colors flex-1 justify-center"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-slate-900 text-sm font-semibold rounded-lg border-0 cursor-pointer transition-colors flex-1 justify-center"
                     >
                       <UserPlus size={13} />
                       {inviteLoading ? "Sending…" : "Send Invite"}
@@ -250,9 +250,9 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                 ) : (
                   <div className="flex flex-col gap-2">
                     {collaborators.map((c) => (
-                      <div key={c.userId} className="flex items-center justify-between bg-slate-900/50 rounded-lg px-3 py-2 border border-slate-800">
+                      <div key={c.userId} className="flex items-center justify-between bg-gray-100 rounded-lg px-3 py-2 border border-gray-200">
                         <div className="min-w-0">
-                          <p className="text-sm text-white font-medium truncate">{c.name}</p>
+                          <p className="text-sm text-slate-900 font-medium truncate">{c.name}</p>
                           <p className="text-xs text-slate-500 truncate">{c.email}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -260,7 +260,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                             value={c.role}
                             disabled={actionLoading === c.userId}
                             onChange={(e) => handleRoleChange(c.userId, e.target.value as SharedRole)}
-                            className="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-violet-500 disabled:opacity-50"
+                            className="bg-gray-200 border border-gray-300 rounded px-2 py-1 text-xs text-slate-900 focus:outline-none focus:border-violet-500 disabled:opacity-50"
                           >
                             <option value="viewer">Viewer</option>
                             <option value="editor">Editor</option>
@@ -297,7 +297,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                       className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer bg-transparent disabled:opacity-60
                         ${versionPolicy === p.value
                           ? "border-violet-500 bg-violet-500/10"
-                          : "border-slate-800 hover:border-slate-600 bg-slate-900/30"
+                          : "border-gray-200 hover:border-slate-600 bg-gray-100/30"
                         }`}
                     >
                       <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center
@@ -305,7 +305,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                         {versionPolicy === p.value && <div className="w-2 h-2 rounded-full bg-violet-400" />}
                       </div>
                       <div>
-                        <p className={`text-sm font-semibold ${versionPolicy === p.value ? "text-violet-300" : "text-slate-300"}`}>{p.label}</p>
+                        <p className={`text-sm font-semibold ${versionPolicy === p.value ? "text-violet-300" : "text-slate-600"}`}>{p.label}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{p.desc}</p>
                       </div>
                     </button>
@@ -323,16 +323,16 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
               {chatLoading ? (
                 <p className="text-xs text-slate-500">Loading…</p>
               ) : (
-                <div className="flex items-center justify-between bg-slate-900/50 border border-slate-800 rounded-xl p-4">
+                <div className="flex items-center justify-between bg-gray-100 border border-gray-200 rounded-xl p-4">
                   <div>
-                    <p className="text-sm font-semibold text-white">Admin-Only Chat</p>
+                    <p className="text-sm font-semibold text-slate-900">Admin-Only Chat</p>
                     <p className="text-xs text-slate-500 mt-0.5">When enabled, only you can send messages in this file's chat room.</p>
                   </div>
                   <button
                     onClick={() => handleChatToggle(!adminOnlyChat)}
                     disabled={chatSaving}
                     className={`relative w-11 h-6 rounded-full border-0 cursor-pointer transition-colors flex-shrink-0 ml-4 disabled:opacity-50 overflow-hidden
-                      ${adminOnlyChat ? "bg-violet-600" : "bg-slate-700"}`}
+                      ${adminOnlyChat ? "bg-violet-600" : "bg-gray-300"}`}
                   >
                     <span
                       className={`absolute top-[3px] left-[3px] w-[18px] h-[18px] bg-white rounded-full shadow transition-transform duration-200

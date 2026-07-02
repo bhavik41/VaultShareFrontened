@@ -82,18 +82,18 @@ export default function FileAuditPage() {
   const isOwner = currentUser?.id === fileOwnerId
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <header className="sticky top-0 z-10 border-b border-white/5 bg-slate-950/95 backdrop-blur">
+    <div className="min-h-screen bg-gray-50 text-slate-900">
+      <header className="sticky top-0 z-10 border-b border-gray-200 bg-gray-50/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate(-1)} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/5 hover:text-white">
+            <button onClick={() => navigate(-1)} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-black/3 hover:text-slate-900">
               <ChevronLeft size={18} />
             </button>
-            <Link to="/dashboard" className="text-lg font-bold text-white">VaultShare</Link>
+            <Link to="/dashboard" className="text-lg font-bold text-slate-900">VaultShare</Link>
           </div>
           <div className="flex items-center gap-3">
             {!loading && !error && logs.length > 0 && <AuditLogExport logs={logs} fileName={`file-${fileId}-audit`} />}
-            <button onClick={load} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-400 transition-colors hover:text-white">
+            <button onClick={load} className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-3 py-1.5 text-xs text-slate-400 transition-colors hover:text-slate-900">
               <RefreshCw size={13} /> Refresh
             </button>
           </div>
@@ -106,7 +106,7 @@ export default function FileAuditPage() {
             <ShieldCheck size={20} className="text-violet-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">File Audit History</h1>
+            <h1 className="text-xl font-bold text-slate-900">File Audit History</h1>
             <p className="text-sm text-slate-500">Complete access trail for this file</p>
           </div>
         </div>

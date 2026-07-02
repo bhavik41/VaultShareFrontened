@@ -75,7 +75,7 @@ export default function VersionRequestsPage() {
       <div className="flex-1 overflow-y-auto">
       <div className="mx-auto max-w-4xl p-8">
         <div className="mb-6 flex flex-col gap-0.5">
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white">
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-900">
             <Clock size={22} className="text-amber-400" />
             Version Upload Requests
           </h1>
@@ -91,12 +91,12 @@ export default function VersionRequestsPage() {
             <Loader2 size={24} className="animate-spin text-violet-400" />
           </div>
         ) : requests.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-slate-900/60 bg-slate-950/10 p-12 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900/50 text-slate-500">
+          <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-gray-200 bg-gray-50/10 p-12 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-slate-500">
               <CheckCircle2 size={24} />
             </div>
             <div className="flex max-w-sm flex-col gap-1">
-              <h3 className="text-sm font-semibold text-slate-200">No pending requests</h3>
+              <h3 className="text-sm font-semibold text-slate-700">No pending requests</h3>
               <p className="text-xs leading-relaxed text-slate-500">
                 You're all caught up. New version-upload requests for your files will show up here.
               </p>
@@ -107,12 +107,12 @@ export default function VersionRequestsPage() {
             {requests.map((req) => (
               <div
                 key={req.id}
-                className="flex items-center justify-between gap-4 rounded-2xl border border-white/5 bg-[#131224]/30 p-4"
+                className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-[#131224]/30 p-4"
               >
                 <div className="min-w-0">
                   <Link
                     to={`/files/${req.fileId}`}
-                    className="truncate text-sm font-semibold text-slate-100 hover:text-violet-300"
+                    className="truncate text-sm font-semibold text-slate-800 hover:text-violet-300"
                   >
                     {fileNames.get(req.fileId) ?? req.originalName}
                   </Link>

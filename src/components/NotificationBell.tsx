@@ -52,20 +52,20 @@ export default function NotificationBell() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 transition-colors hover:bg-slate-800/60 hover:text-white"
+        className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-gray-100 text-slate-400 transition-colors hover:bg-gray-200 hover:text-slate-900"
       >
         <Bell size={16} />
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-slate-900">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-[100] mt-2.5 w-80 rounded-xl border border-slate-800 bg-slate-950 p-1.5 shadow-2xl shadow-black/80">
-          <div className="border-b border-slate-900 px-3 py-2.5">
-            <span className="text-xs font-semibold text-slate-200">Notifications</span>
+        <div className="absolute right-0 top-full z-[100] mt-2.5 w-80 rounded-xl border border-gray-200 bg-gray-50 p-1.5 shadow-2xl shadow-black/80">
+          <div className="border-b border-gray-200 px-3 py-2.5">
+            <span className="text-xs font-semibold text-slate-700">Notifications</span>
           </div>
           <div className="max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
@@ -75,13 +75,13 @@ export default function NotificationBell() {
                 <button
                   key={n.id}
                   onClick={() => handleClickNotification(n)}
-                  className={`flex w-full items-start gap-2.5 rounded-lg p-2.5 text-left transition-colors hover:bg-slate-900/60 ${
+                  className={`flex w-full items-start gap-2.5 rounded-lg p-2.5 text-left transition-colors hover:bg-gray-100 ${
                     n.read ? "opacity-60" : ""
                   }`}
                 >
                   <span className="mt-0.5 shrink-0">{ICONS[n.type]}</span>
                   <div className="min-w-0">
-                    <p className="text-xs leading-snug text-slate-200">{n.message}</p>
+                    <p className="text-xs leading-snug text-slate-700">{n.message}</p>
                     <p className="mt-0.5 text-[10px] text-slate-500">
                       {new Date(n.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                     </p>

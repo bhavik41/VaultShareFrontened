@@ -56,7 +56,7 @@ const ROLE_COLORS: Record<string, string> = {
   owner: 'bg-purple-500/20 text-purple-300',
   admin: 'bg-amber-500/20 text-amber-300',
   editor: 'bg-blue-500/20 text-blue-300',
-  viewer: 'bg-slate-500/20 text-slate-300',
+  viewer: 'bg-slate-500/20 text-slate-600',
 }
 
 type Tab = 'my-groups' | 'shared-with-me'
@@ -314,13 +314,13 @@ export default function GroupsPage() {
     const canManage = myGroupRole === 'owner' || myGroupRole === 'admin'
 
     return (
-      <div className="flex-1 overflow-y-auto bg-[#0b0f1a] text-slate-100">
+      <div className="flex-1 overflow-y-auto bg-slate-50 text-slate-800">
         <div className="max-w-4xl mx-auto p-6">
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => { setSelectedGroup(null); setEditingGroup(false) }}
-              className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors text-sm"
+              className="flex items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors text-sm"
             >
               <ChevronLeft className="w-4 h-4" />
               Groups
@@ -331,19 +331,19 @@ export default function GroupsPage() {
                   <input
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="bg-[#1e293b] border border-slate-700 rounded-lg px-3 py-1 text-white text-lg font-semibold w-48"
+                    className="bg-white border border-gray-300 rounded-lg px-3 py-1 text-slate-900 text-lg font-semibold w-48"
                     required
                   />
                   <input
                     value={editDesc}
                     onChange={(e) => setEditDesc(e.target.value)}
                     placeholder="Description (optional)"
-                    className="bg-[#1e293b] border border-slate-700 rounded-lg px-3 py-1 text-slate-300 text-sm flex-1"
+                    className="bg-white border border-gray-300 rounded-lg px-3 py-1 text-slate-600 text-sm flex-1"
                   />
                   <select
                     value={editDefaultRole}
                     onChange={(e) => setEditDefaultRole(e.target.value as SharedRole)}
-                    className="bg-[#0f172a] border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-300"
+                    className="bg-slate-100 border border-gray-300 rounded-lg px-2 py-1 text-xs text-slate-600"
                   >
                     <option value="viewer">Default: Viewer</option>
                     <option value="editor">Default: Editor</option>
@@ -351,14 +351,14 @@ export default function GroupsPage() {
                   <button
                     type="submit"
                     disabled={actionLoading}
-                    className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                    className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-lg text-sm font-medium disabled:opacity-50"
                   >
                     Save
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditingGroup(false)}
-                    className="px-3 py-1 text-slate-400 hover:text-white text-sm"
+                    className="px-3 py-1 text-slate-400 hover:text-slate-900 text-sm"
                   >
                     Cancel
                   </button>
@@ -371,7 +371,7 @@ export default function GroupsPage() {
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold capitalize ${
                         (selectedGroup as any).defaultRole === 'editor'
                           ? 'bg-blue-500/20 text-blue-300'
-                          : 'bg-slate-500/20 text-slate-300'
+                          : 'bg-slate-500/20 text-slate-600'
                       }`}>
                         {(selectedGroup as any).defaultRole ?? 'viewer'} access
                       </span>
@@ -383,7 +383,7 @@ export default function GroupsPage() {
                   {canManage && (
                     <button
                       onClick={() => setEditingGroup(true)}
-                      className="text-slate-500 hover:text-slate-300 text-xs underline"
+                      className="text-slate-500 hover:text-slate-600 text-xs underline"
                     >
                       Edit
                     </button>
@@ -422,15 +422,15 @@ export default function GroupsPage() {
           )}
 
           {/* Tabs */}
-          <div className="flex gap-1 mb-6 bg-[#1e293b] rounded-xl p-1 w-fit">
+          <div className="flex gap-1 mb-6 bg-white rounded-xl p-1 w-fit">
             {(['members', 'files'] as GroupTab[]).map((t) => (
               <button
                 key={t}
                 onClick={() => setGroupTab(t)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
                   groupTab === t
-                    ? 'bg-indigo-600 text-white'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-indigo-600 text-slate-900'
+                    : 'text-slate-400 hover:text-slate-900'
                 }`}
               >
                 {t === 'members' ? (
@@ -446,7 +446,7 @@ export default function GroupsPage() {
           {groupTab === 'members' && (
             <div className="space-y-4">
               {/* Owner row */}
-              <div className="bg-[#1e293b] rounded-xl p-4">
+              <div className="bg-white rounded-xl p-4">
                 <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Owner</h3>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-purple-600/30 flex items-center justify-center text-purple-300 font-semibold text-sm">
@@ -461,7 +461,7 @@ export default function GroupsPage() {
               </div>
 
               {/* Members list */}
-              <div className="bg-[#1e293b] rounded-xl p-4">
+              <div className="bg-white rounded-xl p-4">
                 <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
                   Members ({selectedGroup.members.length})
                 </h3>
@@ -470,7 +470,7 @@ export default function GroupsPage() {
                 ) : (
                   <div className="space-y-2">
                     {selectedGroup.members.map((m: GroupMember) => (
-                      <div key={m.id} className="flex items-center gap-3 py-2 border-b border-slate-700/50 last:border-0">
+                      <div key={m.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-0">
                         <div className="w-8 h-8 rounded-full bg-indigo-600/20 flex items-center justify-center text-indigo-300 font-semibold text-sm">
                           {m.name.charAt(0).toUpperCase()}
                         </div>
@@ -483,7 +483,7 @@ export default function GroupsPage() {
                             value={m.role}
                             onChange={(e) => handleUpdateMemberRole(m.userId, e.target.value as GroupRole)}
                             disabled={actionLoading}
-                            className="bg-[#0f172a] border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-300 disabled:opacity-50"
+                            className="bg-slate-100 border border-gray-300 rounded-lg px-2 py-1 text-xs text-slate-600 disabled:opacity-50"
                           >
                             <option value="viewer">Viewer</option>
                             <option value="editor">Editor</option>
@@ -512,7 +512,7 @@ export default function GroupsPage() {
 
               {/* Add member form */}
               {canManage && (
-                <div className="bg-[#1e293b] rounded-xl p-4">
+                <div className="bg-white rounded-xl p-4">
                   <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                     <UserPlus className="w-3.5 h-3.5" />Add Member
                   </h3>
@@ -523,12 +523,12 @@ export default function GroupsPage() {
                       onChange={(e) => setMemberEmail(e.target.value)}
                       placeholder="user@example.com"
                       required
-                      className="flex-1 min-w-[200px] bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                      className="flex-1 min-w-[200px] bg-slate-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500"
                     />
                     <select
                       value={memberRole}
                       onChange={(e) => setMemberRole(e.target.value as GroupRole)}
-                      className="bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300"
+                      className="bg-slate-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-600"
                     >
                       <option value="viewer">Viewer</option>
                       <option value="editor">Editor</option>
@@ -537,16 +537,16 @@ export default function GroupsPage() {
                     <button
                       type="submit"
                       disabled={actionLoading || !memberEmail.trim()}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
                     >
                       {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
                       Add
                     </button>
                   </form>
                   <div className="mt-3 flex gap-4 text-xs text-slate-500">
-                    <span><span className="text-slate-300 font-medium">Viewer</span> — read-only access to group files</span>
-                    <span><span className="text-slate-300 font-medium">Editor</span> — can edit group files</span>
-                    <span><span className="text-slate-300 font-medium">Admin</span> — can manage members &amp; files</span>
+                    <span><span className="text-slate-600 font-medium">Viewer</span> — read-only access to group files</span>
+                    <span><span className="text-slate-600 font-medium">Editor</span> — can edit group files</span>
+                    <span><span className="text-slate-600 font-medium">Admin</span> — can manage members &amp; files</span>
                   </div>
                 </div>
               )}
@@ -556,7 +556,7 @@ export default function GroupsPage() {
           {/* Files Tab */}
           {groupTab === 'files' && (
             <div className="space-y-4">
-              <div className="bg-[#1e293b] rounded-xl p-4">
+              <div className="bg-white rounded-xl p-4">
                 <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
                   Shared Files ({(selectedGroup.files as GroupFile[]).length})
                 </h3>
@@ -565,7 +565,7 @@ export default function GroupsPage() {
                 ) : (
                   <div className="space-y-2">
                     {(selectedGroup.files as GroupFile[]).map((f) => (
-                      <div key={f.id} className="flex items-center gap-3 py-2 border-b border-slate-700/50 last:border-0">
+                      <div key={f.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-0">
                         <FileText className="w-4 h-4 text-indigo-400 shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm truncate">{f.fileName}</p>
@@ -576,7 +576,7 @@ export default function GroupsPage() {
                             value={f.role}
                             onChange={(e) => handleUpdateFilePermission(f.fileId, e.target.value as SharedRole)}
                             disabled={actionLoading}
-                            className="bg-[#0f172a] border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-300 disabled:opacity-50"
+                            className="bg-slate-100 border border-gray-300 rounded-lg px-2 py-1 text-xs text-slate-600 disabled:opacity-50"
                           >
                             <option value="viewer">Viewer</option>
                             <option value="editor">Editor</option>
@@ -603,7 +603,7 @@ export default function GroupsPage() {
               </div>
 
               {/* Share file form */}
-              <div className="bg-[#1e293b] rounded-xl p-4">
+              <div className="bg-white rounded-xl p-4">
                 <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   <Plus className="w-3.5 h-3.5" />Share a File with this Group
                 </h3>
@@ -618,7 +618,7 @@ export default function GroupsPage() {
                       value={shareFileId}
                       onChange={(e) => setShareFileId(e.target.value)}
                       required
-                      className="flex-1 min-w-[200px] bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300"
+                      className="flex-1 min-w-[200px] bg-slate-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-600"
                     >
                       <option value="">Select a file…</option>
                       {myFiles.map((f) => (
@@ -630,7 +630,7 @@ export default function GroupsPage() {
                     <select
                       value={shareFileRole}
                       onChange={(e) => setShareFileRole(e.target.value as SharedRole)}
-                      className="bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300"
+                      className="bg-slate-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-600"
                     >
                       <option value="viewer">Viewer</option>
                       <option value="editor">Editor</option>
@@ -638,7 +638,7 @@ export default function GroupsPage() {
                     <button
                       type="submit"
                       disabled={actionLoading || !shareFileId}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
                     >
                       {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                       Share
@@ -661,7 +661,7 @@ export default function GroupsPage() {
   // ── Groups list view ──────────────────────────────────────────────────────────
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#0b0f1a] text-slate-100">
+    <div className="flex-1 overflow-y-auto bg-slate-50 text-slate-800">
       <div className="max-w-4xl mx-auto p-6">
         {/* Page Header */}
         <div className="flex items-center justify-between mb-6">
@@ -677,7 +677,7 @@ export default function GroupsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => tab === 'my-groups' ? loadGroups() : loadSharedFiles()}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-slate-900 transition-colors"
               title="Refresh"
             >
               <RefreshCw className="w-4 h-4" />
@@ -685,7 +685,7 @@ export default function GroupsPage() {
             {tab === 'my-groups' && (
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-xl text-sm font-medium transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 New Group
@@ -708,7 +708,7 @@ export default function GroupsPage() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-[#1e293b] rounded-xl p-1 w-fit">
+        <div className="flex gap-1 mb-6 bg-white rounded-xl p-1 w-fit">
           {([
             { key: 'my-groups', label: 'My Groups', icon: <Users className="w-3.5 h-3.5" /> },
             { key: 'shared-with-me', label: 'Shared With Me', icon: <Shield className="w-3.5 h-3.5" /> },
@@ -717,7 +717,7 @@ export default function GroupsPage() {
               key={key}
               onClick={() => setTab(key)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                tab === key ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                tab === key ? 'bg-indigo-600 text-slate-900' : 'text-slate-400 hover:text-slate-900'
               }`}
             >
               {icon}{label}
@@ -727,7 +727,7 @@ export default function GroupsPage() {
 
         {/* Create Group Form */}
         {showCreateForm && tab === 'my-groups' && (
-          <div className="mb-6 bg-[#1e293b] rounded-xl p-5 border border-indigo-500/30">
+          <div className="mb-6 bg-white rounded-xl p-5 border border-indigo-500/30">
             <h2 className="font-semibold mb-4 flex items-center gap-2">
               <Plus className="w-4 h-4 text-indigo-400" />Create New Group
             </h2>
@@ -738,14 +738,14 @@ export default function GroupsPage() {
                 onChange={(e) => setNewGroupName(e.target.value)}
                 placeholder="Group name *"
                 required
-                className="w-full bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-100 border border-gray-300 rounded-lg px-3 py-2 text-slate-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500"
               />
               <input
                 type="text"
                 value={newGroupDesc}
                 onChange={(e) => setNewGroupDesc(e.target.value)}
                 placeholder="Description (optional)"
-                className="w-full bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-100 border border-gray-300 rounded-lg px-3 py-2 text-slate-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500"
               />
               <div>
                 <label className="block text-xs text-slate-400 mb-1.5">Default role for all members</label>
@@ -759,8 +759,8 @@ export default function GroupsPage() {
                         newGroupDefaultRole === r
                           ? r === 'editor'
                             ? 'bg-blue-500/20 border-blue-500/50 text-blue-300'
-                            : 'bg-slate-500/20 border-slate-500/50 text-slate-300'
-                          : 'bg-transparent border-slate-700 text-slate-500 hover:text-slate-300'
+                            : 'bg-slate-500/20 border-slate-500/50 text-slate-600'
+                          : 'bg-transparent border-gray-300 text-slate-500 hover:text-slate-600'
                       }`}
                     >
                       {r}
@@ -775,7 +775,7 @@ export default function GroupsPage() {
                 <button
                   type="submit"
                   disabled={actionLoading || !newGroupName.trim()}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
                 >
                   {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   Create Group
@@ -783,7 +783,7 @@ export default function GroupsPage() {
                 <button
                   type="button"
                   onClick={() => { setShowCreateForm(false); setNewGroupName(''); setNewGroupDesc(''); setNewGroupDefaultRole('viewer') }}
-                  className="px-4 py-2 text-slate-400 hover:text-white rounded-lg text-sm transition-colors"
+                  className="px-4 py-2 text-slate-400 hover:text-slate-900 rounded-lg text-sm transition-colors"
                 >
                   Cancel
                 </button>
@@ -806,7 +806,7 @@ export default function GroupsPage() {
                 <p className="text-sm mt-1">Create a group to share files with multiple people at once.</p>
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium transition-colors"
+                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-xl text-sm font-medium transition-colors"
                 >
                   <Plus className="w-4 h-4" />New Group
                 </button>
@@ -817,7 +817,7 @@ export default function GroupsPage() {
                   <button
                     key={group.id}
                     onClick={() => { loadGroupDetail(group.id); setGroupTab('members') }}
-                    className="text-left bg-[#1e293b] hover:bg-[#253347] rounded-xl p-4 transition-colors border border-slate-700/50 hover:border-indigo-500/40"
+                    className="text-left bg-white hover:bg-slate-100 rounded-xl p-4 transition-colors border border-gray-200 hover:border-indigo-500/40"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-3 min-w-0">
@@ -870,10 +870,10 @@ export default function GroupsPage() {
                 <p className="text-sm mt-1">When a group you belong to gets a file shared with it, it'll appear here.</p>
               </div>
             ) : (
-              <div className="bg-[#1e293b] rounded-xl overflow-hidden">
+              <div className="bg-white rounded-xl overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-700/50">
+                    <tr className="border-b border-gray-200">
                       <th className="text-left px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wide">File</th>
                       <th className="text-left px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wide">Group</th>
                       <th className="text-left px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wide">Permission</th>
@@ -884,7 +884,7 @@ export default function GroupsPage() {
                     {sharedFiles.map((f, i) => (
                       <tr
                         key={`${f.fileId}-${f.groupId}`}
-                        className={i % 2 === 0 ? '' : 'bg-slate-800/20'}
+                        className={i % 2 === 0 ? '' : 'bg-gray-50'}
                       >
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
@@ -894,7 +894,7 @@ export default function GroupsPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-slate-300">{f.groupName}</span>
+                          <span className="text-slate-600">{f.groupName}</span>
                         </td>
                         <td className="px-4 py-3">
                           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ROLE_COLORS[f.role]}`}>

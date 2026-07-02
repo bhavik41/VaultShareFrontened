@@ -101,14 +101,14 @@ function pageNumbers(current: number, total: number): (number | "…")[] {
 function UserCell({ log, onEnter, onLeave }: { log: AuditLog; onEnter: (e: React.MouseEvent, log: AuditLog) => void; onLeave: () => void }) {
   return (
     <button
-      className="flex items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-white/10"
+      className="flex items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-black/5"
       onMouseEnter={(e) => onEnter(e, log)}
       onMouseLeave={onLeave}
     >
-      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-[10px] font-bold text-white">
+      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-[10px] font-bold text-slate-900">
         {(log.userName || "?").charAt(0).toUpperCase()}
       </div>
-      <span className="text-sm text-slate-200 underline decoration-dotted underline-offset-2">
+      <span className="text-sm text-slate-700 underline decoration-dotted underline-offset-2">
         {log.userName || "Unknown"}
       </span>
     </button>
@@ -118,10 +118,10 @@ function UserCell({ log, onEnter, onLeave }: { log: AuditLog; onEnter: (e: React
 function OwnerCell({ name }: { name: string }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-[10px] font-bold text-white">
+      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-[10px] font-bold text-slate-900">
         {name.charAt(0).toUpperCase()}
       </div>
-      <span className="text-sm text-slate-300">{name}</span>
+      <span className="text-sm text-slate-600">{name}</span>
     </div>
   );
 }
@@ -237,12 +237,12 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
 
   if (error) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-[#0a0a14]">
+      <div className="flex flex-1 items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4 text-slate-400">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 text-red-400">
             <Lock size={32} />
           </div>
-          <h2 className="text-lg font-semibold text-white">Access Restricted</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Access Restricted</h2>
           <p className="text-sm text-slate-500">{error}</p>
         </div>
       </div>
@@ -254,12 +254,12 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
   const activeCollaborator = popover ? collaboratorMap.get(popover.log.userId) ?? null : null;
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto bg-[#0a0a14] p-8">
+    <div className="flex flex-1 flex-col overflow-y-auto bg-slate-50 p-8">
       <div className="mx-auto w-full max-w-full flex flex-col gap-5">
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900">
             <History size={20} className="text-blue-500" />
             Audit History
           </h2>
@@ -278,7 +278,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value as AuditAction | "all")}
-            className="rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-xs text-slate-300 focus:border-blue-500 focus:outline-none"
+            className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-xs text-slate-600 focus:border-blue-500 focus:outline-none"
           >
             {ACTION_FILTER_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -290,7 +290,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
             <select
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="rounded-lg border border-white/10 bg-slate-900 px-2 py-1.5 text-xs text-slate-300 focus:border-blue-500 focus:outline-none"
+              className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1.5 text-xs text-slate-600 focus:border-blue-500 focus:outline-none"
             >
               {PAGE_SIZE_OPTIONS.map((n) => (
                 <option key={n} value={n}>{n}</option>
@@ -300,9 +300,9 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#0d0d1a]">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-slate-50">
           <table className="w-full min-w-[820px] text-left text-sm text-slate-400">
-            <thead className="border-b border-white/5 bg-white/5 text-xs uppercase tracking-wider text-slate-500">
+            <thead className="border-b border-gray-200 bg-black/3 text-xs uppercase tracking-wider text-slate-500">
               <tr>
                 <th className="px-6 py-4 font-medium w-44">Action</th>
                 <th className="px-6 py-4 font-medium">Details</th>
@@ -311,7 +311,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                 <th className="px-6 py-4 font-medium w-44 whitespace-nowrap">Timestamp</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-gray-200">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
@@ -332,13 +332,13 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                 </tr>
               ) : (
                 logs.map((log) => (
-                  <tr key={log.id} className="transition-colors hover:bg-white/5">
+                  <tr key={log.id} className="transition-colors hover:bg-black/3">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200">
                           {ACTION_ICONS[log.action] || <History size={16} />}
                         </div>
-                        <span className="font-medium text-slate-200">
+                        <span className="font-medium text-slate-700">
                           {ACTION_LABELS[log.action] || log.action}
                         </span>
                       </div>
@@ -346,10 +346,10 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                     <td className="px-6 py-4 max-w-[220px]">
                       {log.details ? (
                         <div className="group relative">
-                          <span className="text-slate-300 text-xs block truncate cursor-default">
+                          <span className="text-slate-600 text-xs block truncate cursor-default">
                             {log.details}
                           </span>
-                          <div className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-max max-w-xs rounded-lg border border-white/10 bg-[#1e1e2f] px-3 py-2 text-xs text-slate-200 shadow-xl group-hover:block">
+                          <div className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-max max-w-xs rounded-lg border border-gray-200 bg-[#1e1e2f] px-3 py-2 text-xs text-slate-700 shadow-xl group-hover:block">
                             {log.details}
                           </div>
                         </div>
@@ -380,14 +380,14 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         {!loading && total > 0 && (
           <div className="flex items-center justify-between">
             <p className="text-xs text-slate-500">
-              Showing <span className="font-semibold text-slate-300">{firstEntry}–{lastEntry}</span> of{" "}
-              <span className="font-semibold text-slate-300">{total}</span> entries
+              Showing <span className="font-semibold text-slate-600">{firstEntry}–{lastEntry}</span> of{" "}
+              <span className="font-semibold text-slate-600">{total}</span> entries
             </p>
             <div className="flex items-center gap-1">
-              <button onClick={() => setPage(1)} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-white/3 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage(1)} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronsLeft size={14} />
               </button>
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-white/3 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronLeft size={14} />
               </button>
               {pageNumbers(page, totalPages).map((p, i) =>
@@ -397,16 +397,16 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                   <button
                     key={p}
                     onClick={() => setPage(p)}
-                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-lg border px-2 text-xs font-medium transition-colors ${p === page ? "border-blue-500/50 bg-blue-500/20 text-blue-300" : "border-white/5 bg-white/3 text-slate-400 hover:bg-white/10 hover:text-white"}`}
+                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-lg border px-2 text-xs font-medium transition-colors ${p === page ? "border-blue-500/50 bg-blue-500/20 text-blue-300" : "border-gray-200 bg-black/3 text-slate-400 hover:bg-black/5 hover:text-slate-900"}`}
                   >
                     {p}
                   </button>
                 )
               )}
-              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-white/3 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronRight size={14} />
               </button>
-              <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-white/3 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronsRight size={14} />
               </button>
             </div>
@@ -419,28 +419,28 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         <div
           ref={popoverRef}
           style={{ position: "fixed", top: popover.top, left: popover.left, zIndex: 50 }}
-          className="w-72 overflow-hidden rounded-xl border border-white/10 bg-[#12121f] shadow-2xl shadow-black/50"
+          className="w-72 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl shadow-gray-300/50"
           onMouseEnter={cancelHide}
           onMouseLeave={scheduleHide}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 border-b border-white/5 p-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-bold text-white">
+          <div className="flex items-center gap-3 border-b border-gray-200 p-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-bold text-slate-900">
               {popover.log.userName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="truncate text-sm font-semibold text-white">{popover.log.userName}</p>
+                <p className="truncate text-sm font-semibold text-slate-900">{popover.log.userName}</p>
                 {popover.isOwner && (
                   <span className="flex items-center gap-1 rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-semibold text-violet-300">
                     <Crown size={9} />Owner
                   </span>
                 )}
                 {!popover.isOwner && popover.isSelf && (
-                  <span className="rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-semibold text-slate-300">You</span>
+                  <span className="rounded-full bg-gray-300 px-2 py-0.5 text-[10px] font-semibold text-slate-600">You</span>
                 )}
                 {!popover.isOwner && !popover.isSelf && activeCollaborator && (
-                  <span className="rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-semibold capitalize text-slate-300">
+                  <span className="rounded-full bg-gray-300 px-2 py-0.5 text-[10px] font-semibold capitalize text-slate-600">
                     {activeCollaborator.role}
                   </span>
                 )}
@@ -454,7 +454,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
 
           {/* Body */}
           {popover.isOwner && (
-            <div className="flex items-center gap-2 border-t border-white/5 px-4 py-3">
+            <div className="flex items-center gap-2 border-t border-gray-200 px-4 py-3">
               <Crown size={13} className="text-violet-400" />
               <span className="text-xs text-violet-300 font-medium">File Owner — cannot be managed</span>
             </div>
@@ -471,14 +471,14 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                 <button
                   disabled={actionLoading}
                   onClick={() => handleRoleChange("editor")}
-                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "editor" ? "border-violet-500/50 bg-violet-500/20 text-violet-200" : "border-white/10 bg-white/5 text-slate-300 hover:border-violet-500/30 hover:bg-violet-500/10 hover:text-violet-200"}`}
+                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "editor" ? "border-violet-500/50 bg-violet-500/20 text-violet-200" : "border-gray-200 bg-black/3 text-slate-600 hover:border-violet-500/30 hover:bg-violet-500/10 hover:text-violet-200"}`}
                 >
                   Editor
                 </button>
                 <button
                   disabled={actionLoading}
                   onClick={() => handleRoleChange("viewer")}
-                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "viewer" ? "border-blue-500/50 bg-blue-500/20 text-blue-200" : "border-white/10 bg-white/5 text-slate-300 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-200"}`}
+                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "viewer" ? "border-blue-500/50 bg-blue-500/20 text-blue-200" : "border-gray-200 bg-black/3 text-slate-600 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-200"}`}
                 >
                   Viewer
                 </button>

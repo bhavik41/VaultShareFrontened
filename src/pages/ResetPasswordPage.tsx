@@ -34,7 +34,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-slate-950 p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
+        <div className="bg-black/3 border border-gray-200 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
           {/* Icon */}
           <div className="flex justify-center mb-6">
             <div className="h-14 w-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
@@ -42,33 +42,33 @@ export default function ResetPasswordPage() {
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-white text-center mb-2">Reset password</h1>
-          <p className="text-white/50 text-sm text-center mb-8">
+          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">Reset password</h1>
+          <p className="text-slate-900/50 text-sm text-center mb-8">
             Enter the 6-digit code you received and your new password.
           </p>
 
           {resetSuccess ? (
             <div className="flex flex-col items-center gap-4">
               <CheckCircle2 className="h-12 w-12 text-emerald-400" />
-              <p className="text-white font-medium">Password reset successfully!</p>
-              <p className="text-white/50 text-sm text-center">Redirecting to sign in…</p>
+              <p className="text-slate-900 font-medium">Password reset successfully!</p>
+              <p className="text-slate-900/50 text-sm text-center">Redirecting to sign in…</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm text-white/70 mb-1.5">Email</label>
+                <label className="block text-sm text-slate-900/70 mb-1.5">Email</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                  className="w-full bg-black/5 border border-gray-300 rounded-xl px-4 py-3 text-slate-900 placeholder:text-slate-900/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-white/70 mb-1.5">One-time code (OTP)</label>
+                <label className="block text-sm text-slate-900/70 mb-1.5">One-time code (OTP)</label>
                 <input
                   type="text"
                   required
@@ -76,12 +76,12 @@ export default function ResetPasswordPage() {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                   placeholder="123456"
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white text-center text-xl tracking-[0.5em] placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                  className="w-full bg-black/5 border border-gray-300 rounded-xl px-4 py-3 text-slate-900 text-center text-xl tracking-[0.5em] placeholder:text-slate-900/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-white/70 mb-1.5">New password</label>
+                <label className="block text-sm text-slate-900/70 mb-1.5">New password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -90,12 +90,12 @@ export default function ResetPasswordPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Min. 6 characters"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                    className="w-full bg-black/5 border border-gray-300 rounded-xl px-4 py-3 pr-12 text-slate-900 placeholder:text-slate-900/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-900/40 hover:text-slate-900/70 transition"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -111,7 +111,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || otp.length < 6 || newPassword.length < 6}
-                className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
+                className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-slate-900 font-semibold flex items-center justify-center gap-2 transition-colors"
               >
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 Reset Password
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/forgot-password" className="text-white/40 hover:text-white/70 text-sm flex items-center justify-center gap-1 transition-colors">
+            <Link to="/forgot-password" className="text-slate-900/40 hover:text-slate-900/70 text-sm flex items-center justify-center gap-1 transition-colors">
               <ArrowLeft className="h-3.5 w-3.5" /> Back
             </Link>
           </div>
