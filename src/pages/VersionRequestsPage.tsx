@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import PageHeader from "@/components/PageHeader";
 import { CheckCircle2, Clock, Loader2, X } from "lucide-react";
 import {
   approveVersionRequest,
@@ -69,7 +70,9 @@ export default function VersionRequestsPage() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <>
+      <PageHeader />
+      <div className="flex-1 overflow-y-auto">
       <div className="mx-auto max-w-4xl p-8">
         <div className="mb-6 flex flex-col gap-0.5">
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white">
@@ -148,5 +151,6 @@ export default function VersionRequestsPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

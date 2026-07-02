@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState, useCallback } from "react";
+import PageHeader from "@/components/PageHeader";
 import {
   Activity,
   UploadCloud,
@@ -204,7 +205,9 @@ export default function ActivityPage() {
   const hasMore = activities.length < total;
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <>
+      <PageHeader />
+      <div className="flex-1 overflow-y-auto">
       <main className="mx-auto max-w-4xl px-6 py-8">
         {/* Title */}
         <div className="mb-6 flex items-center justify-between">
@@ -343,6 +346,7 @@ export default function ActivityPage() {
         )}
       </main>
     </div>
+    </>
   );
 }
 
