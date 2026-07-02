@@ -10,7 +10,7 @@ import {
   User,
   KeyRound,
   Home,
-  ChevronDown,
+  MoreVertical,
   Folder,
   Share2,
   Star,
@@ -32,7 +32,6 @@ import {
   MessageSquare,
   Info,
   SortAsc,
-  Clock,
 } from "lucide-react";
 import { logout, disable2faThunk, fetchMeThunk } from "@/store/authSlice";
 import {
@@ -359,56 +358,49 @@ export default function DashboardPage() {
   function GridCard({ doc }: { doc: DashboardDocument }) {
     const typeInfo = getFileTypeInfo(doc.name);
     const isStarred = starredIds.has(doc.id);
-    const isOwner = doc.ownership === "owned";
 
     return (
       <div
-        className="group relative bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-violet-300 hover:shadow-md transition-all duration-150 cursor-pointer select-none"
+        className="group relative bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all duration-150 cursor-pointer select-none"
         onClick={() => navigate(`/files/${doc.id}`)}
         onContextMenu={(e) => openMenu(e, doc.id)}
       >
         {/* Preview area */}
-        <div className={`h-32 flex items-center justify-center ${typeInfo.previewBg} relative`}>
+        <div className={`h-36 flex items-center justify-center ${typeInfo.previewBg} relative`}>
           {typeInfo.icon}
+          <div className="absolute inset-0 group-hover:bg-black/[0.04] transition-colors rounded-t-xl" />
 
-          {/* Hover overlay actions */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
-
-          {/* Top-right actions (show on hover) */}
-          <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={(e) => handleToggleStar(e, doc.id)}
-              className={`w-7 h-7 rounded-full flex items-center justify-center border-0 cursor-pointer transition-colors ${isStarred ? "bg-white text-amber-500" : "bg-white/80 text-slate-400 hover:text-amber-500"}`}
-            >
-              <Star size={13} className={isStarred ? "fill-amber-400" : ""} />
-            </button>
-            <button
-              onClick={(e) => openMenu(e, doc.id)}
-              className="w-7 h-7 rounded-full bg-white/80 hover:bg-white flex items-center justify-center border-0 cursor-pointer text-slate-500 hover:text-slate-800 transition-colors"
-            >
-              <ChevronDown size={13} />
-            </button>
-          </div>
+          {/* Star (always visible if starred, else on hover) */}
+          <button
+            onClick={(e) => handleToggleStar(e, doc.id)}
+            className={`absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center border-0 cursor-pointer transition-all
+              ${isStarred ? "bg-white/90 text-amber-500 opacity-100" : "bg-white/70 text-slate-400 hover:text-amber-500 opacity-0 group-hover:opacity-100"}`}
+          >
+            <Star size={13} className={isStarred ? "fill-amber-400" : ""} />
+          </button>
 
           {/* Shared badge */}
           {doc.ownership === "shared" && (
-            <div className="absolute top-2 left-2">
-              <span className="flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-700">
-                <BadgeCheck size={10} />Shared
+            <div className="absolute top-2 right-2">
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-700 flex items-center gap-0.5">
+                <BadgeCheck size={9} />Shared
               </span>
             </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center gap-2 px-3 py-2.5 border-t border-slate-100 bg-white">
+        {/* Footer row */}
+        <div className="flex items-center gap-2 px-3 py-2.5 bg-white">
           <SmallFileIcon fileName={doc.name} size={16} />
-          <span className="flex-1 text-sm font-medium text-slate-800 truncate">{doc.name}</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-slate-800 truncate">{doc.name}</p>
+            <p className="text-xs text-slate-400">{new Date(doc.createdAt).toLocaleDateString()}</p>
+          </div>
           <button
             onClick={(e) => openMenu(e, doc.id)}
-            className="w-6 h-6 rounded-full flex items-center justify-center border-0 cursor-pointer text-slate-400 hover:bg-slate-100 hover:text-slate-700 opacity-0 group-hover:opacity-100 transition-all bg-transparent shrink-0"
+            className="w-7 h-7 rounded-full flex items-center justify-center border-0 cursor-pointer text-slate-400 hover:bg-slate-100 hover:text-slate-700 opacity-0 group-hover:opacity-100 transition-all bg-transparent shrink-0"
           >
-            <ChevronDown size={13} />
+            <MoreVertical size={15} />
           </button>
         </div>
       </div>
@@ -449,7 +441,7 @@ export default function DashboardPage() {
             onClick={(e) => openMenu(e, doc.id)}
             className="w-7 h-7 rounded-full flex items-center justify-center border-0 cursor-pointer text-slate-400 hover:bg-slate-200 hover:text-slate-700 opacity-0 group-hover:opacity-100 transition-all bg-transparent"
           >
-            <ChevronDown size={14} />
+            <MoreVertical size={14} />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); setInfoDoc(doc); }}
@@ -536,26 +528,23 @@ export default function DashboardPage() {
               {/* Suggested / Quick access */}
               {recentDocs.length > 0 && !searchQuery && (
                 <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Clock size={16} className="text-slate-500" />
-                    <h2 className="text-base font-semibold text-slate-700">Suggested</h2>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                    {recentDocs.map((doc) => {
-                      const typeInfo = getFileTypeInfo(doc.name);
-                      return (
-                        <div
-                          key={doc.id}
-                          onClick={() => navigate(`/files/${doc.id}`)}
-                          className="flex flex-col items-center gap-2 p-3 rounded-xl border border-slate-200 hover:border-violet-300 hover:bg-slate-50 cursor-pointer transition-all group"
-                        >
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${typeInfo.previewBg}`}>
-                            <SmallFileIcon fileName={doc.name} size={20} />
-                          </div>
-                          <span className="text-[11px] font-medium text-slate-700 text-center line-clamp-2 leading-tight w-full">{doc.name}</span>
+                  <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Suggested</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {recentDocs.map((doc) => (
+                      <div
+                        key={doc.id}
+                        onClick={() => navigate(`/files/${doc.id}`)}
+                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 cursor-pointer transition-all group"
+                      >
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${getFileTypeInfo(doc.name).previewBg}`}>
+                          <SmallFileIcon fileName={doc.name} size={20} />
                         </div>
-                      );
-                    })}
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-slate-800 truncate">{doc.name}</p>
+                          <p className="text-xs text-slate-400">{new Date(doc.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </section>
               )}

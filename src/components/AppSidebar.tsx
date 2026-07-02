@@ -27,16 +27,16 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "files",     label: "My Drive",         icon: <Folder     size={18} />, path: "/dashboard",         tab: "files"     },
-  { id: "shared",    label: "Shared with me",   icon: <Share2     size={18} />, path: "/collaboration"                       },
-  { id: "starred",   label: "Starred",          icon: <Star       size={18} />, path: "/dashboard",         tab: "starred"   },
-  { id: "recent",    label: "Recent",           icon: <Clock      size={18} />, path: "/activity"                            },
-  { id: "team",      label: "Team / Sharing",   icon: <Users      size={18} />, path: "/file-sharing"                        },
-  { id: "groups",    label: "Groups",           icon: <UsersRound size={18} />, path: "/groups"                              },
-  { id: "version-requests", label: "Version Requests", icon: <History size={18} />, path: "/version-requests" },
-  { id: "activity",  label: "Activity Log",     icon: <Activity   size={18} />, path: "/activity"                            },
-  { id: "trash",     label: "Trash",            icon: <Trash2     size={18} />, path: "/dashboard",         tab: "trash"     },
-  { id: "settings",  label: "Settings",         icon: <Settings   size={18} />, path: "/dashboard",         tab: "settings"  },
+  { id: "files",            label: "My Drive",          icon: <Folder     size={20} />, path: "/dashboard",   tab: "files"    },
+  { id: "shared",           label: "Shared with me",    icon: <Share2     size={20} />, path: "/collaboration"                },
+  { id: "starred",          label: "Starred",           icon: <Star       size={20} />, path: "/dashboard",   tab: "starred"  },
+  { id: "recent",           label: "Recent",            icon: <Clock      size={20} />, path: "/activity"                     },
+  { id: "team",             label: "Team / Sharing",    icon: <Users      size={20} />, path: "/file-sharing"                 },
+  { id: "groups",           label: "Groups",            icon: <UsersRound size={20} />, path: "/groups"                       },
+  { id: "version-requests", label: "Version Requests",  icon: <History    size={20} />, path: "/version-requests"             },
+  { id: "activity",         label: "Activity Log",      icon: <Activity   size={20} />, path: "/activity"                     },
+  { id: "trash",            label: "Trash",             icon: <Trash2     size={20} />, path: "/dashboard",   tab: "trash"    },
+  { id: "settings",         label: "Settings",          icon: <Settings   size={20} />, path: "/dashboard",   tab: "settings" },
 ];
 
 const MOCK_BASE_BYTES = 6.2 * 1024 * 1024 * 1024;
@@ -85,69 +85,41 @@ export default function AppSidebar() {
   }
 
   return (
-    <aside
-      className={`${collapsed ? "w-[72px]" : "w-64"} shrink-0 bg-[#f6f8fc] flex flex-col transition-[width] duration-200 h-full overflow-hidden`}
-    >
-      {/* Logo row */}
-      <div className={`flex items-center ${collapsed ? "justify-center py-4 px-2" : "justify-between py-4 px-4"}`}>
-        {collapsed ? (
-          <button
-            onClick={toggle}
-            title="Expand sidebar"
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white border-0 cursor-pointer hover:opacity-90 transition-opacity"
-          >
-            V
+    <aside className={`${collapsed ? "w-20" : "w-60"} shrink-0 bg-[#f6f8fc] flex flex-col transition-[width] duration-200 h-full overflow-hidden`}>
+
+      {/* Logo */}
+      <div className={`flex items-center gap-3 py-5 ${collapsed ? "px-4 justify-center" : "px-4"}`}>
+        {!collapsed && (
+          <button onClick={toggle} className="p-2 -ml-2 rounded-full hover:bg-slate-200 border-0 bg-transparent cursor-pointer text-slate-600 transition-colors" title="Close menu">
+            <ChevronLeft size={18} />
           </button>
-        ) : (
-          <>
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shrink-0">
-                V
-              </div>
-              <span className="font-bold text-[17px] text-slate-800 tracking-tight">VaultShare</span>
-            </div>
-            <button
-              onClick={toggle}
-              title="Collapse sidebar"
-              className="p-1.5 rounded-full text-slate-500 hover:bg-slate-200 transition-colors border-0 bg-transparent cursor-pointer"
-            >
-              <ChevronLeft size={16} />
-            </button>
-          </>
         )}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shrink-0">
+            V
+          </div>
+          {!collapsed && <span className="font-bold text-base text-slate-800 tracking-tight truncate">VaultShare</span>}
+        </div>
       </div>
 
       {/* + New button */}
-      <div className={`${collapsed ? "flex justify-center px-2 mb-3" : "px-3 mb-3"}`}>
-        {collapsed ? (
-          <button
-            onClick={handleNew}
-            title="New upload"
-            className="w-12 h-12 rounded-full bg-white shadow-md hover:shadow-lg border border-slate-200 flex items-center justify-center text-slate-700 transition-all cursor-pointer"
-          >
-            <Plus size={22} />
-          </button>
-        ) : (
-          <button
-            onClick={handleNew}
-            className="flex items-center gap-3 pl-4 pr-6 py-3 bg-white shadow-md hover:shadow-lg border border-slate-100 rounded-2xl text-slate-700 font-medium text-base transition-all cursor-pointer w-fit"
-          >
-            <Plus size={18} className="text-slate-600" />
-            <span>New</span>
-          </button>
-        )}
+      <div className={`mb-4 ${collapsed ? "px-3" : "px-4"}`}>
+        <button
+          onClick={handleNew}
+          className={`flex items-center gap-3 bg-white shadow hover:shadow-md border border-slate-200/80 rounded-2xl text-slate-700 font-medium text-sm transition-all cursor-pointer
+            ${collapsed ? "w-12 h-12 justify-center p-0" : "pl-4 pr-6 py-2.5"}`}
+          title={collapsed ? "Upload file" : undefined}
+        >
+          <Plus size={20} className="shrink-0 text-slate-600" />
+          {!collapsed && <span>New</span>}
+        </button>
       </div>
 
-      {/* Nav */}
-      <nav className={`flex flex-col gap-0.5 ${collapsed ? "px-2" : "px-3"} flex-1 overflow-y-auto`}>
-        {/* Expand chevron when collapsed */}
+      {/* Navigation */}
+      <nav className={`flex-1 flex flex-col gap-0.5 overflow-y-auto ${collapsed ? "px-2" : "px-3"}`}>
         {collapsed && (
-          <button
-            onClick={toggle}
-            title="Expand sidebar"
-            className="mx-auto mb-1 p-1.5 rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors border-0 bg-transparent cursor-pointer"
-          >
-            <ChevronRight size={14} />
+          <button onClick={toggle} title="Expand" className="mx-auto mb-2 p-2 rounded-full text-slate-500 hover:bg-slate-200 border-0 bg-transparent cursor-pointer transition-colors">
+            <ChevronRight size={16} />
           </button>
         )}
 
@@ -158,16 +130,14 @@ export default function AppSidebar() {
               key={item.id}
               onClick={() => handleNav(item)}
               title={collapsed ? item.label : undefined}
-              className={`w-full flex items-center ${collapsed ? "justify-center p-3" : "gap-4 px-4 py-2.5"} rounded-full border-0 text-base font-medium transition-all duration-100 cursor-pointer
-                ${isActive
-                  ? "bg-violet-100 text-violet-800 font-semibold"
-                  : "bg-transparent text-slate-700 hover:bg-slate-200 hover:text-slate-900"
-                }`}
+              className={`w-full flex items-center gap-3 rounded-full border-0 text-sm font-medium transition-colors duration-100 cursor-pointer
+                ${collapsed ? "justify-center p-3" : "px-4 py-2"}
+                ${isActive ? "bg-[#e8eaf6] text-[#1a237e] font-semibold" : "bg-transparent text-slate-700 hover:bg-slate-200"}`}
             >
-              <span className={`shrink-0 ${isActive ? "text-violet-700" : "text-slate-500"}`}>
+              <span className={`shrink-0 ${isActive ? "text-[#3949ab]" : "text-slate-500"}`}>
                 {item.icon}
               </span>
-              {!collapsed && <span className="whitespace-nowrap">{item.label}</span>}
+              {!collapsed && <span className="truncate">{item.label}</span>}
             </button>
           );
         })}
@@ -175,19 +145,19 @@ export default function AppSidebar() {
 
       {/* Storage */}
       {!collapsed && (
-        <div className="p-4 border-t border-slate-200/60">
+        <div className="px-4 py-4 border-t border-slate-200/60 mt-2">
           <div className="flex items-center gap-2 mb-2">
             <HardDrive size={14} className="text-slate-500 shrink-0" />
             <span className="text-sm font-medium text-slate-600">Storage</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden mb-2">
+          <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden mb-2">
             <div
-              className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-all duration-500"
               style={{ width: `${progressPct}%` }}
             />
           </div>
           <p className="text-sm text-slate-500">{totalGB.toFixed(1)} GB of 10 GB used</p>
-          <button className="mt-2 text-sm text-violet-700 font-medium hover:text-violet-800 border-0 bg-transparent cursor-pointer p-0">
+          <button className="mt-1.5 text-sm text-violet-700 font-medium hover:underline border-0 bg-transparent cursor-pointer p-0">
             Get more storage
           </button>
         </div>
