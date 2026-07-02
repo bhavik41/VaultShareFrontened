@@ -7,21 +7,21 @@ import {
 import type { AuditLog, AuditAction } from "@/store/auditApi"
 
 const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; color: string }> = {
-  upload:            { label: "Uploaded",          icon: <UploadCloud size={12} />,  color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
-  download:          { label: "Downloaded",        icon: <Download size={12} />,     color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
+  upload:            { label: "Uploaded",          icon: <UploadCloud size={12} />,  color: "text-blue-600 bg-blue-500/10 border-blue-500/20" },
+  download:          { label: "Downloaded",        icon: <Download size={12} />,     color: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20" },
   view:              { label: "Viewed",            icon: <Eye size={12} />,          color: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
-  share:             { label: "Shared",            icon: <Share2 size={12} />,       color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" },
+  share:             { label: "Shared",            icon: <Share2 size={12} />,       color: "text-indigo-600 bg-indigo-500/10 border-indigo-500/20" },
   permission_change: { label: "Permission change", icon: <ShieldAlert size={12} />, color: "text-orange-400 bg-orange-500/10 border-orange-500/20" },
-  delete:            { label: "Deleted",           icon: <Trash2 size={12} />,       color: "text-red-400 bg-red-500/10 border-red-500/20" },
-  revoke_access:     { label: "Revoked access",    icon: <ShieldAlert size={12} />, color: "text-rose-400 bg-rose-500/10 border-rose-500/20" },
-  star:              { label: "Starred",           icon: <Crown size={12} />,        color: "text-amber-400 bg-amber-500/10 border-amber-500/20" },
+  delete:            { label: "Deleted",           icon: <Trash2 size={12} />,       color: "text-red-600 bg-red-500/10 border-red-500/20" },
+  revoke_access:     { label: "Revoked access",    icon: <ShieldAlert size={12} />, color: "text-rose-600 bg-rose-500/10 border-rose-500/20" },
+  star:              { label: "Starred",           icon: <Crown size={12} />,        color: "text-amber-600 bg-amber-500/10 border-amber-500/20" },
   invitation_accepted: { label: "Invite accepted", icon: <Share2 size={12} />,      color: "text-teal-400 bg-teal-500/10 border-teal-500/20" },
-  version_upload:    { label: "Version uploaded",  icon: <GitBranch size={12} />,    color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
-  version_request:   { label: "Version requested", icon: <Clock size={12} />,        color: "text-amber-400 bg-amber-500/10 border-amber-500/20" },
-  version_approved:  { label: "Version approved",  icon: <CheckCircle2 size={12} />, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
-  version_rejected:  { label: "Version rejected",  icon: <XCircle size={12} />,      color: "text-rose-400 bg-rose-500/10 border-rose-500/20" },
-  version_activated: { label: "Version activated", icon: <History size={12} />,      color: "text-violet-400 bg-violet-500/10 border-violet-500/20" },
-  version_deleted:   { label: "Version deleted",   icon: <Trash2 size={12} />,       color: "text-red-400 bg-red-500/10 border-red-500/20" },
+  version_upload:    { label: "Version uploaded",  icon: <GitBranch size={12} />,    color: "text-blue-600 bg-blue-500/10 border-blue-500/20" },
+  version_request:   { label: "Version requested", icon: <Clock size={12} />,        color: "text-amber-600 bg-amber-500/10 border-amber-500/20" },
+  version_approved:  { label: "Version approved",  icon: <CheckCircle2 size={12} />, color: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20" },
+  version_rejected:  { label: "Version rejected",  icon: <XCircle size={12} />,      color: "text-rose-600 bg-rose-500/10 border-rose-500/20" },
+  version_activated: { label: "Version activated", icon: <History size={12} />,      color: "text-violet-600 bg-violet-500/10 border-violet-500/20" },
+  version_deleted:   { label: "Version deleted",   icon: <Trash2 size={12} />,       color: "text-red-600 bg-red-500/10 border-red-500/20" },
 }
 
 const ACTIONS: AuditAction[] = [
@@ -48,7 +48,7 @@ interface AuditLogTableProps {
 function UserAvatar({ name }: { name: string }) {
   const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
   return (
-    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-[10px] font-bold text-slate-900">
+    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-[10px] font-bold text-white">
       {initials}
     </div>
   )
@@ -68,7 +68,7 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => onFilterChange("")}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${filterAction === "" ? "border-violet-500/50 bg-violet-500/10 text-violet-300" : "border-gray-200 bg-black/3 text-slate-400 hover:text-slate-900"}`}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${filterAction === "" ? "border-violet-500/50 bg-violet-50 text-violet-700" : "border-gray-200 bg-black/3 text-slate-400 hover:text-slate-900"}`}
           >All</button>
           {ACTIONS.map((a) => {
             const meta = ACTION_META[a]
@@ -118,7 +118,7 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
                       {log.userName}
                       {isOwner && (
                         <span title="File Owner" className="inline-flex shrink-0">
-                          <Crown size={12} className="text-amber-400" />
+                          <Crown size={12} className="text-amber-600" />
                         </span>
                       )}
                     </p>
@@ -130,7 +130,7 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
                       <p className="mb-2 text-xs font-semibold text-slate-600">Manage access</p>
                       <button onClick={() => { onRoleChange!(log.userId, "editor"); setHoveredUserId(null) }} className="w-full rounded-lg px-3 py-1.5 text-left text-xs text-slate-600 hover:bg-black/3">Set as Editor</button>
                       <button onClick={() => { onRoleChange!(log.userId, "viewer"); setHoveredUserId(null) }} className="w-full rounded-lg px-3 py-1.5 text-left text-xs text-slate-600 hover:bg-black/3">Set as Viewer</button>
-                      <button onClick={() => { onRevokeAccess!(log.userId); setHoveredUserId(null) }} className="w-full rounded-lg px-3 py-1.5 text-left text-xs text-rose-400 hover:bg-rose-950/20">Revoke Access</button>
+                      <button onClick={() => { onRevokeAccess!(log.userId); setHoveredUserId(null) }} className="w-full rounded-lg px-3 py-1.5 text-left text-xs text-rose-600 hover:bg-rose-950/20">Revoke Access</button>
                     </div>
                   )}
                   {isSelf && !isOwner && (
@@ -166,7 +166,7 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const p = Math.max(1, Math.min(page - 2, totalPages - 4)) + i
               return (
-                <button key={p} onClick={() => onPageChange(p)} className={`flex h-7 w-7 items-center justify-center rounded-lg border text-xs font-semibold transition-colors ${p === page ? "border-violet-500 bg-violet-500/20 text-violet-300" : "border-gray-200 text-slate-400 hover:text-slate-900"}`}>{p}</button>
+                <button key={p} onClick={() => onPageChange(p)} className={`flex h-7 w-7 items-center justify-center rounded-lg border text-xs font-semibold transition-colors ${p === page ? "border-violet-500 bg-violet-100 text-violet-700" : "border-gray-200 text-slate-400 hover:text-slate-900"}`}>{p}</button>
               )
             })}
             <button onClick={() => onPageChange(page + 1)} disabled={page === totalPages} className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 hover:text-slate-900 disabled:opacity-40"><ChevronRight size={13} /></button>

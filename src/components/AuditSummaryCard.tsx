@@ -7,12 +7,12 @@ interface AuditSummaryCardProps {
 }
 
 const ACTION_ICONS: Record<string, { icon: React.ReactNode; color: string }> = {
-  upload:            { icon: <UploadCloud size={14} />,  color: "text-blue-400" },
-  download:          { icon: <Download size={14} />,     color: "text-emerald-400" },
+  upload:            { icon: <UploadCloud size={14} />,  color: "text-blue-600" },
+  download:          { icon: <Download size={14} />,     color: "text-emerald-600" },
   view:              { icon: <Eye size={14} />,          color: "text-purple-400" },
-  share:             { icon: <Share2 size={14} />,       color: "text-indigo-400" },
+  share:             { icon: <Share2 size={14} />,       color: "text-indigo-600" },
   permission_change: { icon: <ShieldAlert size={14} />, color: "text-orange-400" },
-  delete:            { icon: <Trash2 size={14} />,       color: "text-red-400" },
+  delete:            { icon: <Trash2 size={14} />,       color: "text-red-600" },
 }
 
 export const AuditSummaryCard: React.FC<AuditSummaryCardProps> = ({ summary }) => {
@@ -25,7 +25,7 @@ export const AuditSummaryCard: React.FC<AuditSummaryCardProps> = ({ summary }) =
       <div className="rounded-xl border border-gray-200 bg-slate-50 p-4">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Unique Users</p>
         <div className="mt-1 flex items-center gap-1.5">
-          <Users size={16} className="text-violet-400" />
+          <Users size={16} className="text-violet-600" />
           <p className="text-2xl font-bold text-slate-900">{summary.uniqueUsers}</p>
         </div>
       </div>

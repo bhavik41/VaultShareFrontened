@@ -144,7 +144,7 @@ export default function ContactPage() {
 
             {sent ? (
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
-                <p className="font-semibold text-emerald-300">Message sent!</p>
+                <p className="font-semibold text-emerald-700">Message sent!</p>
                 <p className="mt-1 text-sm text-slate-400">We'll get back to you within 24 hours.</p>
               </div>
             ) : (

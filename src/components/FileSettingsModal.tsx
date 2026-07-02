@@ -167,7 +167,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center gap-2 min-w-0">
-            <Settings size={16} className="text-violet-400 flex-shrink-0" />
+            <Settings size={16} className="text-violet-600 flex-shrink-0" />
             <div className="min-w-0">
               <p className="text-xs text-slate-500 font-medium">File Settings</p>
               <p className="text-sm font-bold text-slate-900 truncate">{fileName}</p>
@@ -175,7 +175,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
           </div>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-gray-200 border-0 bg-transparent cursor-pointer flex-shrink-0"
+            className="text-slate-600 hover:text-slate-800 transition-colors p-1 rounded-lg hover:bg-gray-200 border-0 bg-transparent cursor-pointer flex-shrink-0"
           >
             <X size={16} />
           </button>
@@ -189,8 +189,8 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-0 cursor-pointer transition-colors flex-1 justify-center
                 ${activeTab === tab.id
-                  ? "text-violet-400 border-b-2 border-violet-500 bg-violet-500/5"
-                  : "text-slate-500 hover:text-slate-600 bg-transparent"
+                  ? "text-violet-600 border-b-2 border-violet-500 bg-violet-500/5"
+                  : "text-slate-600 hover:text-slate-800 bg-transparent"
                 }`}
             >
               {tab.icon}
@@ -229,14 +229,14 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                     <button
                       type="submit"
                       disabled={inviteLoading || !inviteEmail.trim()}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-slate-900 text-sm font-semibold rounded-lg border-0 cursor-pointer transition-colors flex-1 justify-center"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-colors flex-1 justify-center"
                     >
                       <UserPlus size={13} />
                       {inviteLoading ? "Sending…" : "Send Invite"}
                     </button>
                   </div>
-                  {inviteError && <p className="text-xs text-rose-400">{inviteError}</p>}
-                  {inviteSuccess && <p className="text-xs text-emerald-400">Invitation sent.</p>}
+                  {inviteError && <p className="text-xs text-rose-600">{inviteError}</p>}
+                  {inviteSuccess && <p className="text-xs text-emerald-600">Invitation sent.</p>}
                 </form>
               </div>
 
@@ -268,7 +268,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                           <button
                             onClick={() => handleRemove(c.userId)}
                             disabled={actionLoading === c.userId}
-                            className="text-rose-500 hover:text-rose-400 text-xs font-semibold border-0 bg-transparent cursor-pointer disabled:opacity-50 px-1"
+                            className="text-rose-500 hover:text-rose-600 text-xs font-semibold border-0 bg-transparent cursor-pointer disabled:opacity-50 px-1"
                           >
                             Remove
                           </button>
@@ -305,7 +305,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                         {versionPolicy === p.value && <div className="w-2 h-2 rounded-full bg-violet-400" />}
                       </div>
                       <div>
-                        <p className={`text-sm font-semibold ${versionPolicy === p.value ? "text-violet-300" : "text-slate-600"}`}>{p.label}</p>
+                        <p className={`text-sm font-semibold ${versionPolicy === p.value ? "text-violet-700" : "text-slate-600"}`}>{p.label}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{p.desc}</p>
                       </div>
                     </button>
@@ -323,7 +323,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
               {chatLoading ? (
                 <p className="text-xs text-slate-500">Loading…</p>
               ) : (
-                <div className="flex items-center justify-between bg-gray-100 border border-gray-200 rounded-xl p-4">
+                <div className="flex items-center justify-between bg-white border border-slate-300 rounded-xl p-4">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">Admin-Only Chat</p>
                     <p className="text-xs text-slate-500 mt-0.5">When enabled, only you can send messages in this file's chat room.</p>

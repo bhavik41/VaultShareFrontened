@@ -31,7 +31,7 @@ export default function SigninPage() {
       <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-slate-900 shadow-lg shadow-violet-500/20">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shadow-lg shadow-violet-500/20">
               V
             </div>
             <span className="text-slate-900 font-bold text-lg tracking-tight">VaultShare</span>
@@ -96,7 +96,7 @@ export default function SigninPage() {
                   <label className="text-sm font-medium text-slate-600">Password</label>
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-violet-400 hover:text-violet-300 transition-colors no-underline"
+                    className="text-sm text-violet-600 hover:text-violet-700 transition-colors no-underline"
                   >
                     Forgot password?
                   </Link>
@@ -114,7 +114,7 @@ export default function SigninPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800 transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -123,7 +123,7 @@ export default function SigninPage() {
 
               {/* Error */}
               {error && (
-                <p className="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
+                <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
                   {error}
                 </p>
               )}
@@ -132,7 +132,7 @@ export default function SigninPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-slate-900 font-semibold flex items-center justify-center gap-2 transition-colors text-sm"
+                className="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors text-sm"
               >
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 Sign in
@@ -149,7 +149,7 @@ export default function SigninPage() {
 
           <p className="mt-6 text-center text-sm text-slate-500">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-violet-400 hover:text-violet-300 font-medium transition-colors no-underline">
+            <Link to="/signup" className="text-violet-600 hover:text-violet-700 font-medium transition-colors no-underline">
               Sign up
             </Link>
           </p>

@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
           {/* Icon */}
           <div className="flex justify-center mb-6">
             <div className="h-14 w-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
-              <Mail className="h-7 w-7 text-violet-400" />
+              <Mail className="h-7 w-7 text-violet-600" />
             </div>
           </div>
 
@@ -34,15 +34,15 @@ export default function ForgotPasswordPage() {
 
           {resetEmailSent ? (
             <div className="flex flex-col items-center gap-4">
-              <CheckCircle2 className="h-12 w-12 text-emerald-400" />
+              <CheckCircle2 className="h-12 w-12 text-emerald-600" />
               <p className="text-slate-900 text-center font-medium">Check your inbox!</p>
               <p className="text-slate-900/50 text-sm text-center">
-                We sent a 6-digit OTP to <span className="text-violet-400">{email}</span>.
+                We sent a 6-digit OTP to <span className="text-violet-600">{email}</span>.
               </p>
               <Link
                 to="/reset-password"
                 state={{ email }}
-                className="mt-2 w-full text-center py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-slate-900 font-medium transition-colors"
+                className="mt-2 w-full text-center py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-medium transition-colors"
               >
                 Enter OTP
               </Link>
@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
               </div>
 
               {error && (
-                <p className="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+                <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
                   {error}
                 </p>
               )}
@@ -70,7 +70,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-slate-900 font-semibold flex items-center justify-center gap-2 transition-colors"
+                className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
               >
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 Send Reset Code

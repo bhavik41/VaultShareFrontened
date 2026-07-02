@@ -103,7 +103,7 @@ export default function FileAuditPage() {
       <main className="mx-auto max-w-5xl px-6 py-8">
         <div className="mb-6 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600/20">
-            <ShieldCheck size={20} className="text-violet-400" />
+            <ShieldCheck size={20} className="text-violet-600" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-slate-900">File Audit History</h1>
@@ -129,7 +129,7 @@ export default function FileAuditPage() {
         )}
 
         {!loading && error && (
-          <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-400">
+          <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-600">
             <AlertCircle size={16} />
             {error}
           </div>

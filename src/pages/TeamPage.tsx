@@ -28,7 +28,7 @@ const INVITE_LINK = "vaultshare.io/invite/team-xK9mP2-rnd7abc"
 
 function roleBadge(role: Role) {
   if (role === "owner") return { label: "Owner", className: "bg-yellow-500/15 text-yellow-300 border border-yellow-500/20" }
-  if (role === "editor") return { label: "Can edit", className: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/20" }
+  if (role === "editor") return { label: "Can edit", className: "bg-emerald-500/15 text-emerald-700 border border-emerald-500/20" }
   return { label: "Can view", className: "bg-gray-300 text-slate-600 border border-slate-600" }
 }
 
@@ -133,7 +133,7 @@ export default function TeamPage() {
           </form>
 
           {sent && (
-            <p className="mt-3 text-sm text-emerald-400">
+            <p className="mt-3 text-sm text-emerald-600">
               Invite sent to <span className="font-semibold">{sent}</span>
             </p>
           )}
@@ -175,7 +175,7 @@ export default function TeamPage() {
                     {m.role !== "owner" && (
                       <button
                         onClick={() => handleRemove(m.id)}
-                        className="text-xs font-medium text-rose-500 transition-colors hover:text-rose-400"
+                        className="text-xs font-medium text-rose-500 transition-colors hover:text-rose-600"
                       >
                         Remove
                       </button>

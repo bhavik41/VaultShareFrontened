@@ -40,12 +40,12 @@ const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; c
   upload: {
     label: "Uploaded",
     icon: <UploadCloud size={14} />,
-    color: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+    color: "text-blue-600 bg-blue-500/10 border-blue-500/20",
   },
   download: {
     label: "Downloaded",
     icon: <Download size={14} />,
-    color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    color: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20",
   },
   view: {
     label: "Viewed",
@@ -55,7 +55,7 @@ const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; c
   share: {
     label: "Shared",
     icon: <Share2 size={14} />,
-    color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
+    color: "text-indigo-600 bg-indigo-500/10 border-indigo-500/20",
   },
   permission_change: {
     label: "Permission changed",
@@ -65,17 +65,17 @@ const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; c
   delete: {
     label: "Deleted",
     icon: <Trash2 size={14} />,
-    color: "text-red-400 bg-red-500/10 border-red-500/20",
+    color: "text-red-600 bg-red-500/10 border-red-500/20",
   },
   revoke_access: {
     label: "Access revoked",
     icon: <ShieldAlert size={14} />,
-    color: "text-rose-400 bg-rose-500/10 border-rose-500/20",
+    color: "text-rose-600 bg-rose-500/10 border-rose-500/20",
   },
   star: {
     label: "Starred",
     icon: <Crown size={14} />,
-    color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+    color: "text-amber-600 bg-amber-500/10 border-amber-500/20",
   },
   invitation_accepted: {
     label: "Invite accepted",
@@ -85,40 +85,40 @@ const ACTION_META: Record<AuditAction, { label: string; icon: React.ReactNode; c
   version_upload: {
     label: "Version uploaded",
     icon: <GitBranch size={14} />,
-    color: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+    color: "text-blue-600 bg-blue-500/10 border-blue-500/20",
   },
   version_request: {
     label: "Version requested",
     icon: <Clock size={14} />,
-    color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+    color: "text-amber-600 bg-amber-500/10 border-amber-500/20",
   },
   version_approved: {
     label: "Version approved",
     icon: <CheckCircle2 size={14} />,
-    color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    color: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20",
   },
   version_rejected: {
     label: "Version rejected",
     icon: <XCircle size={14} />,
-    color: "text-rose-400 bg-rose-500/10 border-rose-500/20",
+    color: "text-rose-600 bg-rose-500/10 border-rose-500/20",
   },
   version_activated: {
     label: "Version activated",
     icon: <History size={14} />,
-    color: "text-violet-400 bg-violet-500/10 border-violet-500/20",
+    color: "text-violet-600 bg-violet-500/10 border-violet-500/20",
   },
   version_deleted: {
     label: "Version deleted",
     icon: <Trash2 size={14} />,
-    color: "text-red-400 bg-red-500/10 border-red-500/20",
+    color: "text-red-600 bg-red-500/10 border-red-500/20",
   },
 };
 
 function FileIcon({ mimeType }: { mimeType: string }) {
   if (mimeType.startsWith("image/"))
-    return <Image size={18} className="text-violet-400" />;
+    return <Image size={18} className="text-violet-600" />;
   if (mimeType.includes("zip") || mimeType.includes("archive") || mimeType.includes("tar"))
-    return <FileArchive size={18} className="text-amber-400" />;
+    return <FileArchive size={18} className="text-amber-600" />;
   if (
     mimeType.includes("javascript") ||
     mimeType.includes("typescript") ||
@@ -213,7 +213,7 @@ export default function ActivityPage() {
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600/20">
-              <Activity size={20} className="text-violet-400" />
+              <Activity size={20} className="text-violet-600" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900">My Activity</h1>
@@ -237,8 +237,8 @@ export default function ActivityPage() {
               onClick={() => setTab(t.id)}
               className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
                 tab === t.id
-                  ? "bg-violet-600/20 text-violet-300"
-                  : "text-slate-400 hover:text-slate-700"
+                  ? "bg-violet-600/20 text-violet-700"
+                  : "text-slate-600 hover:text-slate-800"
               }`}
             >
               {t.label}
@@ -257,7 +257,7 @@ export default function ActivityPage() {
         )}
 
         {!loading && error && (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-400">
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-600">
             {error}
           </div>
         )}

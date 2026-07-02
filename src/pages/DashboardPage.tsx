@@ -63,11 +63,11 @@ const getFileTypeInfo = (fileName: string) => {
   if (ext === "fig")
     return { label: "FIG", borderColor: "border-l-4 border-l-purple-500", bgColor: "bg-purple-500/10", textColor: "text-purple-400", icon: <FileText size={18} className="text-purple-400" /> };
   if (["doc", "docx", "txt", "rtf", "odt"].includes(ext))
-    return { label: "DOC", borderColor: "border-l-4 border-l-amber-500", bgColor: "bg-amber-500/10", textColor: "text-amber-400", icon: <FileText size={18} className="text-amber-400" /> };
+    return { label: "DOC", borderColor: "border-l-4 border-l-amber-500", bgColor: "bg-amber-500/10", textColor: "text-amber-600", icon: <FileText size={18} className="text-amber-600" /> };
   if (["zip", "rar", "7z", "tar", "gz"].includes(ext))
-    return { label: "ZIP", borderColor: "border-l-4 border-l-indigo-400", bgColor: "bg-indigo-500/10", textColor: "text-indigo-400", icon: <FileArchive size={18} className="text-indigo-400" /> };
+    return { label: "ZIP", borderColor: "border-l-4 border-l-indigo-400", bgColor: "bg-indigo-500/10", textColor: "text-indigo-600", icon: <FileArchive size={18} className="text-indigo-600" /> };
   if (["json", "js", "ts", "html", "css", "xml", "cpp", "py"].includes(ext))
-    return { label: "CODE", borderColor: "border-l-4 border-l-emerald-500", bgColor: "bg-emerald-500/10", textColor: "text-emerald-400", icon: <Code size={18} className="text-emerald-400" /> };
+    return { label: "CODE", borderColor: "border-l-4 border-l-emerald-500", bgColor: "bg-emerald-500/10", textColor: "text-emerald-600", icon: <Code size={18} className="text-emerald-600" /> };
   if (["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(ext))
     return { label: "IMG", borderColor: "border-l-4 border-l-pink-500", bgColor: "bg-pink-500/10", textColor: "text-pink-400", icon: <Image size={18} className="text-pink-400" /> };
   return { label: "FILE", borderColor: "border-l-4 border-l-slate-400", bgColor: "bg-slate-500/10", textColor: "text-slate-400", icon: <FileText size={18} className="text-slate-400" /> };
@@ -134,7 +134,7 @@ function ProfileDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2.5 p-1.5 pr-3 bg-gray-100 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
+        className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
       >
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-xs font-bold text-slate-900 shadow-md">
           {initials}
@@ -160,7 +160,7 @@ function ProfileDropdown({
             { icon: <Folder size={15} />, label: "My Files", sub: "Upload & share files", action: () => { setOpen(false); onChangeTab("files"); } },
             { icon: <Share2 size={15} />, label: "Collaboration", sub: "Invitations & shared files", action: () => { setOpen(false); navigate("/collaboration"); } },
             { icon: <Users size={15} />, label: "Manage Sharing", sub: "Permissions & share links", action: () => { setOpen(false); navigate("/file-sharing"); } },
-            { icon: is2faEnabled ? <ShieldCheck size={15} className="text-emerald-400" /> : <ShieldAlert size={15} className="text-amber-400" />, label: "Two-Factor Auth", sub: is2faEnabled ? "Enabled" : "Not enabled", action: () => { setOpen(false); onChangeTab("settings"); } },
+            { icon: is2faEnabled ? <ShieldCheck size={15} className="text-emerald-600" /> : <ShieldAlert size={15} className="text-amber-600" />, label: "Two-Factor Auth", sub: is2faEnabled ? "Enabled" : "Not enabled", action: () => { setOpen(false); onChangeTab("settings"); } },
             { icon: <KeyRound size={15} />, label: "Change Password", sub: "Reset via email", action: () => navigate("/forgot-password") },
             { icon: <Home size={15} />, label: "Home Page", sub: "Go to landing page", action: () => navigate("/") },
           ].map(({ icon, label, sub, action }) => (
@@ -368,7 +368,7 @@ export default function DashboardPage() {
               {typeInfo.label}
             </span>
             {doc.ownership === "shared" && (
-              <span className="flex items-center gap-1 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded bg-violet-500/15 text-violet-400">
+              <span className="flex items-center gap-1 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded bg-violet-500/15 text-violet-600">
                 <BadgeCheck size={10} />
                 Shared
               </span>
@@ -380,12 +380,12 @@ export default function DashboardPage() {
             <button
               onClick={(e) => handleToggleStar(e, doc.id)}
               disabled={starLoading === doc.id}
-              className="p-1.5 rounded-lg text-slate-500 hover:text-amber-400 transition-colors"
+              className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 transition-colors"
               title={isStarred ? "Unstar" : "Star"}
             >
               <Star
                 size={14}
-                className={isStarred ? "fill-amber-400 text-amber-400" : ""}
+                className={isStarred ? "fill-amber-400 text-amber-600" : ""}
               />
             </button>
 
@@ -393,7 +393,7 @@ export default function DashboardPage() {
             <div className="relative">
               <button
                 onClick={(e) => { e.stopPropagation(); setActiveMenuId(isMenuOpen ? null : doc.id); }}
-                className="bg-transparent border-0 cursor-pointer text-slate-500 hover:text-slate-600 p-1.5"
+                className="bg-transparent border-0 cursor-pointer text-slate-600 hover:text-slate-800 p-1.5"
               >
                 <MoreVertical size={16} />
               </button>
@@ -434,20 +434,20 @@ export default function DashboardPage() {
 
         {/* Name */}
         <div className="flex flex-col gap-1 cursor-pointer" onClick={() => navigate(`/files/${doc.id}`)}>
-          <span className="font-bold text-slate-800 text-sm tracking-tight truncate pr-2 hover:text-violet-300 transition-colors">
+          <span className="font-bold text-slate-800 text-sm tracking-tight truncate pr-2 hover:text-violet-700 transition-colors">
             {doc.name}
           </span>
           <span className="text-[11px] text-slate-500">
             {formatBytes(doc.size)} · {new Date(doc.createdAt).toLocaleDateString()}
             {doc.ownership === "shared" && doc.ownerName && (
-              <span className="text-violet-400"> · by {doc.ownerName}</span>
+              <span className="text-violet-600"> · by {doc.ownerName}</span>
             )}
           </span>
         </div>
 
         {/* Bottom row */}
         <div className="flex items-center justify-between border-t border-gray-200/40 pt-3">
-          <div className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/5 px-2 py-1 rounded-lg border border-emerald-500/10">
+          <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-500/5 px-2 py-1 rounded-lg border border-emerald-500/10">
             <Lock size={12} />
             <span className="text-[10px] font-bold uppercase tracking-wider">Encrypted</span>
           </div>
@@ -457,13 +457,13 @@ export default function DashboardPage() {
               <CollaboratorAvatars collaborators={doc.collaborators} />
             )}
             {doc.ownership === "shared" && (
-              <span className="text-[10px] font-semibold capitalize text-violet-400 bg-violet-500/10 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-semibold capitalize text-violet-600 bg-violet-500/10 px-1.5 py-0.5 rounded">
                 {doc.accessLevel}
               </span>
             )}
             <button
               onClick={(e) => { e.stopPropagation(); openChat(doc.id, doc.name); }}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 text-violet-400 border-0 cursor-pointer transition-colors"
+              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 text-violet-600 border-0 cursor-pointer transition-colors"
               title="Open chat for this file"
             >
               <MessageSquare size={12} />
@@ -492,7 +492,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-4">
             <input type="file" ref={fileInputRef} multiple onChange={handleFileChange} className="hidden" />
-            <button onClick={triggerUpload} className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-slate-900 text-sm font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-98 transition-all duration-150">
+            <button onClick={triggerUpload} className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-98 transition-all duration-150">
               <Plus size={16} strokeWidth={2.5} /><span>Upload</span>
             </button>
             <NotificationBell />
@@ -525,7 +525,7 @@ export default function DashboardPage() {
               {localUploads.length > 0 && (
                 <div className="flex flex-col gap-3 p-4 bg-gray-100 border border-gray-200 rounded-2xl">
                   <span className="text-xs font-semibold text-slate-400 flex items-center gap-2">
-                    <Loader2 size={13} className="animate-spin text-violet-400" />Uploading files...
+                    <Loader2 size={13} className="animate-spin text-violet-600" />Uploading files...
                   </span>
                   <div className="flex flex-col gap-2">
                     {localUploads.map((entry) => {
@@ -538,7 +538,7 @@ export default function DashboardPage() {
                             <div className="w-20 h-1.5 rounded-full bg-gray-50 overflow-hidden">
                               <div className="h-full bg-violet-500 rounded-full" style={{ width: `${progress}%` }} />
                             </div>
-                            <span className="text-[10px] font-bold text-violet-400">{progress}%</span>
+                            <span className="text-[10px] font-bold text-violet-600">{progress}%</span>
                           </div>
                         </div>
                       );
@@ -549,7 +549,7 @@ export default function DashboardPage() {
 
               {docsLoading ? (
                 <div className="flex items-center justify-center py-20">
-                  <Loader2 size={24} className="animate-spin text-violet-400" />
+                  <Loader2 size={24} className="animate-spin text-violet-600" />
                 </div>
               ) : filteredFiles.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -579,14 +579,14 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-0.5">
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0 flex items-center gap-2">
-                  <Star size={22} className="fill-amber-400 text-amber-400" />Starred Files
+                  <Star size={22} className="fill-amber-400 text-amber-600" />Starred Files
                 </h1>
                 <span className="text-xs text-slate-500">Files you've marked as important.</span>
               </div>
 
               {docsLoading ? (
                 <div className="flex items-center justify-center py-20">
-                  <Loader2 size={24} className="animate-spin text-amber-400" />
+                  <Loader2 size={24} className="animate-spin text-amber-600" />
                 </div>
               ) : starredDocs.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -599,7 +599,7 @@ export default function DashboardPage() {
               ) : (
                 <div className="flex flex-col items-center justify-center p-12 bg-gray-50/10 border border-gray-200 rounded-3xl text-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
-                    <Star size={24} className="text-amber-400" />
+                    <Star size={24} className="text-amber-600" />
                   </div>
                   <div className="flex flex-col gap-1 max-w-sm">
                     <h3 className="text-sm font-semibold text-slate-700">No starred files</h3>
@@ -630,7 +630,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="bg-[#131224]/30 border border-gray-200 rounded-2xl p-5 flex flex-col gap-2.5">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Security Level</span>
-                  <span className={`text-sm font-bold flex items-center gap-1.5 ${is2faEnabled ? "text-emerald-400" : "text-amber-400"}`}>
+                  <span className={`text-sm font-bold flex items-center gap-1.5 ${is2faEnabled ? "text-emerald-600" : "text-amber-600"}`}>
                     {is2faEnabled ? <><ShieldCheck size={18} /><span>2FA Protected</span></> : <><ShieldAlert size={18} /><span>2FA Disabled</span></>}
                   </span>
                   <span className="text-[10px] text-slate-500 mt-2">{is2faEnabled ? "Login requires OTP." : "Enable 2FA for better security."}</span>
@@ -662,7 +662,7 @@ export default function DashboardPage() {
                   <div>
                     <h3 className="text-sm font-semibold text-slate-700 m-0 flex items-center gap-2">
                       Two-Factor Authentication (2FA)
-                      {is2faEnabled ? <ShieldCheck size={16} className="text-emerald-400" /> : <ShieldAlert size={16} className="text-amber-400" />}
+                      {is2faEnabled ? <ShieldCheck size={16} className="text-emerald-600" /> : <ShieldAlert size={16} className="text-amber-600" />}
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed m-0 mt-1 max-w-sm">
                       {is2faEnabled ? "Your account is secure. 2FA is active and guards login actions." : "Enable 2FA to guard your account against unauthorized access."}
@@ -688,7 +688,7 @@ export default function DashboardPage() {
                         {authLoading ? <Loader2 size={14} className="animate-spin" /> : "Confirm"}
                       </Button>
                     </form>
-                    {authError && <p className="text-rose-400 text-xs font-semibold m-0 mt-1">{authError}</p>}
+                    {authError && <p className="text-rose-600 text-xs font-semibold m-0 mt-1">{authError}</p>}
                   </div>
                 )}
               </div>
@@ -708,7 +708,7 @@ export default function DashboardPage() {
             <p className="text-xs text-slate-500 leading-relaxed m-0">
               This preview URL only works in your current browser session. Use Manage Sharing for permissioned share links.
             </p>
-            <div className="bg-[#131224]/40 border border-gray-200 rounded-xl p-3 text-xs text-violet-400 font-mono break-all line-clamp-3 select-all leading-normal">{shareUrl}</div>
+            <div className="bg-[#131224]/40 border border-gray-200 rounded-xl p-3 text-xs text-violet-600 font-mono break-all line-clamp-3 select-all leading-normal">{shareUrl}</div>
             <div className="flex gap-3 mt-1.5">
               <button
                 onClick={() => { navigator.clipboard.writeText(shareUrl).catch(() => {}); setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000); }}

@@ -253,7 +253,7 @@ export default function FileSharingPage() {
           <button
             type="button"
             onClick={loadPageData}
-            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-black/5"
+            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-slate-50"
           >
             <RefreshCw size={16} />
             Refresh
@@ -322,7 +322,7 @@ export default function FileSharingPage() {
               {selectedFile && (
                 <div className="rounded-lg border border-gray-200 bg-black/3 p-5">
                   <div className="mb-3 flex items-center gap-2">
-                    <ShieldCheck size={18} className="text-violet-300" />
+                    <ShieldCheck size={18} className="text-violet-700" />
                     <h2 className="text-lg font-semibold">Version Upload Policy</h2>
                   </div>
                   <p className="mb-3 text-xs text-slate-400">
@@ -356,7 +356,7 @@ export default function FileSharingPage() {
                   className="rounded-lg border border-gray-200 bg-black/3 p-5"
                 >
                   <div className="mb-4 flex items-center gap-2">
-                    <UserPlus size={18} className="text-violet-300" />
+                    <UserPlus size={18} className="text-violet-700" />
                     <h2 className="text-lg font-semibold">Invite Collaborator</h2>
                   </div>
 
@@ -393,7 +393,7 @@ export default function FileSharingPage() {
                   className="rounded-lg border border-gray-200 bg-black/3 p-5"
                 >
                   <div className="mb-4 flex items-center gap-2">
-                    <Share2 size={18} className="text-violet-300" />
+                    <Share2 size={18} className="text-violet-700" />
                     <h2 className="text-lg font-semibold">Direct Share</h2>
                   </div>
 
@@ -428,7 +428,7 @@ export default function FileSharingPage() {
 
               <div className="rounded-lg border border-gray-200 bg-black/3 p-5">
                 <div className="mb-4 flex items-center gap-2">
-                  <Mail size={18} className="text-violet-300" />
+                  <Mail size={18} className="text-violet-700" />
                   <h2 className="text-lg font-semibold">Sent Invitations</h2>
                 </div>
 
@@ -466,7 +466,7 @@ export default function FileSharingPage() {
 
               <div className="rounded-lg border border-gray-200 bg-black/3 p-5">
                 <div className="mb-4 flex items-center gap-2">
-                  <Users size={18} className="text-violet-300" />
+                  <Users size={18} className="text-violet-700" />
                   <h2 className="text-lg font-semibold">Collaborators</h2>
                 </div>
 
@@ -504,7 +504,7 @@ export default function FileSharingPage() {
                           <button
                             type="button"
                             onClick={() => handleRemoveCollaborator(user.userId)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-slate-900 hover:bg-red-500"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white hover:bg-red-500"
                             title="Remove collaborator"
                           >
                             <Trash2 size={16} />
@@ -518,7 +518,7 @@ export default function FileSharingPage() {
 
               <div className="rounded-lg border border-gray-200 bg-black/3 p-5">
                 <div className="mb-4 flex items-center gap-2">
-                  <Link size={18} className="text-violet-300" />
+                  <Link size={18} className="text-violet-700" />
                   <h2 className="text-lg font-semibold">Share Links</h2>
                 </div>
 
@@ -585,7 +585,7 @@ export default function FileSharingPage() {
                               {formatDate(shareLink.expiresAt)}
                               {shareLink.revokedAt ? " - Revoked" : ""}
                               {shareLink.passwordProtected && (
-                                <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-300">
+                                <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-700">
                                   🔒 Password
                                 </span>
                               )}
@@ -596,7 +596,7 @@ export default function FileSharingPage() {
                             <button
                               type="button"
                               onClick={() => handleCopyLink(shareLink.token)}
-                              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 bg-black/3 text-slate-900 hover:bg-black/5"
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 bg-black/3 text-slate-900 hover:bg-slate-50"
                               title="Copy link"
                             >
                               <Copy size={16} />
@@ -606,7 +606,7 @@ export default function FileSharingPage() {
                               type="button"
                               onClick={() => handleRevokeLink(shareLink.token)}
                               disabled={!!shareLink.revokedAt}
-                              className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-slate-900 hover:bg-red-500 disabled:opacity-50"
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white hover:bg-red-500 disabled:opacity-50"
                               title="Revoke link"
                             >
                               <Trash2 size={16} />

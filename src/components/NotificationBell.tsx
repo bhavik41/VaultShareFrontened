@@ -5,9 +5,9 @@ import { getNotifications, markNotificationRead, type AppNotification } from "@/
 import { useAppSelector } from "@/store/hooks";
 
 const ICONS: Record<AppNotification["type"], React.ReactNode> = {
-  version_request: <Clock size={14} className="text-amber-400" />,
-  version_approved: <CheckCircle2 size={14} className="text-emerald-400" />,
-  version_rejected: <XCircle size={14} className="text-rose-400" />,
+  version_request: <Clock size={14} className="text-amber-600" />,
+  version_approved: <CheckCircle2 size={14} className="text-emerald-600" />,
+  version_rejected: <XCircle size={14} className="text-rose-600" />,
 };
 
 const POLL_INTERVAL_MS = 30000;

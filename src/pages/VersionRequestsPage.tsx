@@ -76,7 +76,7 @@ export default function VersionRequestsPage() {
       <div className="mx-auto max-w-4xl p-8">
         <div className="mb-6 flex flex-col gap-0.5">
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-900">
-            <Clock size={22} className="text-amber-400" />
+            <Clock size={22} className="text-amber-600" />
             Version Upload Requests
           </h1>
           <span className="text-xs text-slate-500">
@@ -84,11 +84,11 @@ export default function VersionRequestsPage() {
           </span>
         </div>
 
-        {error && <p className="mb-4 text-xs text-rose-400">{error}</p>}
+        {error && <p className="mb-4 text-xs text-rose-600">{error}</p>}
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 size={24} className="animate-spin text-violet-400" />
+            <Loader2 size={24} className="animate-spin text-violet-600" />
           </div>
         ) : requests.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-gray-200 bg-gray-50/10 p-12 text-center">
@@ -112,7 +112,7 @@ export default function VersionRequestsPage() {
                 <div className="min-w-0">
                   <Link
                     to={`/files/${req.fileId}`}
-                    className="truncate text-sm font-semibold text-slate-800 hover:text-violet-300"
+                    className="truncate text-sm font-semibold text-slate-800 hover:text-violet-700"
                   >
                     {fileNames.get(req.fileId) ?? req.originalName}
                   </Link>
@@ -127,7 +127,7 @@ export default function VersionRequestsPage() {
                   <button
                     disabled={actionLoadingId === req.id}
                     onClick={() => handleApprove(req)}
-                    className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50"
+                    className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 disabled:opacity-50"
                   >
                     {actionLoadingId === req.id ? (
                       <Loader2 size={13} className="animate-spin" />

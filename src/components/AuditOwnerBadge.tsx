@@ -9,9 +9,9 @@ interface AuditOwnerBadgeProps {
 export const AuditOwnerBadge: React.FC<AuditOwnerBadgeProps> = ({ ownerName, isCurrentUser }) => {
   return (
     <div className="flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2">
-      <Crown size={14} className="text-amber-400 shrink-0" />
+      <Crown size={14} className="text-amber-600 shrink-0" />
       <div>
-        <p className="text-xs font-semibold text-amber-300">
+        <p className="text-xs font-semibold text-amber-700">
           File Owner: <span className="text-slate-900">{ownerName}</span>
           {isCurrentUser && <span className="ml-1 text-amber-500/70">(you)</span>}
         </p>

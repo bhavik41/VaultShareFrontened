@@ -26,12 +26,12 @@ export default function ChatSidebar({
       {!isOpen && (
         <button
           onClick={onToggle}
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-1 bg-gray-100 border border-gray-200 border-r-0 rounded-l-xl px-2 py-3 text-slate-400 hover:text-violet-400 hover:bg-slate-850 cursor-pointer transition-all duration-200 shadow-lg"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-1 bg-gray-100 border border-gray-200 border-r-0 rounded-l-xl px-2 py-3 text-slate-400 hover:text-violet-600 hover:bg-slate-850 cursor-pointer transition-all duration-200 shadow-lg"
           title="Open chat"
         >
           <MessageSquare size={16} />
           {unreadCount > 0 && (
-            <span className="w-5 h-5 rounded-full bg-violet-600 text-slate-900 text-[9px] font-bold flex items-center justify-center">
+            <span className="w-5 h-5 rounded-full bg-violet-600 text-white text-[9px] font-bold flex items-center justify-center">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}

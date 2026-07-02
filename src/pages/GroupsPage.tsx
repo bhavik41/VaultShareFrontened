@@ -53,9 +53,9 @@ function formatSize(bytes: number) {
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  owner: 'bg-purple-500/20 text-purple-300',
-  admin: 'bg-amber-500/20 text-amber-300',
-  editor: 'bg-blue-500/20 text-blue-300',
+  owner: 'bg-purple-100 text-purple-700',
+  admin: 'bg-amber-100 text-amber-700',
+  editor: 'bg-blue-100 text-blue-700',
   viewer: 'bg-slate-500/20 text-slate-600',
 }
 
@@ -351,7 +351,7 @@ export default function GroupsPage() {
                   <button
                     type="submit"
                     disabled={actionLoading}
-                    className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-lg text-sm font-medium disabled:opacity-50"
+                    className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium disabled:opacity-50"
                   >
                     Save
                   </button>
@@ -370,7 +370,7 @@ export default function GroupsPage() {
                       <h1 className="text-xl font-bold">{selectedGroup.name}</h1>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold capitalize ${
                         (selectedGroup as any).defaultRole === 'editor'
-                          ? 'bg-blue-500/20 text-blue-300'
+                          ? 'bg-blue-100 text-blue-700'
                           : 'bg-slate-500/20 text-slate-600'
                       }`}>
                         {(selectedGroup as any).defaultRole ?? 'viewer'} access
@@ -383,7 +383,7 @@ export default function GroupsPage() {
                   {canManage && (
                     <button
                       onClick={() => setEditingGroup(true)}
-                      className="text-slate-500 hover:text-slate-600 text-xs underline"
+                      className="text-slate-600 hover:text-slate-800 text-xs underline"
                     >
                       Edit
                     </button>
@@ -399,7 +399,7 @@ export default function GroupsPage() {
                 <button
                   onClick={() => handleDeleteGroup(selectedGroup.id)}
                   disabled={actionLoading}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-sm transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-red-500/10 hover:bg-red-100 text-red-700 rounded-lg text-sm transition-colors disabled:opacity-50"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   Delete Group
@@ -410,13 +410,13 @@ export default function GroupsPage() {
 
           {/* Alerts */}
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex items-center justify-between">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center justify-between">
               {error}
               <button onClick={() => setError('')}><X className="w-4 h-4" /></button>
             </div>
           )}
           {success && (
-            <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 text-sm">
+            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-600 text-sm">
               {success}
             </div>
           )}
@@ -429,7 +429,7 @@ export default function GroupsPage() {
                 onClick={() => setGroupTab(t)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
                   groupTab === t
-                    ? 'bg-indigo-600 text-slate-900'
+                    ? 'bg-indigo-600 text-white'
                     : 'text-slate-400 hover:text-slate-900'
                 }`}
               >
@@ -498,7 +498,7 @@ export default function GroupsPage() {
                           <button
                             onClick={() => handleRemoveMember(m.userId)}
                             disabled={actionLoading}
-                            className="text-slate-500 hover:text-red-400 transition-colors disabled:opacity-50 ml-1"
+                            className="text-slate-500 hover:text-red-600 transition-colors disabled:opacity-50 ml-1"
                             title="Remove member"
                           >
                             <UserMinus className="w-4 h-4" />
@@ -537,7 +537,7 @@ export default function GroupsPage() {
                     <button
                       type="submit"
                       disabled={actionLoading || !memberEmail.trim()}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
                     >
                       {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
                       Add
@@ -566,7 +566,7 @@ export default function GroupsPage() {
                   <div className="space-y-2">
                     {(selectedGroup.files as GroupFile[]).map((f) => (
                       <div key={f.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-0">
-                        <FileText className="w-4 h-4 text-indigo-400 shrink-0" />
+                        <FileText className="w-4 h-4 text-indigo-600 shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm truncate">{f.fileName}</p>
                           <p className="text-slate-500 text-xs">{formatSize(f.size)} · {formatDate(f.sharedAt)}</p>
@@ -590,7 +590,7 @@ export default function GroupsPage() {
                           <button
                             onClick={() => handleRemoveFile(f.fileId)}
                             disabled={actionLoading}
-                            className="text-slate-500 hover:text-red-400 transition-colors disabled:opacity-50 ml-1"
+                            className="text-slate-500 hover:text-red-600 transition-colors disabled:opacity-50 ml-1"
                             title="Remove file from group"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -610,7 +610,7 @@ export default function GroupsPage() {
                 {myFiles.length === 0 ? (
                   <p className="text-slate-500 text-sm">
                     You have no files uploaded yet.{' '}
-                    <a href="/upload" className="text-indigo-400 hover:underline">Upload one</a>.
+                    <a href="/upload" className="text-indigo-600 hover:underline">Upload one</a>.
                   </p>
                 ) : (
                   <form onSubmit={handleShareFile} className="flex gap-2 flex-wrap">
@@ -638,7 +638,7 @@ export default function GroupsPage() {
                     <button
                       type="submit"
                       disabled={actionLoading || !shareFileId}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
                     >
                       {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                       Share
@@ -668,7 +668,7 @@ export default function GroupsPage() {
           <div className="flex items-center gap-3">
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
-                <Users className="w-6 h-6 text-indigo-400" />
+                <Users className="w-6 h-6 text-indigo-600" />
                 Groups
               </h1>
               <p className="text-slate-400 text-sm mt-0.5">Manage teams and share files with multiple people at once</p>
@@ -685,7 +685,7 @@ export default function GroupsPage() {
             {tab === 'my-groups' && (
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-xl text-sm font-medium transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 New Group
@@ -696,13 +696,13 @@ export default function GroupsPage() {
 
         {/* Alerts */}
         {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex items-center justify-between">
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center justify-between">
             {error}
             <button onClick={() => setError('')}><X className="w-4 h-4" /></button>
           </div>
         )}
         {success && (
-          <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 text-sm">
+          <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-600 text-sm">
             {success}
           </div>
         )}
@@ -717,7 +717,7 @@ export default function GroupsPage() {
               key={key}
               onClick={() => setTab(key)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                tab === key ? 'bg-indigo-600 text-slate-900' : 'text-slate-400 hover:text-slate-900'
+                tab === key ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-900'
               }`}
             >
               {icon}{label}
@@ -729,7 +729,7 @@ export default function GroupsPage() {
         {showCreateForm && tab === 'my-groups' && (
           <div className="mb-6 bg-white rounded-xl p-5 border border-indigo-500/30">
             <h2 className="font-semibold mb-4 flex items-center gap-2">
-              <Plus className="w-4 h-4 text-indigo-400" />Create New Group
+              <Plus className="w-4 h-4 text-indigo-600" />Create New Group
             </h2>
             <form onSubmit={handleCreateGroup} className="space-y-3">
               <input
@@ -758,9 +758,9 @@ export default function GroupsPage() {
                       className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-colors capitalize ${
                         newGroupDefaultRole === r
                           ? r === 'editor'
-                            ? 'bg-blue-500/20 border-blue-500/50 text-blue-300'
+                            ? 'bg-blue-500/20 border-blue-500/50 text-blue-700'
                             : 'bg-slate-500/20 border-slate-500/50 text-slate-600'
-                          : 'bg-transparent border-gray-300 text-slate-500 hover:text-slate-600'
+                          : 'bg-transparent border-gray-300 text-slate-600 hover:text-slate-800'
                       }`}
                     >
                       {r}
@@ -775,7 +775,7 @@ export default function GroupsPage() {
                 <button
                   type="submit"
                   disabled={actionLoading || !newGroupName.trim()}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
                 >
                   {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   Create Group
@@ -797,7 +797,7 @@ export default function GroupsPage() {
           <>
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-indigo-400" />
+                <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
               </div>
             ) : groups.length === 0 ? (
               <div className="text-center py-20 text-slate-500">
@@ -806,7 +806,7 @@ export default function GroupsPage() {
                 <p className="text-sm mt-1">Create a group to share files with multiple people at once.</p>
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-900 rounded-xl text-sm font-medium transition-colors"
+                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium transition-colors"
                 >
                   <Plus className="w-4 h-4" />New Group
                 </button>
@@ -822,7 +822,7 @@ export default function GroupsPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-lg bg-indigo-600/20 flex items-center justify-center shrink-0">
-                          <Users className="w-4.5 h-4.5 text-indigo-400" />
+                          <Users className="w-4.5 h-4.5 text-indigo-600" />
                         </div>
                         <div className="min-w-0">
                           <p className="font-semibold truncate">{group.name}</p>
@@ -836,7 +836,7 @@ export default function GroupsPage() {
                           {group.role}
                         </span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize ${
-                          group.defaultRole === 'editor' ? 'bg-blue-500/15 text-blue-400' : 'bg-slate-500/15 text-slate-400'
+                          group.defaultRole === 'editor' ? 'bg-blue-500/15 text-blue-600' : 'bg-slate-500/15 text-slate-400'
                         }`}>
                           {group.defaultRole ?? 'viewer'} access
                         </span>
@@ -861,7 +861,7 @@ export default function GroupsPage() {
           <>
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-indigo-400" />
+                <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
               </div>
             ) : sharedFiles.length === 0 ? (
               <div className="text-center py-20 text-slate-500">
@@ -888,7 +888,7 @@ export default function GroupsPage() {
                       >
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-indigo-400 shrink-0" />
+                            <FileText className="w-4 h-4 text-indigo-600 shrink-0" />
                             <span className="font-medium truncate max-w-[200px]">{f.fileName}</span>
                             <span className="text-slate-500 text-xs">({formatSize(f.size)})</span>
                           </div>

@@ -75,8 +75,8 @@ function ProfileDropdown({
     },
     {
       icon: is2faEnabled
-        ? <ShieldCheck size={15} className="text-emerald-400" />
-        : <ShieldAlert size={15} className="text-amber-400" />,
+        ? <ShieldCheck size={15} className="text-emerald-600" />
+        : <ShieldAlert size={15} className="text-amber-600" />,
       label: "Two-Factor Auth",
       sub: is2faEnabled ? "Enabled" : "Not enabled",
       action: () => { setOpen(false); navigate("/dashboard", { state: { tab: "settings" } }); },
@@ -99,7 +99,7 @@ function ProfileDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2.5 p-1.5 pr-3 bg-gray-100 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
+        className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
       >
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-xs font-bold text-slate-900 shadow-md">
           {initials}
@@ -183,7 +183,7 @@ export default function PageHeader() {
       />
       <button
         onClick={() => fileInputRef.current?.click()}
-        className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-slate-900 text-sm font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-95 transition-all duration-150"
+        className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-95 transition-all duration-150"
       >
         <Plus size={16} strokeWidth={2.5} />
         <span>Upload</span>

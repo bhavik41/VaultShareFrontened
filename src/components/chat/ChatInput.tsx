@@ -102,7 +102,7 @@ export default function ChatInput({
       <button
         onClick={handleSend}
         disabled={disabled || !value.trim()}
-        className="flex-shrink-0 w-9 h-9 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:bg-gray-200 disabled:text-slate-600 text-slate-900 flex items-center justify-center transition-all duration-150 cursor-pointer disabled:cursor-not-allowed active:scale-95"
+        className="flex-shrink-0 w-9 h-9 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:bg-gray-200 disabled:text-slate-500 text-white flex items-center justify-center transition-all duration-150 cursor-pointer disabled:cursor-not-allowed active:scale-95"
         title="Send message"
       >
         <Send size={15} />

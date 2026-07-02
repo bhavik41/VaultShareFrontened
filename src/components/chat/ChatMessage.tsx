@@ -68,13 +68,13 @@ export default function ChatMessage({
 
         {/* Bubble */}
         <div className={`flex flex-col gap-0.5 max-w-[72%] ${isSelf ? "items-end" : "items-start"}`}>
-          <span className={`text-[10px] font-semibold ${isSelf ? "text-violet-400" : "text-slate-400"}`}>
+          <span className={`text-[10px] font-semibold ${isSelf ? "text-violet-600" : "text-slate-400"}`}>
             {isSelf ? "You" : message.userName}
           </span>
           <div
             className={`px-3 py-2 rounded-2xl text-sm leading-relaxed break-words shadow-sm ${
               isSelf
-                ? "bg-violet-600 text-slate-900 rounded-br-sm shadow-violet-900/30"
+                ? "bg-violet-600 text-white rounded-br-sm shadow-violet-900/30"
                 : "bg-gray-200 text-slate-800 rounded-bl-sm shadow-black/30"
             }`}
           >

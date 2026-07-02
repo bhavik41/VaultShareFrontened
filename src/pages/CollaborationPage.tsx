@@ -114,7 +114,7 @@ export default function CollaborationPage() {
           <button
             type="button"
             onClick={loadCollaborationData}
-            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-black/5"
+            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-slate-50"
           >
             <RefreshCw size={16} />
             Refresh
@@ -142,7 +142,7 @@ export default function CollaborationPage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <section className="rounded-lg border border-gray-200 bg-black/3 p-5">
               <div className="mb-4 flex items-center gap-2">
-                <Mail size={18} className="text-violet-300" />
+                <Mail size={18} className="text-violet-700" />
                 <h2 className="text-lg font-semibold">Invitation History</h2>
               </div>
 
@@ -164,7 +164,7 @@ export default function CollaborationPage() {
                           </p>
                           <p className="mt-1 text-sm text-slate-400">
                             Invited by {invitation.inviterName} as{" "}
-                            <span className="text-violet-200">
+                            <span className="text-violet-800">
                               {invitation.role}
                             </span>
                           </p>
@@ -210,7 +210,7 @@ export default function CollaborationPage() {
                                     "rejected",
                                   )
                                 }
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-slate-900 hover:bg-red-500 disabled:opacity-60"
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white hover:bg-red-500 disabled:opacity-60"
                                 title="Reject invitation"
                               >
                                 <X size={16} />
@@ -227,7 +227,7 @@ export default function CollaborationPage() {
 
             <section className="rounded-lg border border-gray-200 bg-black/3 p-5">
               <div className="mb-4 flex items-center gap-2">
-                <FileText size={18} className="text-violet-300" />
+                <FileText size={18} className="text-violet-700" />
                 <h2 className="text-lg font-semibold">Shared With Me</h2>
               </div>
 
@@ -254,14 +254,14 @@ export default function CollaborationPage() {
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="rounded-md bg-violet-500/15 px-2 py-1 text-xs font-medium text-violet-200">
+                          <span className="rounded-md bg-violet-500/15 px-2 py-1 text-xs font-medium text-violet-800">
                             {file.role}
                           </span>
 
                           <button
                             type="button"
                             onClick={() => navigate(`/files/${file.id}`)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 bg-black/3 text-slate-900 hover:bg-black/5"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 bg-black/3 text-slate-900 hover:bg-slate-50"
                             title="Open file"
                           >
                             <Eye size={16} />

@@ -25,7 +25,7 @@ export default function EmailOtpPrompt() {
         <div className="bg-black/3 border border-gray-200 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
           <div className="flex justify-center mb-6">
             <div className="h-14 w-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
-              <Mail className="h-7 w-7 text-violet-400" />
+              <Mail className="h-7 w-7 text-violet-600" />
             </div>
           </div>
 
@@ -47,7 +47,7 @@ export default function EmailOtpPrompt() {
             />
 
             {error && (
-              <p className="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
+              <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
                 {error}
               </p>
             )}
@@ -55,7 +55,7 @@ export default function EmailOtpPrompt() {
             <button
               type="submit"
               disabled={loading || code.length < 6}
-              className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-slate-900 font-semibold flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               Verify
@@ -70,7 +70,7 @@ export default function EmailOtpPrompt() {
             <button
               type="button"
               onClick={() => { dispatch(clearOtpState()); navigate("/signin") }}
-              className="text-violet-400 hover:text-violet-300 text-sm transition-colors"
+              className="text-violet-600 hover:text-violet-700 text-sm transition-colors"
             >
               ← Return to sign in
             </button>

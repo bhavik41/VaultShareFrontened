@@ -7,21 +7,21 @@ interface AuditLogBadgeProps {
 }
 
 const ACTION_COLORS: Record<string, string> = {
-  upload: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  download: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  upload: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  download: "bg-emerald-50 text-emerald-700 border-emerald-500/20",
   view: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  share: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+  share: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20",
   permission_change: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  delete: "bg-red-500/10 text-red-400 border-red-500/20",
-  revoke_access: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-  star: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  delete: "bg-red-50 text-red-700 border-red-500/20",
+  revoke_access: "bg-rose-500/10 text-rose-600 border-rose-500/20",
+  star: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   invitation_accepted: "bg-teal-500/10 text-teal-400 border-teal-500/20",
-  version_upload: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  version_request: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  version_approved: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  version_rejected: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-  version_activated: "bg-violet-500/10 text-violet-400 border-violet-500/20",
-  version_deleted: "bg-red-500/10 text-red-400 border-red-500/20",
+  version_upload: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  version_request: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  version_approved: "bg-emerald-50 text-emerald-700 border-emerald-500/20",
+  version_rejected: "bg-rose-500/10 text-rose-600 border-rose-500/20",
+  version_activated: "bg-violet-500/10 text-violet-600 border-violet-500/20",
+  version_deleted: "bg-red-50 text-red-700 border-red-500/20",
 }
 
 export const AuditLogBadge: React.FC<AuditLogBadgeProps> = ({ count, topAction }) => {

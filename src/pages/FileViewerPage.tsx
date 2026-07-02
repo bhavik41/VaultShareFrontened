@@ -185,7 +185,7 @@ export default function FileViewerPage() {
                   className={`relative px-4 py-4 text-sm font-medium transition-colors ${
                     activeTab === tab
                       ? "text-slate-900 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-500"
-                      : "text-slate-400 hover:text-slate-700"
+                      : "text-slate-600 hover:text-slate-800"
                   }`}
                 >
                   {tab}
@@ -216,7 +216,7 @@ export default function FileViewerPage() {
           <span className="text-xs text-slate-900 font-medium truncate max-w-[320px]">
             {effectiveFile?.name ?? "…"}
           </span>
-          <span className="ml-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-300">
+          <span className="ml-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
             AES-256
           </span>
         </div>
@@ -278,7 +278,7 @@ export default function FileViewerPage() {
                     {effectiveFile && id && (
                       <button
                         onClick={() => downloadFile(id, effectiveFile.name)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-violet-500 transition-colors"
+                        className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-500 transition-colors"
                       >
                         <Download size={14} /> Download file
                       </button>
@@ -320,7 +320,7 @@ export default function FileViewerPage() {
                     </div>
                     <button
                       onClick={() => file && downloadFile(file.id, file.name)}
-                      className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-violet-500 transition-colors"
+                      className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-500 transition-colors"
                     >
                       <Download size={14} /> Download file
                     </button>
@@ -342,7 +342,7 @@ export default function FileViewerPage() {
               <span>·</span>
               <span>Last modified 10:42 AM</span>
             </div>
-            <span className="text-[11px] font-medium text-emerald-400">SHA-256 verified ✓</span>
+            <span className="text-[11px] font-medium text-emerald-600">SHA-256 verified ✓</span>
           </div>
         </div>
 
@@ -361,21 +361,21 @@ export default function FileViewerPage() {
               <div
                 className={`flex items-center justify-between rounded-lg border px-3 py-2 transition-colors duration-200 ${
                   adminOnlyChat
-                    ? "border-amber-500/60 bg-amber-500/15"
+                    ? "border-amber-200 bg-amber-50"
                     : "border-gray-300 bg-gray-100"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   {adminOnlyChat ? (
-                    <Lock size={13} className="text-amber-400" />
+                    <Lock size={13} className="text-amber-600" />
                   ) : (
                     <ShieldCheck size={13} className="text-slate-500" />
                   )}
                   <div className="flex flex-col leading-tight">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${adminOnlyChat ? "text-amber-300" : "text-slate-400"}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${adminOnlyChat ? "text-amber-700" : "text-slate-400"}`}>
                       Admin Only
                     </span>
-                    <span className={`text-[10px] ${adminOnlyChat ? "text-amber-400/80" : "text-slate-500"}`}>
+                    <span className={`text-[10px] ${adminOnlyChat ? "text-amber-600/80" : "text-slate-500"}`}>
                       {adminOnlyChat ? "Active · only you can send" : "Off · everyone can chat"}
                     </span>
                   </div>
@@ -398,9 +398,9 @@ export default function FileViewerPage() {
             )}
             {/* Banner shown to non-owners when admin-only mode is active */}
             {adminOnlyChat && !isOwner && (
-              <div className="flex items-center gap-2 rounded-lg border border-amber-500/50 bg-amber-500/15 px-3 py-2">
-                <Lock size={13} className="shrink-0 text-amber-400" />
-                <span className="text-[11px] font-medium text-amber-300">Admin-only mode · read only</span>
+              <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                <Lock size={13} className="shrink-0 text-amber-600" />
+                <span className="text-[11px] font-medium text-amber-700">Admin-only mode · read only</span>
               </div>
             )}
           </div>
@@ -482,7 +482,7 @@ export default function FileViewerPage() {
                         <div
                           className={`rounded-xl px-3 py-2 text-xs leading-relaxed break-words ${
                             isMe
-                              ? "rounded-tr-sm bg-blue-600 text-slate-900"
+                              ? "rounded-tr-sm bg-blue-600 text-white"
                               : "rounded-tl-sm bg-gray-200 text-slate-700"
                           }`}
                         >
@@ -502,7 +502,7 @@ export default function FileViewerPage() {
                                 onClick={() => toggleReaction(msg.id, emoji)}
                                 className={`flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] border transition-colors ${
                                   users.includes(myEmail)
-                                    ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                                    ? "border-blue-500 bg-blue-100 text-blue-700"
                                     : "border-slate-600 bg-gray-200 text-slate-600 hover:border-slate-500"
                                 }`}
                               >
@@ -567,7 +567,7 @@ export default function FileViewerPage() {
                   <p className="mb-2 text-xs leading-relaxed text-slate-400">{c.text}</p>
                   <div className="flex gap-2">
                     <button className="text-[10px] font-medium text-slate-400 hover:text-slate-900">Reply</button>
-                    <button className="text-[10px] font-medium text-blue-400 hover:text-blue-300">Jump to</button>
+                    <button className="text-[10px] font-medium text-blue-600 hover:text-blue-700">Jump to</button>
                   </div>
                 </div>
               ))}
@@ -581,12 +581,12 @@ export default function FileViewerPage() {
               <div
                 className={`flex items-center gap-2 mb-2 rounded-lg border px-3 py-1.5 ${
                   isOwner
-                    ? "border-amber-500/50 bg-amber-500/10"
-                    : "border-amber-500/50 bg-amber-500/15"
+                    ? "border-amber-200 bg-amber-50"
+                    : "border-amber-200 bg-amber-50"
                 }`}
               >
-                <Lock size={12} className="shrink-0 text-amber-400" />
-                <span className="text-[11px] font-medium text-amber-300">
+                <Lock size={12} className="shrink-0 text-amber-600" />
+                <span className="text-[11px] font-medium text-amber-700">
                   {isOwner
                     ? "Admin-only mode is ON — only you can send messages"
                     : "Admin-only mode is ON — only the owner can send messages"}
@@ -596,12 +596,12 @@ export default function FileViewerPage() {
             {replyTo && (
               <div className="flex items-center justify-between mb-2 rounded-lg border border-gray-300 bg-gray-200 px-3 py-1.5">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Reply size={11} className="shrink-0 text-blue-400" />
+                  <Reply size={11} className="shrink-0 text-blue-600" />
                   <span className="text-[10px] text-slate-400 truncate">
                     <span className="font-semibold text-slate-600">{replyTo.userName}</span>: {replyTo.content.slice(0, 50)}{replyTo.content.length > 50 ? "…" : ""}
                   </span>
                 </div>
-                <button onClick={() => setReplyTo(null)} className="ml-2 shrink-0 text-slate-500 hover:text-slate-600">
+                <button onClick={() => setReplyTo(null)} className="ml-2 shrink-0 text-slate-600 hover:text-slate-800">
                   <X size={12} />
                 </button>
               </div>
@@ -621,13 +621,13 @@ export default function FileViewerPage() {
                 disabled={!canSendMessage}
                 className="flex-1 rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-xs text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
               />
-              <button type="button" disabled={!canSendMessage} className="text-slate-500 hover:text-slate-600 disabled:opacity-40">
+              <button type="button" disabled={!canSendMessage} className="text-slate-600 hover:text-slate-800 disabled:opacity-40">
                 <AtSign size={15} />
               </button>
               <button
                 type="submit"
                 disabled={!canSendMessage}
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-slate-900 hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Send size={12} />
               </button>

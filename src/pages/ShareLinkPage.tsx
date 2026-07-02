@@ -148,7 +148,7 @@ export default function ShareLinkPage() {
           </RouterLink>
           <RouterLink
             to="/signin"
-            className="rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-black/5"
+            className="rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-slate-50"
           >
             Sign in
           </RouterLink>
@@ -164,7 +164,7 @@ export default function ShareLinkPage() {
         ) : error ? (
           <div className="w-full rounded-lg border border-red-500/30 bg-red-500/10 p-6">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="text-red-300" size={24} />
+              <AlertTriangle className="text-red-700" size={24} />
               <div>
                 <h1 className="text-xl font-semibold text-red-100">Link unavailable</h1>
                 <p className="mt-1 text-sm text-red-200">{error}</p>
@@ -175,7 +175,7 @@ export default function ShareLinkPage() {
           <div className="w-full max-w-md rounded-lg border border-gray-200 bg-black/3 p-8">
             <div className="mb-6 flex flex-col items-center gap-3 text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/20">
-                <Lock size={28} className="text-amber-300" />
+                <Lock size={28} className="text-amber-700" />
               </div>
               <h1 className="text-xl font-bold">Password required</h1>
               <p className="text-sm text-slate-400">
@@ -194,7 +194,7 @@ export default function ShareLinkPage() {
                   className="w-full rounded-md border border-gray-200 bg-gray-100 py-2 pl-10 pr-3 text-sm text-slate-900 outline-none focus:border-violet-400"
                 />
               </div>
-              {unlockError && <p className="text-sm text-red-400">{unlockError}</p>}
+              {unlockError && <p className="text-sm text-red-600">{unlockError}</p>}
               <button
                 type="submit"
                 disabled={unlockLoading || !passwordInput}
@@ -216,7 +216,7 @@ export default function ShareLinkPage() {
                   <p className="mt-1 flex items-center gap-2 text-sm text-slate-400">
                     {file.mimeType} • {formatSize(file.size)}
                     {file.isEncrypted && (
-                      <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-xs font-medium text-emerald-300">
+                      <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-xs font-medium text-emerald-700">
                         🔐 Encrypted
                       </span>
                     )}
@@ -229,7 +229,7 @@ export default function ShareLinkPage() {
                     🔒 Protected
                   </span>
                 )}
-                <span className="rounded-md bg-violet-500/15 px-3 py-1 text-sm font-medium text-violet-200">
+                <span className="rounded-md bg-violet-500/15 px-3 py-1 text-sm font-medium text-violet-800">
                   {shareLink.permissionMode}
                 </span>
               </div>
@@ -274,7 +274,7 @@ export default function ShareLinkPage() {
                   <Download size={16} />
                   {downloading ? "Downloading..." : "Download File"}
                 </button>
-                {downloadError && <p className="text-sm text-red-300">{downloadError}</p>}
+                {downloadError && <p className="text-sm text-red-700">{downloadError}</p>}
               </div>
             ) : (
               <div className="rounded-md border border-gray-200 bg-gray-100 p-4 text-sm text-slate-600">

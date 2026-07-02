@@ -210,7 +210,7 @@ export default function VersionHistoryPanel({
           </h2>
           {uploadMode !== "denied" && (
             myPendingRequest?.status === "pending" ? (
-              <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-300 cursor-default">
+              <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-700 cursor-default">
                 <Clock size={14} />
                 Request Pending
               </div>
@@ -225,7 +225,7 @@ export default function VersionHistoryPanel({
             ) : (
               <button
                 onClick={() => setShowUploadForm((v) => !v)}
-                className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-slate-900 transition-colors hover:bg-violet-500"
+                className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-violet-500"
               >
                 <UploadCloud size={14} />
                 {uploadMode === "direct" ? "Upload New Version" : "Request Version Upload"}
@@ -241,7 +241,7 @@ export default function VersionHistoryPanel({
             className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-slate-50 p-4"
           >
             {uploadMode === "request" && (
-              <p className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
+              <p className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700">
                 <Clock size={13} />
                 This file requires owner approval for new versions. Your upload will be held pending
                 until reviewed.
@@ -260,12 +260,12 @@ export default function VersionHistoryPanel({
               rows={2}
               className="rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-xs text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             />
-            {submitError && <p className="text-xs text-rose-400">{submitError}</p>}
+            {submitError && <p className="text-xs text-rose-600">{submitError}</p>}
             <div className="flex items-center gap-2">
               <button
                 type="submit"
                 disabled={!selectedFile || submitting}
-                className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-slate-900 transition-colors hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {submitting && <Loader2 size={12} className="animate-spin" />}
                 {uploadMode === "direct" ? "Upload" : "Submit Request"}
@@ -284,9 +284,9 @@ export default function VersionHistoryPanel({
         {/* My request status (collaborator view) */}
         {!isOwner && myPendingRequest?.status === "pending" && (
           <div className="relative flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 pr-10">
-            <Clock size={16} className="mt-0.5 shrink-0 text-amber-400" />
+            <Clock size={16} className="mt-0.5 shrink-0 text-amber-600" />
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-amber-300">Request Pending Approval</p>
+              <p className="text-sm font-semibold text-amber-700">Request Pending Approval</p>
               <p className="mt-1 text-[11px] text-slate-400">
                 <span className="font-medium text-slate-600">{myPendingRequest.originalName}</span>
                 {" · "}{formatBytes(myPendingRequest.size)}
@@ -306,7 +306,7 @@ export default function VersionHistoryPanel({
         )}
         {!isOwner && myPendingRequest?.status === "rejected" && (
           <div className="relative flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 p-4 pr-10">
-            <X size={16} className="mt-0.5 shrink-0 text-rose-400" />
+            <X size={16} className="mt-0.5 shrink-0 text-rose-600" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-rose-300">Request Rejected</p>
               <p className="mt-1 text-[11px] text-slate-400">
@@ -320,7 +320,7 @@ export default function VersionHistoryPanel({
               </p>
               <button
                 onClick={() => { setMyPendingRequest(null); setShowUploadForm(true); }}
-                className="mt-3 flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-slate-900 hover:bg-violet-500 transition-colors"
+                className="mt-3 flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-500 transition-colors"
               >
                 <UploadCloud size={13} />
                 Submit New Request
@@ -339,7 +339,7 @@ export default function VersionHistoryPanel({
         {/* Pending requests (owner only) */}
         {isOwner && pendingRequests.length > 0 && (
           <div className="flex flex-col gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
-            <h3 className="flex items-center gap-2 text-sm font-semibold text-amber-300">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-amber-700">
               <Clock size={14} />
               Pending Version Requests ({pendingRequests.length})
             </h3>
@@ -361,7 +361,7 @@ export default function VersionHistoryPanel({
                   <button
                     disabled={actionLoadingId === req.id}
                     onClick={() => handleApprove(req.id)}
-                    className="flex items-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50"
+                    className="flex items-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-500/20 disabled:opacity-50"
                   >
                     <CheckCircle2 size={12} /> Approve
                   </button>
@@ -378,7 +378,7 @@ export default function VersionHistoryPanel({
           </div>
         )}
 
-        {error && <p className="text-xs text-rose-400">{error}</p>}
+        {error && <p className="text-xs text-rose-600">{error}</p>}
 
         {/* Version list */}
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-slate-50">
@@ -406,7 +406,7 @@ export default function VersionHistoryPanel({
                           {v.originalName || fileName}
                         </span>
                         {v.isActive && (
-                          <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300 shrink-0">
+                          <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 shrink-0">
                             <ShieldCheck size={10} /> Active
                           </span>
                         )}
@@ -436,7 +436,7 @@ export default function VersionHistoryPanel({
                           disabled={actionLoadingId === v.id}
                           onClick={() => handleActivate(v.id)}
                           title="Set as active version"
-                          className="rounded-lg border border-blue-500/30 bg-blue-500/10 px-2.5 py-1.5 text-[11px] font-semibold text-blue-300 hover:bg-blue-500/20 disabled:opacity-50"
+                          className="rounded-lg border border-blue-500/30 bg-blue-500/10 px-2.5 py-1.5 text-[11px] font-semibold text-blue-700 hover:bg-blue-500/20 disabled:opacity-50"
                         >
                           Set as Active
                         </button>
@@ -444,7 +444,7 @@ export default function VersionHistoryPanel({
                           disabled={actionLoadingId === v.id}
                           onClick={() => handleDeleteVersion(v.id)}
                           title="Delete this version"
-                          className="rounded-lg p-2 text-rose-400 hover:bg-rose-500/10 disabled:opacity-50"
+                          className="rounded-lg p-2 text-rose-600 hover:bg-rose-500/10 disabled:opacity-50"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -461,14 +461,14 @@ export default function VersionHistoryPanel({
         {!isOwner && myRejectedRequests.length > 0 && (
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-slate-50">
             <div className="flex items-center gap-2 border-b border-gray-200 px-5 py-3">
-              <X size={13} className="text-rose-400" />
+              <X size={13} className="text-rose-600" />
               <span className="text-xs font-semibold text-slate-400">Rejected Requests</span>
             </div>
             <div className="divide-y divide-gray-200">
               {myRejectedRequests.map((req) => (
                 <div key={req.id} className="flex items-center justify-between gap-3 px-5 py-3.5 opacity-70">
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-rose-900/40 text-xs font-bold text-rose-400">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-rose-900/40 text-xs font-bold text-rose-600">
                       <X size={14} />
                     </div>
                     <div className="min-w-0">

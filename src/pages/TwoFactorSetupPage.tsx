@@ -44,7 +44,7 @@ export default function TwoFactorSetupPage() {
           {isEnabled ? (
             disableDone ? (
               <div className="flex flex-col items-center gap-5 text-center">
-                <CheckCircle2 className="h-16 w-16 text-emerald-400" />
+                <CheckCircle2 className="h-16 w-16 text-emerald-600" />
                 <h1 className="text-2xl font-bold text-slate-900">2FA Disabled</h1>
                 <p className="text-slate-900/50 text-sm">
                   Two-factor authentication has been removed from your account.
@@ -59,7 +59,7 @@ export default function TwoFactorSetupPage() {
             ) : (
               <div className="flex flex-col items-center gap-5 text-center">
                 <div className="h-14 w-14 rounded-2xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center">
-                  <ShieldOff className="h-7 w-7 text-rose-400" />
+                  <ShieldOff className="h-7 w-7 text-rose-600" />
                 </div>
                 <h1 className="text-2xl font-bold text-slate-900">Disable 2FA</h1>
                 <p className="text-slate-900/50 text-sm">
@@ -82,7 +82,7 @@ export default function TwoFactorSetupPage() {
                     />
                   </div>
                   {error && (
-                    <p className="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
+                    <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
                       {error}
                     </p>
                   )}
@@ -124,21 +124,21 @@ export default function TwoFactorSetupPage() {
               {step === "setup" && (
                 <div className="flex flex-col items-center gap-5 text-center">
                   <div className="h-14 w-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
-                    <ShieldCheck className="h-7 w-7 text-violet-400" />
+                    <ShieldCheck className="h-7 w-7 text-violet-600" />
                   </div>
                   <h1 className="text-2xl font-bold text-slate-900">Enable 2FA</h1>
                   <p className="text-slate-900/50 text-sm">
                     Protect your account with a time-based one-time password (TOTP). Works with Google Authenticator, Authy, and 1Password.
                   </p>
                   {error && (
-                    <p className="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 w-full">
+                    <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 w-full">
                       {error}
                     </p>
                   )}
                   <button
                     onClick={handleSetup}
                     disabled={loading}
-                    className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-slate-900 font-semibold flex items-center justify-center gap-2 transition-colors"
+                    className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
                   >
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
                     Generate QR Code
@@ -174,14 +174,14 @@ export default function TwoFactorSetupPage() {
                       />
                     </div>
                     {error && (
-                      <p className="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+                      <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
                         {error}
                       </p>
                     )}
                     <button
                       type="submit"
                       disabled={loading || totpCode.length < 6}
-                      className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-slate-900 font-semibold flex items-center justify-center gap-2 transition-colors"
+                      className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
                     >
                       {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                       Verify & Enable 2FA
@@ -193,7 +193,7 @@ export default function TwoFactorSetupPage() {
               {/* ── Step 3: Done ── */}
               {step === "done" && (
                 <div className="flex flex-col items-center gap-5 text-center">
-                  <CheckCircle2 className="h-16 w-16 text-emerald-400" />
+                  <CheckCircle2 className="h-16 w-16 text-emerald-600" />
                   <h1 className="text-2xl font-bold text-slate-900">2FA Enabled!</h1>
                   <p className="text-slate-900/50 text-sm">
                     Your account is now protected with two-factor authentication. You'll be asked for a code on every sign in.
