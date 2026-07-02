@@ -588,7 +588,7 @@ export default function GroupsPage() {
                 {myFiles.length === 0 ? (
                   <p className="text-slate-500 text-sm">
                     You have no files uploaded yet.{' '}
-                    <RouterLink to="/upload" className="text-indigo-400 hover:underline">Upload one</RouterLink>.
+                    <a href="/upload" className="text-indigo-400 hover:underline">Upload one</a>.
                   </p>
                 ) : (
                   <form onSubmit={handleShareFile} className="flex gap-2 flex-wrap">
@@ -631,9 +631,10 @@ export default function GroupsPage() {
           )}
         </div>
       </div>
-    </div>
     )
   }
+
+
 
   // ── Groups list view ──────────────────────────────────────────────────────────
 

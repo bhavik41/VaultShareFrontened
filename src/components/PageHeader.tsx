@@ -168,7 +168,7 @@ export default function PageHeader() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
-    files.forEach((f) => dispatch(uploadFileThunk({ file: f })));
+    files.forEach((f) => dispatch(uploadFileThunk({ file: f, localId: crypto.randomUUID() })));
     e.target.value = "";
   }
 
