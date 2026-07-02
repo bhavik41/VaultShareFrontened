@@ -83,6 +83,11 @@ export async function getMyPendingRequest(fileId: string): Promise<VersionReques
   return res.data.request
 }
 
+export async function getMyRejectedRequests(fileId: string): Promise<VersionRequest[]> {
+  const res = await api.get<{ requests: VersionRequest[] }>(`/files/${fileId}/versions/my-rejected`)
+  return res.data.requests
+}
+
 export async function getPendingRequestsForOwner(): Promise<VersionRequest[]> {
   const res = await api.get<{ requests: VersionRequest[] }>(`/version-requests`)
   return res.data.requests
