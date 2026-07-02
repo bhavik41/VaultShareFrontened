@@ -331,12 +331,12 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                   <button
                     onClick={() => handleChatToggle(!adminOnlyChat)}
                     disabled={chatSaving}
-                    className={`relative w-11 h-6 rounded-full border-0 cursor-pointer transition-colors flex-shrink-0 ml-4 disabled:opacity-50
+                    className={`relative w-11 h-6 rounded-full border-0 cursor-pointer transition-colors flex-shrink-0 ml-4 disabled:opacity-50 overflow-hidden
                       ${adminOnlyChat ? "bg-violet-600" : "bg-slate-700"}`}
                   >
                     <span
-                      className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform
-                        ${adminOnlyChat ? "translate-x-5" : "translate-x-0.5"}`}
+                      className={`absolute top-[3px] left-[3px] w-[18px] h-[18px] bg-white rounded-full shadow transition-transform duration-200
+                        ${adminOnlyChat ? "translate-x-[20px]" : "translate-x-0"}`}
                     />
                   </button>
                 </div>
