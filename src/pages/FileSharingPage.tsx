@@ -246,14 +246,14 @@ export default function FileSharingPage() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Manage File Sharing</h1>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-base text-slate-400">
               Invite collaborators, assign permissions, and control share links.
             </p>
           </div>
           <button
             type="button"
             onClick={loadPageData}
-            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-slate-50"
+            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-base text-slate-900 hover:bg-slate-50"
           >
             <RefreshCw size={16} />
             Refresh
@@ -261,13 +261,13 @@ export default function FileSharingPage() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-base text-red-200">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+          <div className="mb-4 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-base text-emerald-200">
             {success}
           </div>
         )}
@@ -278,7 +278,7 @@ export default function FileSharingPage() {
             Loading files...
           </div>
         ) : files.length === 0 ? (
-          <div className="rounded-lg border border-gray-200 bg-black/3 p-5 text-sm text-slate-400">
+          <div className="rounded-lg border border-gray-200 bg-black/3 p-5 text-base text-slate-400">
             Upload a file first before managing sharing.
           </div>
         ) : (
@@ -297,8 +297,8 @@ export default function FileSharingPage() {
                         : "border-gray-200 bg-gray-100 hover:bg-black/3"
                     }`}
                   >
-                    <p className="truncate text-sm font-medium">{file.name}</p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="truncate text-base font-medium">{file.name}</p>
+                    <p className="mt-1 text-sm text-slate-400">
                       {formatSize(file.size)} - {formatDate(file.createdAt)}
                     </p>
                   </button>
@@ -309,11 +309,11 @@ export default function FileSharingPage() {
             <section className="space-y-6">
               {selectedFile && (
                 <div className="rounded-lg border border-gray-200 bg-black/3 p-5">
-                  <p className="text-sm text-slate-400">Selected file</p>
+                  <p className="text-base text-slate-400">Selected file</p>
                   <h2 className="mt-1 text-xl font-semibold">
                     {selectedFile.name}
                   </h2>
-                  <p className="mt-1 text-sm text-slate-400">
+                  <p className="mt-1 text-base text-slate-400">
                     {selectedFile.mimeType} - {formatSize(selectedFile.size)}
                   </p>
                 </div>
@@ -325,7 +325,7 @@ export default function FileSharingPage() {
                     <ShieldCheck size={18} className="text-violet-700" />
                     <h2 className="text-lg font-semibold">Version Upload Policy</h2>
                   </div>
-                  <p className="mb-3 text-xs text-slate-400">
+                  <p className="mb-3 text-sm text-slate-400">
                     Controls who can upload a new version of this file, and whether it requires your
                     approval first.
                   </p>
@@ -333,7 +333,7 @@ export default function FileSharingPage() {
                     value={selectedFile.versionPolicy ?? "admin_only"}
                     disabled={policySaving}
                     onChange={(e) => handlePolicyChange(e.target.value as VersionPolicy)}
-                    className="w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400 disabled:opacity-50"
+                    className="w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400 disabled:opacity-50"
                   >
                     {POLICY_OPTIONS.map((o) => (
                       <option key={o.value} value={o.value}>
@@ -341,7 +341,7 @@ export default function FileSharingPage() {
                       </option>
                     ))}
                   </select>
-                  <p className="mt-2 text-xs text-slate-500">
+                  <p className="mt-2 text-sm text-slate-500">
                     {
                       POLICY_OPTIONS.find((o) => o.value === (selectedFile.versionPolicy ?? "admin_only"))
                         ?.description
@@ -366,13 +366,13 @@ export default function FileSharingPage() {
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                     placeholder="collaborator@example.com"
-                    className="mb-3 w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
+                    className="mb-3 w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400"
                   />
 
                   <select
                     value={inviteRole}
                     onChange={(e) => setInviteRole(e.target.value as SharedRole)}
-                    className="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
+                    className="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400"
                   >
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
@@ -381,7 +381,7 @@ export default function FileSharingPage() {
                   <button
                     type="submit"
                     disabled={actionLoading}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-medium text-slate-900 hover:bg-violet-500 disabled:opacity-60"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-base font-medium text-slate-900 hover:bg-violet-500 disabled:opacity-60"
                   >
                     <UserPlus size={16} />
                     Send Invitation
@@ -403,13 +403,13 @@ export default function FileSharingPage() {
                     value={shareEmail}
                     onChange={(e) => setShareEmail(e.target.value)}
                     placeholder="collaborator@example.com"
-                    className="mb-3 w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
+                    className="mb-3 w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400"
                   />
 
                   <select
                     value={shareRole}
                     onChange={(e) => setShareRole(e.target.value as SharedRole)}
-                    className="mb-4 w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
+                    className="mb-4 w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400"
                   >
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
@@ -418,7 +418,7 @@ export default function FileSharingPage() {
                   <button
                     type="submit"
                     disabled={actionLoading}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-medium text-slate-900 hover:bg-violet-500 disabled:opacity-60"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-base font-medium text-slate-900 hover:bg-violet-500 disabled:opacity-60"
                   >
                     <Share2 size={16} />
                     Share File
@@ -433,7 +433,7 @@ export default function FileSharingPage() {
                 </div>
 
                 {sentInvitations.length === 0 ? (
-                  <p className="text-sm text-slate-400">
+                  <p className="text-base text-slate-400">
                     No invitations have been sent for this file.
                   </p>
                 ) : (
@@ -445,14 +445,14 @@ export default function FileSharingPage() {
                       >
                         <div>
                           <p className="font-medium">{invitation.inviteeEmail}</p>
-                          <p className="mt-1 text-sm text-slate-400">
+                          <p className="mt-1 text-base text-slate-400">
                             Role: {invitation.role} - Sent{" "}
                             {formatDate(invitation.createdAt)}
                           </p>
                         </div>
 
                         <span
-                          className={`rounded-md px-2 py-1 text-xs font-medium ${getStatusClass(
+                          className={`rounded-md px-2 py-1 text-sm font-medium ${getStatusClass(
                             invitation.status,
                           )}`}
                         >
@@ -471,7 +471,7 @@ export default function FileSharingPage() {
                 </div>
 
                 {collaborators.length === 0 ? (
-                  <p className="text-sm text-slate-400">
+                  <p className="text-base text-slate-400">
                     This file has no collaborators yet.
                   </p>
                 ) : (
@@ -483,7 +483,7 @@ export default function FileSharingPage() {
                       >
                         <div>
                           <p className="font-medium">{user.name}</p>
-                          <p className="text-sm text-slate-400">{user.email}</p>
+                          <p className="text-base text-slate-400">{user.email}</p>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -495,7 +495,7 @@ export default function FileSharingPage() {
                                 e.target.value as SharedRole,
                               )
                             }
-                            className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
+                            className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400"
                           >
                             <option value="viewer">Viewer</option>
                             <option value="editor">Editor</option>
@@ -531,7 +531,7 @@ export default function FileSharingPage() {
                     onChange={(e) =>
                       setLinkPermissionMode(e.target.value as ShareLinkPermissionMode)
                     }
-                    className="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
+                    className="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400"
                   >
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
@@ -543,7 +543,7 @@ export default function FileSharingPage() {
                     type="datetime-local"
                     value={linkExpiresAt}
                     onChange={(e) => setLinkExpiresAt(e.target.value)}
-                    className="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
+                    className="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400"
                   />
 
                   <input
@@ -551,13 +551,13 @@ export default function FileSharingPage() {
                     placeholder="Password (optional)"
                     value={linkPassword}
                     onChange={(e) => setLinkPassword(e.target.value)}
-                    className="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
+                    className="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-base text-slate-900 outline-none focus:border-violet-400"
                   />
 
                   <button
                     type="submit"
                     disabled={actionLoading}
-                    className="inline-flex items-center justify-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-medium text-slate-900 hover:bg-violet-500 disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-base font-medium text-slate-900 hover:bg-violet-500 disabled:opacity-60"
                   >
                     <Link size={16} />
                     Create Link
@@ -565,7 +565,7 @@ export default function FileSharingPage() {
                 </form>
 
                 {shareLinks.length === 0 ? (
-                  <p className="text-sm text-slate-400">
+                  <p className="text-base text-slate-400">
                     No share links have been created for this file.
                   </p>
                 ) : (
@@ -577,15 +577,15 @@ export default function FileSharingPage() {
                       >
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div>
-                            <p className="text-sm font-medium">
+                            <p className="text-base font-medium">
                               {buildPublicShareUrl(shareLink.token)}
                             </p>
-                            <p className="mt-1 flex items-center gap-2 text-xs text-slate-400">
+                            <p className="mt-1 flex items-center gap-2 text-sm text-slate-400">
                               Mode: {shareLink.permissionMode} - Expires{" "}
                               {formatDate(shareLink.expiresAt)}
                               {shareLink.revokedAt ? " - Revoked" : ""}
                               {shareLink.passwordProtected && (
-                                <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-700">
+                                <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-sm font-medium text-amber-700">
                                   🔒 Password
                                 </span>
                               )}

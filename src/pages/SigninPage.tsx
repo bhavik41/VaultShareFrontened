@@ -31,7 +31,7 @@ export default function SigninPage() {
       <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shadow-lg shadow-violet-500/20">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-extrabold text-white shadow-lg shadow-violet-500/20">
               V
             </div>
             <span className="text-slate-900 font-bold text-lg tracking-tight">VaultShare</span>
@@ -40,19 +40,19 @@ export default function SigninPage() {
           <div className="flex items-center gap-2">
             <Link
               to="/"
-              className="text-slate-400 hover:text-slate-900 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors no-underline"
+              className="text-slate-400 hover:text-slate-900 text-base font-medium px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors no-underline"
             >
               Home
             </Link>
             <Link
               to="/signin"
-              className="text-slate-900 text-sm font-medium px-3 py-1.5 rounded-lg bg-gray-200 transition-colors no-underline"
+              className="text-slate-900 text-base font-medium px-3 py-1.5 rounded-lg bg-gray-200 transition-colors no-underline"
             >
               Sign in
             </Link>
             <Link
               to="/signup"
-              className="text-slate-900 text-sm font-semibold px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 transition-colors no-underline"
+              className="text-slate-900 text-base font-semibold px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 transition-colors no-underline"
             >
               Sign up
             </Link>
@@ -78,7 +78,7 @@ export default function SigninPage() {
 
               {/* Email */}
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-slate-600">Email</label>
+                <label className="text-base font-medium text-slate-600">Email</label>
                 <input
                   type="email"
                   required
@@ -86,17 +86,17 @@ export default function SigninPage() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-gray-200 border border-gray-300 rounded-xl px-4 py-2.5 text-slate-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60 transition text-sm"
+                  className="w-full bg-gray-200 border border-gray-300 rounded-xl px-4 py-2.5 text-slate-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60 transition text-base"
                 />
               </div>
 
               {/* Password */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-600">Password</label>
+                  <label className="text-base font-medium text-slate-600">Password</label>
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-violet-600 hover:text-violet-700 transition-colors no-underline"
+                    className="text-base text-violet-600 hover:text-violet-700 transition-colors no-underline"
                   >
                     Forgot password?
                   </Link>
@@ -109,7 +109,7 @@ export default function SigninPage() {
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-gray-200 border border-gray-300 rounded-xl px-4 py-2.5 pr-11 text-slate-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60 transition text-sm"
+                    className="w-full bg-gray-200 border border-gray-300 rounded-xl px-4 py-2.5 pr-11 text-slate-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60 transition text-base"
                   />
                   <button
                     type="button"
@@ -123,7 +123,7 @@ export default function SigninPage() {
 
               {/* Error */}
               {error && (
-                <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
+                <p className="text-rose-600 text-base bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
                   {error}
                 </p>
               )}
@@ -132,13 +132,13 @@ export default function SigninPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors text-sm"
+                className="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold flex items-center justify-center gap-2 transition-colors text-base"
               >
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 Sign in
               </button>
 
-              <p className="text-center text-xs text-slate-500">
+              <p className="text-center text-sm text-slate-500">
                 By signing in, you agree to our{" "}
                 <a href="#" className="text-slate-400 hover:text-slate-600 transition-colors">Terms of use</a>
                 {" "}and{" "}
@@ -147,7 +147,7 @@ export default function SigninPage() {
             </form>
           </div>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-base text-slate-500">
             Don't have an account?{" "}
             <Link to="/signup" className="text-violet-600 hover:text-violet-700 font-medium transition-colors no-underline">
               Sign up

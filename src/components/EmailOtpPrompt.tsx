@@ -30,7 +30,7 @@ export default function EmailOtpPrompt() {
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">Check Your Email</h1>
-          <p className="text-slate-900/50 text-sm text-center mb-8">
+          <p className="text-slate-900/50 text-base text-center mb-8">
             We sent a 6-digit verification code to your email address. Enter it below to continue. It expires in 10 minutes.
           </p>
 
@@ -47,7 +47,7 @@ export default function EmailOtpPrompt() {
             />
 
             {error && (
-              <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
+              <p className="text-rose-600 text-base bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
                 {error}
               </p>
             )}
@@ -62,7 +62,7 @@ export default function EmailOtpPrompt() {
             </button>
           </form>
 
-          <p className="text-slate-900/30 text-xs text-center mt-6">
+          <p className="text-slate-900/30 text-sm text-center mt-6">
             Didn't receive the code? Check your spam folder.
           </p>
 
@@ -70,7 +70,7 @@ export default function EmailOtpPrompt() {
             <button
               type="button"
               onClick={() => { dispatch(clearOtpState()); navigate("/signin") }}
-              className="text-violet-600 hover:text-violet-700 text-sm transition-colors"
+              className="text-violet-600 hover:text-violet-700 text-base transition-colors"
             >
               ← Return to sign in
             </button>

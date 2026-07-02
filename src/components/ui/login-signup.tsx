@@ -135,7 +135,7 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
+                <p className="text-sm text-muted-foreground">Must be at least 8 characters</p>
               </div>
 
               {/* Terms */}
@@ -146,7 +146,7 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
                   onCheckedChange={(v) => setAgreedToTerms(v === true)}
                   required
                 />
-                <label htmlFor="terms" className="text-sm text-muted-foreground">
+                <label htmlFor="terms" className="text-base text-muted-foreground">
                   I agree to the{" "}
                   <Link to="#" className="text-primary hover:underline">
                     Terms
@@ -159,7 +159,7 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
               </div>
 
               {/* Error */}
-              {error && <p className="text-sm text-destructive text-center">{error}</p>}
+              {error && <p className="text-base text-destructive text-center">{error}</p>}
 
               <Button
                 type="submit"
@@ -171,7 +171,7 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
             </CardContent>
 
             <CardFooter className="flex justify-center border-t py-4 mt-2">
-              <p className="text-center text-sm text-muted-foreground">
+              <p className="text-center text-base text-muted-foreground">
                 Already have an account?{" "}
                 <Link to="/signin" className="text-primary hover:underline font-medium">
                   Sign in
@@ -217,7 +217,7 @@ export function SigninForm({ onSubmit, isSubmitting = false, error }: SigninForm
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="signin-email" className="text-sm font-medium text-foreground">
+                <Label htmlFor="signin-email" className="text-base font-medium text-foreground">
                   Email
                 </Label>
                 <Input
@@ -233,12 +233,12 @@ export function SigninForm({ onSubmit, isSubmitting = false, error }: SigninForm
 
               <div>
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="signin-password" className="text-sm font-medium text-foreground">
+                  <Label htmlFor="signin-password" className="text-base font-medium text-foreground">
                     Password
                   </Label>
                   <Link
                     to="/forgot-password"
-                    className="text-sm font-medium text-primary hover:text-primary/90 hover:underline"
+                    className="text-base font-medium text-primary hover:text-primary/90 hover:underline"
                   >
                     Forgot password?
                   </Link>
@@ -266,13 +266,13 @@ export function SigninForm({ onSubmit, isSubmitting = false, error }: SigninForm
               </div>
 
               {/* Error */}
-              {error && <p className="text-sm text-destructive text-center">{error}</p>}
+              {error && <p className="text-base text-destructive text-center">{error}</p>}
 
               <Button type="submit" className="w-full font-medium" disabled={isSubmitting}>
                 {isSubmitting ? "Signing in…" : "Sign in"}
               </Button>
 
-              <p className="text-center text-xs text-muted-foreground">
+              <p className="text-center text-sm text-muted-foreground">
                 By signing in, you agree to our{" "}
                 <a href="#" className="capitalize text-primary hover:text-primary/90">
                   Terms of use
@@ -286,7 +286,7 @@ export function SigninForm({ onSubmit, isSubmitting = false, error }: SigninForm
           </CardContent>
         </Card>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-6 text-center text-base text-muted-foreground">
           Don&apos;t have an account?{" "}
           <Link
             to="/signup"

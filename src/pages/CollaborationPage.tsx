@@ -107,14 +107,14 @@ export default function CollaborationPage() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Collaboration</h1>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-base text-slate-400">
               Manage invitations, accepted access, and files shared with you.
             </p>
           </div>
           <button
             type="button"
             onClick={loadCollaborationData}
-            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-slate-50"
+            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-base text-slate-900 hover:bg-slate-50"
           >
             <RefreshCw size={16} />
             Refresh
@@ -122,13 +122,13 @@ export default function CollaborationPage() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-base text-red-200">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+          <div className="mb-4 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-base text-emerald-200">
             {success}
           </div>
         )}
@@ -147,7 +147,7 @@ export default function CollaborationPage() {
               </div>
 
               {invitations.length === 0 ? (
-                <p className="text-sm text-slate-400">
+                <p className="text-base text-slate-400">
                   You do not have any invitations.
                 </p>
               ) : (
@@ -162,13 +162,13 @@ export default function CollaborationPage() {
                           <p className="font-medium">
                             {invitation.fileName ?? "Shared file"}
                           </p>
-                          <p className="mt-1 text-sm text-slate-400">
+                          <p className="mt-1 text-base text-slate-400">
                             Invited by {invitation.inviterName} as{" "}
                             <span className="text-violet-800">
                               {invitation.role}
                             </span>
                           </p>
-                          <p className="mt-1 text-xs text-slate-500">
+                          <p className="mt-1 text-sm text-slate-500">
                             Created {formatDate(invitation.createdAt)}
                             {invitation.respondedAt
                               ? ` • Responded ${formatDate(invitation.respondedAt)}`
@@ -178,7 +178,7 @@ export default function CollaborationPage() {
 
                         <div className="flex shrink-0 items-center gap-2">
                           <span
-                            className={`rounded-md px-2 py-1 text-xs font-medium ${getStatusClass(
+                            className={`rounded-md px-2 py-1 text-sm font-medium ${getStatusClass(
                               invitation.status,
                             )}`}
                           >
@@ -232,7 +232,7 @@ export default function CollaborationPage() {
               </div>
 
               {sharedFiles.length === 0 ? (
-                <p className="text-sm text-slate-400">
+                <p className="text-base text-slate-400">
                   No files have been shared with you yet.
                 </p>
               ) : (
@@ -245,16 +245,16 @@ export default function CollaborationPage() {
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <p className="font-medium">{file.name}</p>
-                          <p className="mt-1 text-sm text-slate-400">
+                          <p className="mt-1 text-base text-slate-400">
                             Owner: {file.ownerName}
                           </p>
-                          <p className="mt-1 text-xs text-slate-500">
+                          <p className="mt-1 text-sm text-slate-500">
                             Shared {formatDate(file.sharedAt)}
                           </p>
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="rounded-md bg-violet-500/15 px-2 py-1 text-xs font-medium text-violet-800">
+                          <span className="rounded-md bg-violet-500/15 px-2 py-1 text-sm font-medium text-violet-800">
                             {file.role}
                           </span>
 

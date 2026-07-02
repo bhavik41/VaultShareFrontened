@@ -93,7 +93,7 @@ export default function FileAuditPage() {
           </div>
           <div className="flex items-center gap-3">
             {!loading && !error && logs.length > 0 && <AuditLogExport logs={logs} fileName={`file-${fileId}-audit`} />}
-            <button onClick={load} className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-3 py-1.5 text-xs text-slate-400 transition-colors hover:text-slate-900">
+            <button onClick={load} className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-3 py-1.5 text-sm text-slate-400 transition-colors hover:text-slate-900">
               <RefreshCw size={13} /> Refresh
             </button>
           </div>
@@ -107,7 +107,7 @@ export default function FileAuditPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-slate-900">File Audit History</h1>
-            <p className="text-sm text-slate-500">Complete access trail for this file</p>
+            <p className="text-base text-slate-500">Complete access trail for this file</p>
           </div>
         </div>
 
@@ -123,13 +123,13 @@ export default function FileAuditPage() {
           <div className="flex items-center justify-center py-24">
             <div className="flex flex-col items-center gap-3 text-slate-500">
               <Loader2 size={28} className="animate-spin" />
-              <span className="text-sm">Loading audit history...</span>
+              <span className="text-base">Loading audit history...</span>
             </div>
           </div>
         )}
 
         {!loading && error && (
-          <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-600">
+          <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-base text-red-600">
             <AlertCircle size={16} />
             {error}
           </div>

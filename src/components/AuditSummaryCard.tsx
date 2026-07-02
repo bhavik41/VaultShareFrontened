@@ -33,7 +33,7 @@ export const AuditSummaryCard: React.FC<AuditSummaryCardProps> = ({ summary }) =
         <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Last Activity</p>
         <div className="mt-1 flex items-center gap-1.5">
           <Clock size={14} className="text-slate-400" />
-          <p className="text-sm font-semibold text-slate-700">
+          <p className="text-base font-semibold text-slate-700">
             {summary.lastActivityAt ? new Date(summary.lastActivityAt).toLocaleDateString() : "—"}
           </p>
         </div>
@@ -48,7 +48,7 @@ export const AuditSummaryCard: React.FC<AuditSummaryCardProps> = ({ summary }) =
             .map(([action, count]) => {
               const meta = ACTION_ICONS[action]
               return (
-                <div key={action} className={`flex items-center gap-1.5 text-xs ${meta?.color ?? "text-slate-400"}`}>
+                <div key={action} className={`flex items-center gap-1.5 text-sm ${meta?.color ?? "text-slate-400"}`}>
                   {meta?.icon}
                   <span className="flex-1 capitalize">{action.replace("_", " ")}</span>
                   <span className="font-bold text-slate-900">{count}</span>

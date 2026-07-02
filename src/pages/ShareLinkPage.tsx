@@ -148,7 +148,7 @@ export default function ShareLinkPage() {
           </RouterLink>
           <RouterLink
             to="/signin"
-            className="rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-sm text-slate-900 hover:bg-slate-50"
+            className="rounded-md border border-gray-200 bg-black/3 px-3 py-2 text-base text-slate-900 hover:bg-slate-50"
           >
             Sign in
           </RouterLink>
@@ -167,7 +167,7 @@ export default function ShareLinkPage() {
               <AlertTriangle className="text-red-700" size={24} />
               <div>
                 <h1 className="text-xl font-semibold text-red-100">Link unavailable</h1>
-                <p className="mt-1 text-sm text-red-200">{error}</p>
+                <p className="mt-1 text-base text-red-200">{error}</p>
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function ShareLinkPage() {
                 <Lock size={28} className="text-amber-700" />
               </div>
               <h1 className="text-xl font-bold">Password required</h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-base text-slate-400">
                 This share link is password protected. Enter the password to access the file.
               </p>
             </div>
@@ -191,14 +191,14 @@ export default function ShareLinkPage() {
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
                   required
-                  className="w-full rounded-md border border-gray-200 bg-gray-100 py-2 pl-10 pr-3 text-sm text-slate-900 outline-none focus:border-violet-400"
+                  className="w-full rounded-md border border-gray-200 bg-gray-100 py-2 pl-10 pr-3 text-base text-slate-900 outline-none focus:border-violet-400"
                 />
               </div>
-              {unlockError && <p className="text-sm text-red-600">{unlockError}</p>}
+              {unlockError && <p className="text-base text-red-600">{unlockError}</p>}
               <button
                 type="submit"
                 disabled={unlockLoading || !passwordInput}
-                className="w-full rounded-md bg-violet-600 py-2 text-sm font-medium text-slate-900 hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-md bg-violet-600 py-2 text-base font-medium text-slate-900 hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {unlockLoading ? "Verifying..." : "Unlock"}
               </button>
@@ -213,10 +213,10 @@ export default function ShareLinkPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold">{file.name}</h1>
-                  <p className="mt-1 flex items-center gap-2 text-sm text-slate-400">
+                  <p className="mt-1 flex items-center gap-2 text-base text-slate-400">
                     {file.mimeType} • {formatSize(file.size)}
                     {file.isEncrypted && (
-                      <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-xs font-medium text-emerald-700">
+                      <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-sm font-medium text-emerald-700">
                         🔐 Encrypted
                       </span>
                     )}
@@ -225,11 +225,11 @@ export default function ShareLinkPage() {
               </div>
               <div className="flex items-center gap-2">
                 {shareLink.passwordProtected && (
-                  <span className="rounded-md bg-amber-500/15 px-3 py-1 text-sm font-medium text-amber-200">
+                  <span className="rounded-md bg-amber-500/15 px-3 py-1 text-base font-medium text-amber-200">
                     🔒 Protected
                   </span>
                 )}
-                <span className="rounded-md bg-violet-500/15 px-3 py-1 text-sm font-medium text-violet-800">
+                <span className="rounded-md bg-violet-500/15 px-3 py-1 text-base font-medium text-violet-800">
                   {shareLink.permissionMode}
                 </span>
               </div>
@@ -237,16 +237,16 @@ export default function ShareLinkPage() {
 
             <div className="mb-6 grid gap-4 md:grid-cols-3">
               <div className="rounded-md border border-gray-200 bg-gray-100 p-4">
-                <div className="mb-2 flex items-center gap-2 text-sm text-slate-400">
+                <div className="mb-2 flex items-center gap-2 text-base text-slate-400">
                   <User size={16} />
                   Owner
                 </div>
                 <p className="font-medium">{file.ownerName}</p>
-                <p className="mt-1 text-sm text-slate-500">{file.ownerEmail}</p>
+                <p className="mt-1 text-base text-slate-500">{file.ownerEmail}</p>
               </div>
 
               <div className="rounded-md border border-gray-200 bg-gray-100 p-4">
-                <div className="mb-2 flex items-center gap-2 text-sm text-slate-400">
+                <div className="mb-2 flex items-center gap-2 text-base text-slate-400">
                   <Calendar size={16} />
                   Expires
                 </div>
@@ -254,7 +254,7 @@ export default function ShareLinkPage() {
               </div>
 
               <div className="rounded-md border border-gray-200 bg-gray-100 p-4">
-                <div className="mb-2 flex items-center gap-2 text-sm text-slate-400">
+                <div className="mb-2 flex items-center gap-2 text-base text-slate-400">
                   <ShieldCheck size={16} />
                   Permission
                 </div>
@@ -269,15 +269,15 @@ export default function ShareLinkPage() {
                   type="button"
                   onClick={handleDownload}
                   disabled={downloading}
-                  className="inline-flex items-center justify-center gap-2 rounded-md bg-violet-600 px-4 py-2 text-sm font-medium text-slate-900 hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-violet-600 px-4 py-2 text-base font-medium text-slate-900 hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Download size={16} />
                   {downloading ? "Downloading..." : "Download File"}
                 </button>
-                {downloadError && <p className="text-sm text-red-700">{downloadError}</p>}
+                {downloadError && <p className="text-base text-red-700">{downloadError}</p>}
               </div>
             ) : (
-              <div className="rounded-md border border-gray-200 bg-gray-100 p-4 text-sm text-slate-600">
+              <div className="rounded-md border border-gray-200 bg-gray-100 p-4 text-base text-slate-600">
                 <p className="font-medium">Download unavailable for this share mode.</p>
                 <p className="mt-1 text-slate-400">
                   {shareLink.permissionMode === "viewer"

@@ -34,7 +34,7 @@ export default function AboutPage() {
       <nav className="sticky top-0 z-50 border-b border-gray-200 bg-[#080810]/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-extrabold text-slate-900">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-base font-extrabold text-slate-900">
               V
             </div>
             <span className="text-base font-bold text-slate-900">VaultShare</span>
@@ -42,17 +42,17 @@ export default function AboutPage() {
 
           <div className="hidden items-center gap-8 md:flex">
             {NAV_LINKS.map((link) => (
-              <a key={link} href="#" className="text-sm text-slate-400 transition-colors hover:text-slate-900">
+              <a key={link} href="#" className="text-base text-slate-400 transition-colors hover:text-slate-900">
                 {link}
               </a>
             ))}
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/signin" className="rounded-lg border border-gray-200 px-4 py-1.5 text-sm text-slate-600 hover:bg-black/3">
+            <Link to="/signin" className="rounded-lg border border-gray-200 px-4 py-1.5 text-base text-slate-600 hover:bg-black/3">
               Sign In
             </Link>
-            <Link to="/signup" className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-semibold text-slate-900 hover:bg-blue-500">
+            <Link to="/signup" className="rounded-lg bg-blue-600 px-4 py-1.5 text-base font-semibold text-slate-900 hover:bg-blue-500">
               Get Started
             </Link>
           </div>
@@ -61,7 +61,7 @@ export default function AboutPage() {
 
       {/* Story Hero */}
       <section className="mx-auto max-w-4xl px-6 pt-20 pb-16 text-center">
-        <p className="mb-5 text-sm font-semibold uppercase tracking-widest text-cyan-400">Our Story</p>
+        <p className="mb-5 text-base font-semibold uppercase tracking-widest text-cyan-400">Our Story</p>
         <h1 className="mb-6 text-5xl font-extrabold leading-tight text-slate-900">
           Built by security engineers<br />who got tired of bad tools.
         </h1>
@@ -78,7 +78,7 @@ export default function AboutPage() {
           {STATS.map(({ value, label }) => (
             <div key={label} className="rounded-xl border border-gray-200 bg-[#0f1020] p-6 text-center">
               <p className="mb-1 text-3xl font-extrabold text-cyan-400">{value}</p>
-              <p className="text-xs text-slate-400">{label}</p>
+              <p className="text-sm text-slate-400">{label}</p>
             </div>
           ))}
         </div>
@@ -97,7 +97,7 @@ export default function AboutPage() {
 
       {/* Team */}
       <section className="mx-auto max-w-5xl px-6 pb-16">
-        <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-cyan-400">The Team</p>
+        <p className="mb-3 text-base font-semibold uppercase tracking-widest text-cyan-400">The Team</p>
         <h2 className="mb-8 text-3xl font-extrabold text-slate-900">The people behind your security.</h2>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -109,17 +109,17 @@ export default function AboutPage() {
             >
               <div className="mb-3 flex items-center gap-3">
                 <div
-                  className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold"
+                  className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-base font-bold"
                   style={{ background: bg, color, border: `1px solid ${color}30` }}
                 >
                   {initials}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">{name}</p>
-                  <p className="text-xs text-slate-400">{role}</p>
+                  <p className="text-base font-semibold text-slate-900">{name}</p>
+                  <p className="text-sm text-slate-400">{role}</p>
                 </div>
               </div>
-              <p className="text-xs leading-relaxed text-slate-500">
+              <p className="text-sm leading-relaxed text-slate-500">
                 Security professional with 10+ years building enterprise-grade systems.
               </p>
             </div>
@@ -129,7 +129,7 @@ export default function AboutPage() {
 
       {/* Values */}
       <section className="mx-auto max-w-5xl px-6 pb-16">
-        <p className="mb-3 text-center text-sm font-semibold uppercase tracking-widest text-cyan-400">Our Values</p>
+        <p className="mb-3 text-center text-base font-semibold uppercase tracking-widest text-cyan-400">Our Values</p>
         <h2 className="mb-8 text-center text-3xl font-extrabold text-slate-900">What we stand for.</h2>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -140,8 +140,8 @@ export default function AboutPage() {
               style={{ borderTop: `3px solid ${border}` }}
             >
               <div className="mb-3 text-2xl">{emoji}</div>
-              <p className="mb-2 text-sm font-bold text-slate-900">{title}</p>
-              <p className="text-xs leading-relaxed text-slate-400">{desc}</p>
+              <p className="mb-2 text-base font-bold text-slate-900">{title}</p>
+              <p className="text-sm leading-relaxed text-slate-400">{desc}</p>
             </div>
           ))}
         </div>
@@ -149,12 +149,12 @@ export default function AboutPage() {
 
       {/* Backers */}
       <section className="mx-auto max-w-5xl px-6 pb-16 text-center">
-        <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-slate-500">Backed By</p>
+        <p className="mb-6 text-sm font-semibold uppercase tracking-widest text-slate-500">Backed By</p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           {BACKERS.map((b) => (
             <span
               key={b}
-              className="rounded-lg border border-gray-300 bg-[#0f1020] px-5 py-2 text-sm text-slate-600"
+              className="rounded-lg border border-gray-300 bg-[#0f1020] px-5 py-2 text-base text-slate-600"
             >
               {b}
             </span>
@@ -170,7 +170,7 @@ export default function AboutPage() {
           </h2>
           <Link
             to="/signup"
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-blue-500"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-base font-semibold text-slate-900 hover:bg-blue-500"
           >
             Get Started Free →
           </Link>

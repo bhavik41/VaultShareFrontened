@@ -217,12 +217,12 @@ export default function ActivityPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900">My Activity</h1>
-              <p className="text-sm text-slate-500">Your file history across VaultShare</p>
+              <p className="text-base text-slate-500">Your file history across VaultShare</p>
             </div>
           </div>
           <button
             onClick={() => load(0, true)}
-            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-3 py-1.5 text-xs text-slate-400 transition-colors hover:text-slate-900"
+            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-3 py-1.5 text-sm text-slate-400 transition-colors hover:text-slate-900"
           >
             <RefreshCw size={13} />
             Refresh
@@ -235,7 +235,7 @@ export default function ActivityPage() {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+              className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 tab === t.id
                   ? "bg-violet-600/20 text-violet-700"
                   : "text-slate-600 hover:text-slate-800"
@@ -251,13 +251,13 @@ export default function ActivityPage() {
           <div className="flex items-center justify-center py-24">
             <div className="flex flex-col items-center gap-3 text-slate-500">
               <Loader2 size={28} className="animate-spin" />
-              <span className="text-sm">Loading activityâ€¦</span>
+              <span className="text-base">Loading activityâ€¦</span>
             </div>
           </div>
         )}
 
         {!loading && error && (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-600">
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-base text-red-600">
             {error}
           </div>
         )}
@@ -265,7 +265,7 @@ export default function ActivityPage() {
         {!loading && !error && activities.length === 0 && (
           <div className="flex flex-col items-center gap-4 py-24 text-slate-500">
             <History size={40} className="opacity-40" />
-            <p className="text-sm">No activity yet for this filter.</p>
+            <p className="text-base">No activity yet for this filter.</p>
           </div>
         )}
 
@@ -294,11 +294,11 @@ export default function ActivityPage() {
 
                         {/* File name + details */}
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-slate-800">
+                          <p className="truncate text-base font-medium text-slate-800">
                             {item.fileName}
                           </p>
                           {item.details && (
-                            <p className="truncate text-xs text-slate-500">{item.details}</p>
+                            <p className="truncate text-sm text-slate-500">{item.details}</p>
                           )}
                         </div>
 
@@ -311,7 +311,7 @@ export default function ActivityPage() {
                         </span>
 
                         {/* Time */}
-                        <span className="w-16 shrink-0 text-right text-xs text-slate-500">
+                        <span className="w-16 shrink-0 text-right text-sm text-slate-500">
                           {formatTime(item.timestamp)}
                         </span>
                       </div>
@@ -327,7 +327,7 @@ export default function ActivityPage() {
                 <button
                   onClick={() => load(activities.length, false)}
                   disabled={loadingMore}
-                  className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-5 py-2 text-sm text-slate-400 transition-colors hover:text-slate-900 disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-lg border border-gray-200 bg-black/3 px-5 py-2 text-base text-slate-400 transition-colors hover:text-slate-900 disabled:opacity-50"
                 >
                   {loadingMore ? (
                     <Loader2 size={14} className="animate-spin" />
@@ -339,7 +339,7 @@ export default function ActivityPage() {
               </div>
             )}
 
-            <p className="text-center text-xs text-slate-600">
+            <p className="text-center text-sm text-slate-600">
               Showing {activities.length} of {total} events
             </p>
           </div>

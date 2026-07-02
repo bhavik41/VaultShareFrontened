@@ -75,7 +75,7 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
         <div className="flex items-center gap-2.5 min-w-0">
           <MessageSquare size={16} className="text-violet-600 flex-shrink-0" />
           <div className="min-w-0">
-            <span className="text-sm font-semibold text-slate-700 truncate block">
+            <span className="text-base font-semibold text-slate-700 truncate block">
               {fileName ? `Chat — ${fileName}` : "Chat"}
             </span>
           </div>
@@ -105,7 +105,7 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
       {error && (
         <div className="flex items-center gap-2 px-4 py-2.5 bg-rose-950/30 border-b border-rose-900/40 flex-shrink-0">
           <AlertCircle size={13} className="text-rose-600 flex-shrink-0" />
-          <span className="text-xs text-rose-600 font-medium flex-1">{error}</span>
+          <span className="text-sm text-rose-600 font-medium flex-1">{error}</span>
           <button
             onClick={() => dispatch(setError(null))}
             className="bg-transparent border-0 p-0.5 text-rose-500 hover:text-rose-300 cursor-pointer"
@@ -127,8 +127,8 @@ export default function ChatPanel({ fileId, fileName, onClose }: ChatPanelProps)
               <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-violet-600/80 flex items-center justify-center text-[8px] text-white font-bold">0</span>
             </div>
             <div className="flex flex-col gap-1.5 max-w-[200px]">
-              <span className="text-sm font-semibold text-slate-600">No messages yet</span>
-              <span className="text-xs text-slate-500 leading-relaxed">
+              <span className="text-base font-semibold text-slate-600">No messages yet</span>
+              <span className="text-sm text-slate-500 leading-relaxed">
                 Start the conversation! Your messages are end-to-end encrypted.
               </span>
             </div>

@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">Reset password</h1>
-          <p className="text-slate-900/50 text-sm text-center mb-8">
+          <p className="text-slate-900/50 text-base text-center mb-8">
             Enter the 6-digit code you received and your new password.
           </p>
 
@@ -51,12 +51,12 @@ export default function ResetPasswordPage() {
             <div className="flex flex-col items-center gap-4">
               <CheckCircle2 className="h-12 w-12 text-emerald-600" />
               <p className="text-slate-900 font-medium">Password reset successfully!</p>
-              <p className="text-slate-900/50 text-sm text-center">Redirecting to sign in…</p>
+              <p className="text-slate-900/50 text-base text-center">Redirecting to sign in…</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm text-slate-900/70 mb-1.5">Email</label>
+                <label className="block text-base text-slate-900/70 mb-1.5">Email</label>
                 <input
                   type="email"
                   required
@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
               </div>
 
               <div>
-                <label className="block text-sm text-slate-900/70 mb-1.5">One-time code (OTP)</label>
+                <label className="block text-base text-slate-900/70 mb-1.5">One-time code (OTP)</label>
                 <input
                   type="text"
                   required
@@ -81,7 +81,7 @@ export default function ResetPasswordPage() {
               </div>
 
               <div>
-                <label className="block text-sm text-slate-900/70 mb-1.5">New password</label>
+                <label className="block text-base text-slate-900/70 mb-1.5">New password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -103,7 +103,7 @@ export default function ResetPasswordPage() {
               </div>
 
               {error && (
-                <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+                <p className="text-rose-600 text-base bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
                   {error}
                 </p>
               )}
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/forgot-password" className="text-slate-900/40 hover:text-slate-900/70 text-sm flex items-center justify-center gap-1 transition-colors">
+            <Link to="/forgot-password" className="text-slate-900/40 hover:text-slate-900/70 text-base flex items-center justify-center gap-1 transition-colors">
               <ArrowLeft className="h-3.5 w-3.5" /> Back
             </Link>
           </div>

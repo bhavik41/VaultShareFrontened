@@ -79,12 +79,12 @@ export default function VersionRequestsPage() {
             <Clock size={22} className="text-amber-600" />
             Version Upload Requests
           </h1>
-          <span className="text-xs text-slate-500">
+          <span className="text-sm text-slate-500">
             Pending version-upload requests across all files you own.
           </span>
         </div>
 
-        {error && <p className="mb-4 text-xs text-rose-600">{error}</p>}
+        {error && <p className="mb-4 text-sm text-rose-600">{error}</p>}
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -96,8 +96,8 @@ export default function VersionRequestsPage() {
               <CheckCircle2 size={24} />
             </div>
             <div className="flex max-w-sm flex-col gap-1">
-              <h3 className="text-sm font-semibold text-slate-700">No pending requests</h3>
-              <p className="text-xs leading-relaxed text-slate-500">
+              <h3 className="text-base font-semibold text-slate-700">No pending requests</h3>
+              <p className="text-sm leading-relaxed text-slate-500">
                 You're all caught up. New version-upload requests for your files will show up here.
               </p>
             </div>
@@ -112,22 +112,22 @@ export default function VersionRequestsPage() {
                 <div className="min-w-0">
                   <Link
                     to={`/files/${req.fileId}`}
-                    className="truncate text-sm font-semibold text-slate-800 hover:text-violet-700"
+                    className="truncate text-base font-semibold text-slate-800 hover:text-violet-700"
                   >
                     {fileNames.get(req.fileId) ?? req.originalName}
                   </Link>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="mt-0.5 text-sm text-slate-500">
                     New file: {req.originalName} · {formatBytes(req.size)} · {formatDate(req.createdAt)}
                   </p>
                   {req.changeNote && (
-                    <p className="mt-1 text-xs italic text-slate-400">"{req.changeNote}"</p>
+                    <p className="mt-1 text-sm italic text-slate-400">"{req.changeNote}"</p>
                   )}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   <button
                     disabled={actionLoadingId === req.id}
                     onClick={() => handleApprove(req)}
-                    className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 disabled:opacity-50"
+                    className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-500/20 disabled:opacity-50"
                   >
                     {actionLoadingId === req.id ? (
                       <Loader2 size={13} className="animate-spin" />
@@ -139,7 +139,7 @@ export default function VersionRequestsPage() {
                   <button
                     disabled={actionLoadingId === req.id}
                     onClick={() => handleReject(req)}
-                    className="flex items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 disabled:opacity-50"
+                    className="flex items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-300 hover:bg-rose-500/20 disabled:opacity-50"
                   >
                     <X size={13} />
                     Reject

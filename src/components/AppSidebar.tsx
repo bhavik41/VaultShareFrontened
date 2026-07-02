@@ -90,14 +90,14 @@ export default function AppSidebar() {
             <button
               onClick={toggle}
               title="Expand sidebar"
-              className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shadow-sm border-0 cursor-pointer hover:scale-105 transition-transform"
+              className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-extrabold text-white shadow-sm border-0 cursor-pointer hover:scale-105 transition-transform"
             >
               V
             </button>
           ) : (
             <>
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shadow-sm shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-extrabold text-white shadow-sm shrink-0">
                   V
                 </div>
                 <span className="font-bold text-[15px] text-slate-900 tracking-tight">VaultShare</span>
@@ -133,7 +133,7 @@ export default function AppSidebar() {
                 key={item.id}
                 onClick={() => handleNav(item)}
                 title={collapsed ? item.label : undefined}
-                className={`w-full flex items-center ${collapsed ? "justify-center p-2.5" : "justify-between px-3 py-2"} rounded-lg border-0 text-sm transition-all duration-150 cursor-pointer
+                className={`w-full flex items-center ${collapsed ? "justify-center p-2.5" : "justify-between px-3 py-2"} rounded-lg border-0 text-base transition-all duration-150 cursor-pointer
                   ${isActive
                     ? "bg-violet-50 text-violet-700 font-semibold"
                     : "bg-transparent text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900"
@@ -170,7 +170,7 @@ export default function AppSidebar() {
                 style={{ width: `${progressPct}%` }}
               />
             </div>
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between text-sm">
               <span className="font-semibold text-slate-700">{totalGB.toFixed(1)} GB</span>
               <span className="text-slate-400">of 10 GB</span>
             </div>

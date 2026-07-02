@@ -91,7 +91,7 @@ export default function ChatInput({
         disabled={disabled}
         placeholder={disabled ? "Connecting..." : "Message... (Enter to send)"}
         rows={1}
-        className="flex-1 resize-none bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder:text-gray-400 focus:outline-none focus:border-violet-500/60 focus:ring-1 focus:ring-violet-500/30 transition-all duration-200 max-h-32 overflow-y-auto disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex-1 resize-none bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-base text-slate-700 placeholder:text-gray-400 focus:outline-none focus:border-violet-500/60 focus:ring-1 focus:ring-violet-500/30 transition-all duration-200 max-h-32 overflow-y-auto disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ minHeight: "40px" }}
         onInput={(e) => {
           const target = e.currentTarget;

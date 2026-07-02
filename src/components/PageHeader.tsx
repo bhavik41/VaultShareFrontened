@@ -101,10 +101,10 @@ function ProfileDropdown({
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
       >
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-xs font-bold text-slate-900 shadow-md">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-slate-900 shadow-md">
           {initials}
         </div>
-        <span className="text-sm text-slate-700 font-medium max-w-[100px] truncate">{name}</span>
+        <span className="text-base text-slate-700 font-medium max-w-[100px] truncate">{name}</span>
         <ChevronDown
           size={14}
           className={`text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
@@ -115,12 +115,12 @@ function ProfileDropdown({
         <div className="absolute right-0 top-full mt-2.5 w-60 bg-gray-50 border border-gray-200 rounded-xl p-1.5 z-[100] shadow-2xl shadow-black/80">
           <div className="p-3 border-b border-gray-200 mb-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-slate-900">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-slate-900">
                 {initials}
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-700 truncate">{name}</div>
-                <div className="text-xs text-slate-500 truncate">{email}</div>
+                <div className="text-base font-semibold text-slate-700 truncate">{name}</div>
+                <div className="text-sm text-slate-500 truncate">{email}</div>
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ function ProfileDropdown({
             >
               <span className="text-slate-500 group-hover:text-slate-600">{icon}</span>
               <div>
-                <div className="text-xs font-semibold text-slate-700">{label}</div>
+                <div className="text-sm font-semibold text-slate-700">{label}</div>
                 <div className="text-[10px] text-slate-500">{sub}</div>
               </div>
             </button>
@@ -145,7 +145,7 @@ function ProfileDropdown({
               className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-rose-950/20 transition-colors"
             >
               <LogOut size={15} className="text-rose-500" />
-              <span className="text-xs font-semibold text-rose-500">Sign Out</span>
+              <span className="text-sm font-semibold text-rose-500">Sign Out</span>
             </button>
           </div>
         </div>
@@ -183,7 +183,7 @@ export default function PageHeader() {
       />
       <button
         onClick={() => fileInputRef.current?.click()}
-        className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-95 transition-all duration-150"
+        className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-base font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-95 transition-all duration-150"
       >
         <Plus size={16} strokeWidth={2.5} />
         <span>Upload</span>

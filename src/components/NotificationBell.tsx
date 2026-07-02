@@ -65,11 +65,11 @@ export default function NotificationBell() {
       {open && (
         <div className="absolute right-0 top-full z-[100] mt-2.5 w-80 rounded-xl border border-gray-200 bg-gray-50 p-1.5 shadow-2xl shadow-black/80">
           <div className="border-b border-gray-200 px-3 py-2.5">
-            <span className="text-xs font-semibold text-slate-700">Notifications</span>
+            <span className="text-sm font-semibold text-slate-700">Notifications</span>
           </div>
           <div className="max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
-              <p className="px-3 py-6 text-center text-xs text-slate-500">No notifications yet.</p>
+              <p className="px-3 py-6 text-center text-sm text-slate-500">No notifications yet.</p>
             ) : (
               notifications.map((n) => (
                 <button
@@ -81,7 +81,7 @@ export default function NotificationBell() {
                 >
                   <span className="mt-0.5 shrink-0">{ICONS[n.type]}</span>
                   <div className="min-w-0">
-                    <p className="text-xs leading-snug text-slate-700">{n.message}</p>
+                    <p className="text-sm leading-snug text-slate-700">{n.message}</p>
                     <p className="mt-0.5 text-[10px] text-slate-500">
                       {new Date(n.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                     </p>

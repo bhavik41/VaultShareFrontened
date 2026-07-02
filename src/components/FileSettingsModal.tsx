@@ -169,8 +169,8 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
           <div className="flex items-center gap-2 min-w-0">
             <Settings size={16} className="text-violet-600 flex-shrink-0" />
             <div className="min-w-0">
-              <p className="text-xs text-slate-500 font-medium">File Settings</p>
-              <p className="text-sm font-bold text-slate-900 truncate">{fileName}</p>
+              <p className="text-sm text-slate-500 font-medium">File Settings</p>
+              <p className="text-base font-bold text-slate-900 truncate">{fileName}</p>
             </div>
           </div>
           <button
@@ -187,7 +187,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-0 cursor-pointer transition-colors flex-1 justify-center
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-0 cursor-pointer transition-colors flex-1 justify-center
                 ${activeTab === tab.id
                   ? "text-violet-600 border-b-2 border-violet-500 bg-violet-500/5"
                   : "text-slate-600 hover:text-slate-800 bg-transparent"
@@ -207,21 +207,21 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
             <div className="flex flex-col gap-5">
               {/* Invite form */}
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Invite Collaborator</p>
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Invite Collaborator</p>
                 <form onSubmit={handleInvite} className="flex flex-col gap-2">
                   <input
                     type="email"
                     placeholder="colleague@email.com"
                     value={inviteEmail}
                     onChange={(e) => { setInviteEmail(e.target.value); setInviteSuccess(false); setInviteError(null); }}
-                    className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-gray-400 focus:outline-none focus:border-violet-500"
+                    className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-base text-slate-900 placeholder-gray-400 focus:outline-none focus:border-violet-500"
                     required
                   />
                   <div className="flex gap-2">
                     <select
                       value={inviteRole}
                       onChange={(e) => setInviteRole(e.target.value as SharedRole)}
-                      className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-violet-500"
+                      className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-base text-slate-900 focus:outline-none focus:border-violet-500"
                     >
                       <option value="viewer">Viewer</option>
                       <option value="editor">Editor</option>
@@ -229,38 +229,38 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                     <button
                       type="submit"
                       disabled={inviteLoading || !inviteEmail.trim()}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-colors flex-1 justify-center"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-base font-semibold rounded-lg border-0 cursor-pointer transition-colors flex-1 justify-center"
                     >
                       <UserPlus size={13} />
                       {inviteLoading ? "Sending…" : "Send Invite"}
                     </button>
                   </div>
-                  {inviteError && <p className="text-xs text-rose-600">{inviteError}</p>}
-                  {inviteSuccess && <p className="text-xs text-emerald-600">Invitation sent.</p>}
+                  {inviteError && <p className="text-sm text-rose-600">{inviteError}</p>}
+                  {inviteSuccess && <p className="text-sm text-emerald-600">Invitation sent.</p>}
                 </form>
               </div>
 
               {/* Current collaborators */}
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Current Collaborators</p>
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Current Collaborators</p>
                 {sharingLoading ? (
-                  <p className="text-xs text-slate-500">Loading…</p>
+                  <p className="text-sm text-slate-500">Loading…</p>
                 ) : collaborators.length === 0 ? (
-                  <p className="text-xs text-slate-500">No collaborators yet.</p>
+                  <p className="text-sm text-slate-500">No collaborators yet.</p>
                 ) : (
                   <div className="flex flex-col gap-2">
                     {collaborators.map((c) => (
                       <div key={c.userId} className="flex items-center justify-between bg-gray-100 rounded-lg px-3 py-2 border border-gray-200">
                         <div className="min-w-0">
-                          <p className="text-sm text-slate-900 font-medium truncate">{c.name}</p>
-                          <p className="text-xs text-slate-500 truncate">{c.email}</p>
+                          <p className="text-base text-slate-900 font-medium truncate">{c.name}</p>
+                          <p className="text-sm text-slate-500 truncate">{c.email}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <select
                             value={c.role}
                             disabled={actionLoading === c.userId}
                             onChange={(e) => handleRoleChange(c.userId, e.target.value as SharedRole)}
-                            className="bg-gray-200 border border-gray-300 rounded px-2 py-1 text-xs text-slate-900 focus:outline-none focus:border-violet-500 disabled:opacity-50"
+                            className="bg-gray-200 border border-gray-300 rounded px-2 py-1 text-sm text-slate-900 focus:outline-none focus:border-violet-500 disabled:opacity-50"
                           >
                             <option value="viewer">Viewer</option>
                             <option value="editor">Editor</option>
@@ -268,7 +268,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                           <button
                             onClick={() => handleRemove(c.userId)}
                             disabled={actionLoading === c.userId}
-                            className="text-rose-500 hover:text-rose-600 text-xs font-semibold border-0 bg-transparent cursor-pointer disabled:opacity-50 px-1"
+                            className="text-rose-500 hover:text-rose-600 text-sm font-semibold border-0 bg-transparent cursor-pointer disabled:opacity-50 px-1"
                           >
                             Remove
                           </button>
@@ -284,9 +284,9 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
           {/* ── VERSIONS TAB ── */}
           {activeTab === "versions" && (
             <div className="flex flex-col gap-4">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Version Upload Policy</p>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Version Upload Policy</p>
               {policyLoading ? (
-                <p className="text-xs text-slate-500">Loading…</p>
+                <p className="text-sm text-slate-500">Loading…</p>
               ) : (
                 <div className="flex flex-col gap-2">
                   {VERSION_POLICIES.map((p) => (
@@ -306,27 +306,27 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                       </div>
                       <div>
                         <p className={`text-sm font-semibold ${versionPolicy === p.value ? "text-violet-700" : "text-slate-600"}`}>{p.label}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{p.desc}</p>
+                        <p className="text-sm text-slate-500 mt-0.5">{p.desc}</p>
                       </div>
                     </button>
                   ))}
                 </div>
               )}
-              {policySaving && <p className="text-xs text-slate-500">Saving…</p>}
+              {policySaving && <p className="text-sm text-slate-500">Saving…</p>}
             </div>
           )}
 
           {/* ── CHAT TAB ── */}
           {activeTab === "chat" && (
             <div className="flex flex-col gap-4">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Chat Settings</p>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Chat Settings</p>
               {chatLoading ? (
-                <p className="text-xs text-slate-500">Loading…</p>
+                <p className="text-sm text-slate-500">Loading…</p>
               ) : (
                 <div className="flex items-center justify-between bg-white border border-slate-300 rounded-xl p-4">
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">Admin-Only Chat</p>
-                    <p className="text-xs text-slate-500 mt-0.5">When enabled, only you can send messages in this file's chat room.</p>
+                    <p className="text-base font-semibold text-slate-900">Admin-Only Chat</p>
+                    <p className="text-sm text-slate-500 mt-0.5">When enabled, only you can send messages in this file's chat room.</p>
                   </div>
                   <button
                     onClick={() => handleChatToggle(!adminOnlyChat)}

@@ -49,7 +49,7 @@ export default function ContactPage() {
       <nav className="sticky top-0 z-50 border-b border-gray-200 bg-[#080810]/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-extrabold text-slate-900">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-base font-extrabold text-slate-900">
               V
             </div>
             <span className="text-base font-bold text-slate-900">VaultShare</span>
@@ -60,7 +60,7 @@ export default function ContactPage() {
               <a
                 key={link}
                 href="#"
-                className="text-sm text-slate-400 transition-colors hover:text-slate-900"
+                className="text-base text-slate-400 transition-colors hover:text-slate-900"
               >
                 {link}
               </a>
@@ -70,13 +70,13 @@ export default function ContactPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/signin"
-              className="rounded-lg border border-gray-200 px-4 py-1.5 text-sm text-slate-600 transition-colors hover:bg-black/3"
+              className="rounded-lg border border-gray-200 px-4 py-1.5 text-base text-slate-600 transition-colors hover:bg-black/3"
             >
               Sign In
             </Link>
             <Link
               to="/signup"
-              className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-blue-500"
+              className="rounded-lg bg-blue-600 px-4 py-1.5 text-base font-semibold text-slate-900 transition-colors hover:bg-blue-500"
             >
               Get Started
             </Link>
@@ -86,7 +86,7 @@ export default function ContactPage() {
 
       {/* Hero */}
       <section className="mx-auto max-w-7xl px-6 pt-16 pb-12">
-        <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-cyan-400">
+        <p className="mb-4 text-base font-semibold uppercase tracking-widest text-cyan-400">
           Get in touch
         </p>
         <h1 className="mb-3 text-5xl font-extrabold leading-tight text-slate-900">
@@ -127,9 +127,9 @@ export default function ContactPage() {
               <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-gray-300 bg-gray-100">
                 {icon}
               </div>
-              <p className="mb-1 text-sm font-semibold text-slate-700">{title}</p>
-              <p className="mb-1 text-sm font-medium text-cyan-400">{value}</p>
-              <p className="text-xs text-slate-500">{sub}</p>
+              <p className="mb-1 text-base font-semibold text-slate-700">{title}</p>
+              <p className="mb-1 text-base font-medium text-cyan-400">{value}</p>
+              <p className="text-sm text-slate-500">{sub}</p>
             </div>
           ))}
         </div>
@@ -145,13 +145,13 @@ export default function ContactPage() {
             {sent ? (
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
                 <p className="font-semibold text-emerald-700">Message sent!</p>
-                <p className="mt-1 text-sm text-slate-400">We'll get back to you within 24 hours.</p>
+                <p className="mt-1 text-base text-slate-400">We'll get back to you within 24 hours.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1.5 block text-xs font-medium text-slate-400">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-400">
                       First Name
                     </label>
                     <input
@@ -159,11 +159,11 @@ export default function ContactPage() {
                       placeholder="Alex"
                       value={form.firstName}
                       onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-xs font-medium text-slate-400">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-400">
                       Last Name
                     </label>
                     <input
@@ -171,13 +171,13 @@ export default function ContactPage() {
                       placeholder="Morgan"
                       value={form.lastName}
                       onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-slate-400">
+                  <label className="mb-1.5 block text-sm font-medium text-slate-400">
                     Email Address
                   </label>
                   <input
@@ -186,12 +186,12 @@ export default function ContactPage() {
                     placeholder="alex@company.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-slate-400">
+                  <label className="mb-1.5 block text-sm font-medium text-slate-400">
                     Company
                   </label>
                   <input
@@ -199,12 +199,12 @@ export default function ContactPage() {
                     placeholder="Acme Corp"
                     value={form.company}
                     onChange={(e) => setForm({ ...form, company: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-slate-400">
+                  <label className="mb-1.5 block text-sm font-medium text-slate-400">
                     Subject
                   </label>
                   <input
@@ -212,12 +212,12 @@ export default function ContactPage() {
                     placeholder="Enterprise / Demo request / Support"
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-slate-400">
+                  <label className="mb-1.5 block text-sm font-medium text-slate-400">
                     Message
                   </label>
                   <textarea
@@ -225,13 +225,13 @@ export default function ContactPage() {
                     placeholder="Tell us how we can help..."
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full resize-none rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full resize-none rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-blue-500"
+                  className="w-full rounded-lg bg-blue-600 py-2.5 text-base font-semibold text-slate-900 transition-colors hover:bg-blue-500"
                 >
                   Send Message →
                 </button>
@@ -248,8 +248,8 @@ export default function ContactPage() {
                   key={q}
                   className="rounded-xl border border-gray-200 bg-[#0f1020] p-5"
                 >
-                  <p className="mb-1.5 text-sm font-semibold text-slate-900">{q}</p>
-                  <p className="text-sm text-slate-400">{a}</p>
+                  <p className="mb-1.5 text-base font-semibold text-slate-900">{q}</p>
+                  <p className="text-base text-slate-400">{a}</p>
                 </div>
               ))}
             </div>

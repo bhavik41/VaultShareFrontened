@@ -136,10 +136,10 @@ function ProfileDropdown({
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
       >
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-xs font-bold text-slate-900 shadow-md">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-slate-900 shadow-md">
           {initials}
         </div>
-        <span className="text-sm text-slate-700 font-medium max-w-[100px] truncate">{name}</span>
+        <span className="text-base text-slate-700 font-medium max-w-[100px] truncate">{name}</span>
         <ChevronDown size={14} className={`text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
 
@@ -147,10 +147,10 @@ function ProfileDropdown({
         <div className="absolute right-0 top-full mt-2.5 w-60 bg-gray-50 border border-gray-200 rounded-xl p-1.5 z-[100] shadow-2xl shadow-black/80">
           <div className="p-3 pb-3 border-b border-gray-200 mb-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-slate-900">{initials}</div>
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-slate-900">{initials}</div>
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-700 truncate">{name}</div>
-                <div className="text-xs text-slate-500 truncate">{email}</div>
+                <div className="text-base font-semibold text-slate-700 truncate">{name}</div>
+                <div className="text-sm text-slate-500 truncate">{email}</div>
               </div>
             </div>
           </div>
@@ -167,7 +167,7 @@ function ProfileDropdown({
             <button key={label} onClick={action} className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-gray-100 transition-colors group">
               <span className="text-slate-500 group-hover:text-slate-600">{icon}</span>
               <div>
-                <div className="text-xs font-semibold text-slate-700">{label}</div>
+                <div className="text-sm font-semibold text-slate-700">{label}</div>
                 <div className="text-[10px] text-slate-500">{sub}</div>
               </div>
             </button>
@@ -176,7 +176,7 @@ function ProfileDropdown({
           <div className="border-t border-gray-200 mt-1.5 pt-1.5">
             <button onClick={() => { setOpen(false); onLogout(); }} className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-rose-950/20 transition-colors">
               <LogOut size={15} className="text-rose-500" />
-              <span className="text-xs font-semibold text-rose-500">Sign Out</span>
+              <span className="text-sm font-semibold text-rose-500">Sign Out</span>
             </button>
           </div>
         </div>
@@ -400,28 +400,28 @@ export default function DashboardPage() {
 
               {isMenuOpen && (
                 <div ref={cardMenuRef} className="absolute right-0 top-full mt-1.5 w-36 bg-gray-50 border border-slate-850 rounded-xl p-1 z-50 shadow-xl">
-                  <button onClick={() => { setActiveMenuId(null); navigate(`/files/${doc.id}`); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-xs font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
+                  <button onClick={() => { setActiveMenuId(null); navigate(`/files/${doc.id}`); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
                     <Eye size={13} /><span>View</span>
                   </button>
                   {canDownload && (
-                    <button onClick={() => handleDownload(doc.id, doc.name)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-xs font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
+                    <button onClick={() => handleDownload(doc.id, doc.name)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
                       <Download size={13} /><span>Download</span>
                     </button>
                   )}
                   {isOwner && (
-                    <button onClick={() => handleShareLink(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-xs font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
+                    <button onClick={() => handleShareLink(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
                       <Share2 size={13} /><span>Share Link</span>
                     </button>
                   )}
                   {isOwner && (
-                    <button onClick={() => { setActiveMenuId(null); setSettingsFile({ id: doc.id, name: doc.name }); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-xs font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
+                    <button onClick={() => { setActiveMenuId(null); setSettingsFile({ id: doc.id, name: doc.name }); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-gray-100 hover:text-slate-900 transition-colors">
                       <Settings size={13} /><span>Settings</span>
                     </button>
                   )}
                   {isOwner && (
                     <>
                       <div className="border-t border-gray-200 my-1" />
-                      <button onClick={() => handleDelete(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-rose-500 text-xs font-semibold cursor-pointer hover:bg-rose-950/20 transition-colors">
+                      <button onClick={() => handleDelete(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-rose-500 text-sm font-semibold cursor-pointer hover:bg-rose-950/20 transition-colors">
                         <Trash2 size={13} /><span>Delete</span>
                       </button>
                     </>
@@ -434,7 +434,7 @@ export default function DashboardPage() {
 
         {/* Name */}
         <div className="flex flex-col gap-1 cursor-pointer" onClick={() => navigate(`/files/${doc.id}`)}>
-          <span className="font-bold text-slate-800 text-sm tracking-tight truncate pr-2 hover:text-violet-700 transition-colors">
+          <span className="font-bold text-slate-800 text-base tracking-tight truncate pr-2 hover:text-violet-700 transition-colors">
             {doc.name}
           </span>
           <span className="text-[11px] text-slate-500">
@@ -487,12 +487,12 @@ export default function DashboardPage() {
               placeholder="Search files..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#131224]/30 border border-slate-850 rounded-xl py-2 pl-10 pr-4 text-sm text-slate-700 placeholder:text-gray-400 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all duration-200"
+              className="w-full bg-[#131224]/30 border border-slate-850 rounded-xl py-2 pl-10 pr-4 text-base text-slate-700 placeholder:text-gray-400 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all duration-200"
             />
           </div>
           <div className="flex items-center gap-4">
             <input type="file" ref={fileInputRef} multiple onChange={handleFileChange} className="hidden" />
-            <button onClick={triggerUpload} className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-98 transition-all duration-150">
+            <button onClick={triggerUpload} className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-base font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-98 transition-all duration-150">
               <Plus size={16} strokeWidth={2.5} /><span>Upload</span>
             </button>
             <NotificationBell />
@@ -507,7 +507,7 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-0.5">
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">My Files</h1>
-                <span className="text-xs text-slate-500">All your owned and shared files in one place.</span>
+                <span className="text-sm text-slate-500">All your owned and shared files in one place.</span>
               </div>
 
               <div className="flex gap-2 pb-1 overflow-x-auto">
@@ -515,7 +515,7 @@ export default function DashboardPage() {
                   <button
                     key={filter}
                     onClick={() => setActiveFilter(filter)}
-                    className={`px-4 py-1.5 rounded-lg border-0 text-xs font-semibold tracking-wide cursor-pointer transition-all duration-150 ${activeFilter === filter ? "bg-violet-600 text-slate-900 shadow-md shadow-violet-600/20" : "bg-[#131224]/50 text-slate-400 hover:bg-gray-100 hover:text-slate-700"}`}
+                    className={`px-4 py-1.5 rounded-lg border-0 text-sm font-semibold tracking-wide cursor-pointer transition-all duration-150 ${activeFilter === filter ? "bg-violet-600 text-slate-900 shadow-md shadow-violet-600/20" : "bg-[#131224]/50 text-slate-400 hover:bg-gray-100 hover:text-slate-700"}`}
                   >
                     {filter}
                   </button>
@@ -524,14 +524,14 @@ export default function DashboardPage() {
 
               {localUploads.length > 0 && (
                 <div className="flex flex-col gap-3 p-4 bg-gray-100 border border-gray-200 rounded-2xl">
-                  <span className="text-xs font-semibold text-slate-400 flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-400 flex items-center gap-2">
                     <Loader2 size={13} className="animate-spin text-violet-600" />Uploading files...
                   </span>
                   <div className="flex flex-col gap-2">
                     {localUploads.map((entry) => {
                       const progress = uploadProgress[entry.localId] ?? 0;
                       return (
-                        <div key={entry.localId} className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-gray-100 border border-slate-850">
+                        <div key={entry.localId} className="flex items-center justify-between text-sm p-2.5 rounded-xl bg-gray-100 border border-slate-850">
                           <span className="text-slate-700 truncate max-w-sm">{entry.name}</span>
                           <div className="flex items-center gap-3">
                             <span className="text-slate-500">{entry.size}</span>
@@ -559,13 +559,13 @@ export default function DashboardPage() {
                 <div className="flex flex-col items-center justify-center p-12 bg-gray-50/10 border border-gray-200 rounded-3xl text-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-slate-500"><Folder size={24} /></div>
                   <div className="flex flex-col gap-1 max-w-sm">
-                    <h3 className="text-sm font-semibold text-slate-700">No files found</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <h3 className="text-base font-semibold text-slate-700">No files found</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">
                       {searchQuery ? `No match for "${searchQuery}".` : "You haven't uploaded any files yet."}
                     </p>
                   </div>
                   {!searchQuery && (
-                    <button onClick={triggerUpload} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-600 hover:text-slate-900 hover:bg-slate-850 text-xs font-semibold cursor-pointer transition-all">
+                    <button onClick={triggerUpload} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-600 hover:text-slate-900 hover:bg-slate-850 text-sm font-semibold cursor-pointer transition-all">
                       Upload First File
                     </button>
                   )}
@@ -581,7 +581,7 @@ export default function DashboardPage() {
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0 flex items-center gap-2">
                   <Star size={22} className="fill-amber-400 text-amber-600" />Starred Files
                 </h1>
-                <span className="text-xs text-slate-500">Files you've marked as important.</span>
+                <span className="text-sm text-slate-500">Files you've marked as important.</span>
               </div>
 
               {docsLoading ? (
@@ -602,8 +602,8 @@ export default function DashboardPage() {
                     <Star size={24} className="text-amber-600" />
                   </div>
                   <div className="flex flex-col gap-1 max-w-sm">
-                    <h3 className="text-sm font-semibold text-slate-700">No starred files</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">Click the star icon on any file card to add it here.</p>
+                    <h3 className="text-base font-semibold text-slate-700">No starred files</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">Click the star icon on any file card to add it here.</p>
                   </div>
                 </div>
               )}
@@ -615,7 +615,7 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-0.5">
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Welcome back, {user?.name ?? "User"}!</h1>
-                <span className="text-xs text-slate-500">Your secure document dashboard and account overview.</span>
+                <span className="text-sm text-slate-500">Your secure document dashboard and account overview.</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <div className="bg-[#131224]/30 border border-gray-200 rounded-2xl p-5 flex flex-col gap-2.5">
@@ -637,11 +637,11 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="bg-[#131224]/10 border border-gray-200 rounded-2xl p-6 flex flex-col gap-4">
-                <h3 className="text-sm font-semibold text-slate-700 m-0 border-b border-gray-200 pb-2">Quick Actions</h3>
+                <h3 className="text-base font-semibold text-slate-700 m-0 border-b border-gray-200 pb-2">Quick Actions</h3>
                 <div className="flex flex-wrap gap-3">
-                  <button onClick={() => setActiveTab("files")} className="px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-slate-900 text-xs font-semibold cursor-pointer active:scale-98 transition-all">View File Repository</button>
-                  <button onClick={() => setActiveTab("settings")} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-350 hover:bg-slate-850 hover:text-slate-900 text-xs font-semibold cursor-pointer active:scale-98 transition-all">Manage 2FA Protection</button>
-                  <button onClick={() => navigate("/activity")} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-350 hover:bg-slate-850 hover:text-slate-900 text-xs font-semibold cursor-pointer active:scale-98 transition-all">View My Activity</button>
+                  <button onClick={() => setActiveTab("files")} className="px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-slate-900 text-sm font-semibold cursor-pointer active:scale-98 transition-all">View File Repository</button>
+                  <button onClick={() => setActiveTab("settings")} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-350 hover:bg-slate-850 hover:text-slate-900 text-sm font-semibold cursor-pointer active:scale-98 transition-all">Manage 2FA Protection</button>
+                  <button onClick={() => navigate("/activity")} className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-100 text-slate-350 hover:bg-slate-850 hover:text-slate-900 text-sm font-semibold cursor-pointer active:scale-98 transition-all">View My Activity</button>
                 </div>
               </div>
             </div>
@@ -652,7 +652,7 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-6 max-w-xl">
               <div className="flex flex-col gap-0.5">
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Account Settings</h1>
-                <span className="text-xs text-slate-500">Manage security protection options, active sessions, and verification methods.</span>
+                <span className="text-sm text-slate-500">Manage security protection options, active sessions, and verification methods.</span>
               </div>
               <div className="bg-[#131224]/30 border border-gray-200 rounded-2xl p-6 flex flex-col gap-5">
                 <h2 className="text-base font-semibold text-slate-900 m-0 border-b border-gray-200 pb-3 flex items-center gap-2">
@@ -660,11 +660,11 @@ export default function DashboardPage() {
                 </h2>
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-700 m-0 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-700 m-0 flex items-center gap-2">
                       Two-Factor Authentication (2FA)
                       {is2faEnabled ? <ShieldCheck size={16} className="text-emerald-600" /> : <ShieldAlert size={16} className="text-amber-600" />}
                     </h3>
-                    <p className="text-xs text-slate-500 leading-relaxed m-0 mt-1 max-w-sm">
+                    <p className="text-sm text-slate-500 leading-relaxed m-0 mt-1 max-w-sm">
                       {is2faEnabled ? "Your account is secure. 2FA is active and guards login actions." : "Enable 2FA to guard your account against unauthorized access."}
                     </p>
                   </div>
@@ -676,19 +676,19 @@ export default function DashboardPage() {
                 </div>
                 {showDisableForm && is2faEnabled && (
                   <div className="p-4 bg-gray-50/60 rounded-xl border border-slate-850 flex flex-col gap-3">
-                    <p className="text-xs text-slate-400 leading-relaxed m-0">Enter the 6-digit code from your authenticator app to disable 2FA.</p>
+                    <p className="text-sm text-slate-400 leading-relaxed m-0">Enter the 6-digit code from your authenticator app to disable 2FA.</p>
                     <form onSubmit={handleDisable2fa} className="flex gap-3">
                       <input
                         type="text" required maxLength={6} value={disableCode}
                         onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, ""))}
                         placeholder="000000"
-                        className="flex-1 bg-[#131224]/30 border border-slate-850 rounded-xl px-3 py-2 text-sm text-slate-900 placeholder:text-slate-650 focus:outline-none focus:border-rose-500/50"
+                        className="flex-1 bg-[#131224]/30 border border-slate-850 rounded-xl px-3 py-2 text-base text-slate-900 placeholder:text-slate-650 focus:outline-none focus:border-rose-500/50"
                       />
                       <Button type="submit" variant="destructive" disabled={authLoading || disableCode.length < 6} className="bg-rose-600 hover:bg-rose-500 text-slate-900 border-0 font-semibold px-4 cursor-pointer rounded-xl min-w-[80px]">
                         {authLoading ? <Loader2 size={14} className="animate-spin" /> : "Confirm"}
                       </Button>
                     </form>
-                    {authError && <p className="text-rose-600 text-xs font-semibold m-0 mt-1">{authError}</p>}
+                    {authError && <p className="text-rose-600 text-sm font-semibold m-0 mt-1">{authError}</p>}
                   </div>
                 )}
               </div>
@@ -703,20 +703,20 @@ export default function DashboardPage() {
           <div className="bg-gray-50 border border-slate-850 rounded-2xl p-6 w-full max-w-md flex flex-col gap-4 shadow-2xl">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-900 m-0">Temporary Preview Link</h3>
-              <button onClick={() => setShareUrl(null)} className="bg-transparent border-0 text-slate-500 hover:text-slate-350 cursor-pointer text-sm font-semibold p-1">✕</button>
+              <button onClick={() => setShareUrl(null)} className="bg-transparent border-0 text-slate-500 hover:text-slate-350 cursor-pointer text-base font-semibold p-1">✕</button>
             </div>
-            <p className="text-xs text-slate-500 leading-relaxed m-0">
+            <p className="text-sm text-slate-500 leading-relaxed m-0">
               This preview URL only works in your current browser session. Use Manage Sharing for permissioned share links.
             </p>
-            <div className="bg-[#131224]/40 border border-gray-200 rounded-xl p-3 text-xs text-violet-600 font-mono break-all line-clamp-3 select-all leading-normal">{shareUrl}</div>
+            <div className="bg-[#131224]/40 border border-gray-200 rounded-xl p-3 text-sm text-violet-600 font-mono break-all line-clamp-3 select-all leading-normal">{shareUrl}</div>
             <div className="flex gap-3 mt-1.5">
               <button
                 onClick={() => { navigator.clipboard.writeText(shareUrl).catch(() => {}); setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000); }}
-                className={`flex-1 py-2 border-0 rounded-xl text-xs font-semibold cursor-pointer transition-all ${copiedLink ? "bg-emerald-600 text-slate-900" : "bg-violet-600 hover:bg-violet-500 text-slate-900"}`}
+                className={`flex-1 py-2 border-0 rounded-xl text-sm font-semibold cursor-pointer transition-all ${copiedLink ? "bg-emerald-600 text-slate-900" : "bg-violet-600 hover:bg-violet-500 text-slate-900"}`}
               >
                 {copiedLink ? "✓ Copied" : "Copy Link"}
               </button>
-              <a href={shareUrl} target="_blank" rel="noreferrer" className="flex-1 py-2 border border-slate-850 rounded-xl text-xs text-slate-600 hover:text-slate-900 bg-gray-100 hover:bg-slate-850 text-center font-semibold no-underline transition-all flex items-center justify-center gap-1.5">
+              <a href={shareUrl} target="_blank" rel="noreferrer" className="flex-1 py-2 border border-slate-850 rounded-xl text-sm text-slate-600 hover:text-slate-900 bg-gray-100 hover:bg-slate-850 text-center font-semibold no-underline transition-all flex items-center justify-center gap-1.5">
                 <span>Preview</span><ExternalLink size={12} />
               </a>
             </div>

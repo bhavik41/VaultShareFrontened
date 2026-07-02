@@ -25,7 +25,7 @@ export default function TwoFactorPrompt() {
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">Two-Factor Auth</h1>
-          <p className="text-slate-900/50 text-sm text-center mb-8">
+          <p className="text-slate-900/50 text-base text-center mb-8">
             Enter the 6-digit code from your authenticator app.
           </p>
 
@@ -42,7 +42,7 @@ export default function TwoFactorPrompt() {
             />
 
             {error && (
-              <p className="text-rose-600 text-sm bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
+              <p className="text-rose-600 text-base bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-center">
                 {error}
               </p>
             )}
@@ -57,7 +57,7 @@ export default function TwoFactorPrompt() {
             </button>
           </form>
 
-          <p className="text-slate-900/30 text-xs text-center mt-6">
+          <p className="text-slate-900/30 text-sm text-center mt-6">
             Lost access to your authenticator? Contact support.
           </p>
         </div>
