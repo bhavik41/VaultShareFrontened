@@ -17,8 +17,8 @@ import {
   Users,
   Settings,
   Search,
-  Plus,
-  MoreVertical,
+  LayoutGrid,
+  List,
   Download,
   Trash2,
   FileText,
@@ -30,6 +30,9 @@ import {
   Eye,
   BadgeCheck,
   MessageSquare,
+  Info,
+  SortAsc,
+  Clock,
 } from "lucide-react";
 import { logout, disable2faThunk, fetchMeThunk } from "@/store/authSlice";
 import {
@@ -56,22 +59,41 @@ function randomId(): string {
   return Math.random().toString(36).slice(2);
 }
 
-const getFileTypeInfo = (fileName: string) => {
+type FileTypeInfo = {
+  label: string;
+  bgColor: string;
+  textColor: string;
+  iconColor: string;
+  previewBg: string;
+  icon: React.ReactNode;
+};
+
+function getFileTypeInfo(fileName: string): FileTypeInfo {
   const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
   if (ext === "pdf")
-    return { label: "PDF", borderColor: "border-l-4 border-l-cyan-400", bgColor: "bg-cyan-50", textColor: "text-cyan-700", icon: <FileText size={18} className="text-cyan-600" /> };
-  if (ext === "fig")
-    return { label: "FIG", borderColor: "border-l-4 border-l-purple-500", bgColor: "bg-purple-50", textColor: "text-purple-700", icon: <FileText size={18} className="text-purple-600" /> };
+    return { label: "PDF", bgColor: "bg-red-50", textColor: "text-red-700", iconColor: "text-red-500", previewBg: "bg-red-50", icon: <FileText size={36} className="text-red-400" /> };
   if (["doc", "docx", "txt", "rtf", "odt"].includes(ext))
-    return { label: "DOC", borderColor: "border-l-4 border-l-amber-500", bgColor: "bg-amber-50", textColor: "text-amber-700", icon: <FileText size={18} className="text-amber-600" /> };
+    return { label: "DOC", bgColor: "bg-blue-50", textColor: "text-blue-700", iconColor: "text-blue-500", previewBg: "bg-blue-50", icon: <FileText size={36} className="text-blue-400" /> };
   if (["zip", "rar", "7z", "tar", "gz"].includes(ext))
-    return { label: "ZIP", borderColor: "border-l-4 border-l-indigo-400", bgColor: "bg-indigo-50", textColor: "text-indigo-700", icon: <FileArchive size={18} className="text-indigo-600" /> };
+    return { label: "ZIP", bgColor: "bg-amber-50", textColor: "text-amber-700", iconColor: "text-amber-500", previewBg: "bg-amber-50", icon: <FileArchive size={36} className="text-amber-400" /> };
   if (["json", "js", "ts", "html", "css", "xml", "cpp", "py"].includes(ext))
-    return { label: "CODE", borderColor: "border-l-4 border-l-emerald-500", bgColor: "bg-emerald-50", textColor: "text-emerald-700", icon: <Code size={18} className="text-emerald-600" /> };
+    return { label: "CODE", bgColor: "bg-emerald-50", textColor: "text-emerald-700", iconColor: "text-emerald-500", previewBg: "bg-emerald-50", icon: <Code size={36} className="text-emerald-400" /> };
   if (["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(ext))
-    return { label: "IMG", borderColor: "border-l-4 border-l-pink-500", bgColor: "bg-pink-50", textColor: "text-pink-700", icon: <Image size={18} className="text-pink-600" /> };
-  return { label: "FILE", borderColor: "border-l-4 border-l-slate-300", bgColor: "bg-slate-50", textColor: "text-slate-600", icon: <FileText size={18} className="text-slate-500" /> };
-};
+    return { label: "IMG", bgColor: "bg-pink-50", textColor: "text-pink-700", iconColor: "text-pink-500", previewBg: "bg-pink-50", icon: <Image size={36} className="text-pink-400" /> };
+  if (ext === "fig")
+    return { label: "FIG", bgColor: "bg-purple-50", textColor: "text-purple-700", iconColor: "text-purple-500", previewBg: "bg-purple-50", icon: <FileText size={36} className="text-purple-400" /> };
+  return { label: "FILE", bgColor: "bg-slate-50", textColor: "text-slate-600", iconColor: "text-slate-400", previewBg: "bg-slate-50", icon: <FileText size={36} className="text-slate-300" /> };
+}
+
+function SmallFileIcon({ fileName, size = 18 }: { fileName: string; size?: number }) {
+  const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
+  if (ext === "pdf") return <FileText size={size} className="text-red-500 shrink-0" />;
+  if (["doc", "docx", "txt"].includes(ext)) return <FileText size={size} className="text-blue-500 shrink-0" />;
+  if (["zip", "rar", "7z"].includes(ext)) return <FileArchive size={size} className="text-amber-500 shrink-0" />;
+  if (["json", "js", "ts", "html", "py"].includes(ext)) return <Code size={size} className="text-emerald-500 shrink-0" />;
+  if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) return <Image size={size} className="text-pink-500 shrink-0" />;
+  return <FileText size={size} className="text-slate-400 shrink-0" />;
+}
 
 function CollaboratorAvatars({ collaborators }: { collaborators: DashboardCollaborator[] }) {
   const visible = collaborators.slice(0, 3);
@@ -90,10 +112,7 @@ function CollaboratorAvatars({ collaborators }: { collaborators: DashboardCollab
         </div>
       ))}
       {overflow > 0 && (
-        <div
-          style={{ marginLeft: -6 }}
-          className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-slate-200 px-1 text-[9px] font-bold text-slate-600 ring-2 ring-white"
-        >
+        <div style={{ marginLeft: -6 }} className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-slate-200 px-1 text-[9px] font-bold text-slate-600 ring-2 ring-white">
           +{overflow}
         </div>
       )}
@@ -109,9 +128,7 @@ interface LocalUploadEntry {
   errorMsg?: string;
 }
 
-function ProfileDropdown({
-  name, email, is2faEnabled, onLogout, onChangeTab,
-}: {
+function ProfileDropdown({ name, email, is2faEnabled, onLogout, onChangeTab }: {
   name: string; email: string; is2faEnabled: boolean;
   onLogout: () => void; onChangeTab: (tab: string) => void;
 }) {
@@ -133,20 +150,17 @@ function ProfileDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all duration-200"
+        title={name}
+        className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-white border-0 cursor-pointer hover:opacity-90 transition-opacity shadow-sm"
       >
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-white shadow-sm">
-          {initials}
-        </div>
-        <span className="text-base text-slate-700 font-medium max-w-[100px] truncate">{name}</span>
-        <ChevronDown size={14} className={`text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        {initials}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2.5 w-60 bg-white border border-slate-200 rounded-xl p-1.5 z-[100] shadow-xl">
-          <div className="p-3 pb-3 border-b border-slate-100 mb-1">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-white">{initials}</div>
+        <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl z-[100] overflow-hidden">
+          <div className="p-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-white">{initials}</div>
               <div className="min-w-0">
                 <div className="text-base font-semibold text-slate-800 truncate">{name}</div>
                 <div className="text-sm text-slate-500 truncate">{email}</div>
@@ -154,28 +168,27 @@ function ProfileDropdown({
             </div>
           </div>
 
-          {[
-            { icon: <User size={15} />, label: "Dashboard View", sub: "Overview & summary", action: () => { setOpen(false); onChangeTab("dashboard"); } },
-            { icon: <Folder size={15} />, label: "My Files", sub: "Upload & share files", action: () => { setOpen(false); onChangeTab("files"); } },
-            { icon: <Share2 size={15} />, label: "Collaboration", sub: "Invitations & shared files", action: () => { setOpen(false); navigate("/collaboration"); } },
-            { icon: <Users size={15} />, label: "Manage Sharing", sub: "Permissions & share links", action: () => { setOpen(false); navigate("/file-sharing"); } },
-            { icon: is2faEnabled ? <ShieldCheck size={15} className="text-emerald-600" /> : <ShieldAlert size={15} className="text-amber-600" />, label: "Two-Factor Auth", sub: is2faEnabled ? "Enabled" : "Not enabled", action: () => { setOpen(false); onChangeTab("settings"); } },
-            { icon: <KeyRound size={15} />, label: "Change Password", sub: "Reset via email", action: () => navigate("/forgot-password") },
-            { icon: <Home size={15} />, label: "Home Page", sub: "Go to landing page", action: () => navigate("/") },
-          ].map(({ icon, label, sub, action }) => (
-            <button key={label} onClick={action} className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-slate-50 transition-colors group">
-              <span className="text-slate-400 group-hover:text-slate-600">{icon}</span>
-              <div>
-                <div className="text-sm font-semibold text-slate-700">{label}</div>
-                <div className="text-[11px] text-slate-400">{sub}</div>
-              </div>
-            </button>
-          ))}
+          <div className="p-1.5">
+            {[
+              { icon: <User size={15} />, label: "Dashboard",        action: () => { setOpen(false); onChangeTab("dashboard"); } },
+              { icon: <Folder size={15} />, label: "My Drive",       action: () => { setOpen(false); onChangeTab("files"); } },
+              { icon: <Share2 size={15} />, label: "Collaboration",  action: () => { setOpen(false); navigate("/collaboration"); } },
+              { icon: <Users size={15} />, label: "Manage Sharing",  action: () => { setOpen(false); navigate("/file-sharing"); } },
+              { icon: is2faEnabled ? <ShieldCheck size={15} className="text-emerald-600" /> : <ShieldAlert size={15} className="text-amber-600" />, label: "Two-Factor Auth", action: () => { setOpen(false); onChangeTab("settings"); } },
+              { icon: <KeyRound size={15} />, label: "Change Password", action: () => navigate("/forgot-password") },
+              { icon: <Home size={15} />, label: "Home Page",        action: () => navigate("/") },
+            ].map(({ icon, label, action }) => (
+              <button key={label} onClick={action} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl border-0 cursor-pointer bg-transparent text-left hover:bg-slate-50 transition-colors">
+                <span className="text-slate-400">{icon}</span>
+                <span className="text-sm font-medium text-slate-700">{label}</span>
+              </button>
+            ))}
+          </div>
 
-          <div className="border-t border-slate-100 mt-1.5 pt-1.5">
-            <button onClick={() => { setOpen(false); onLogout(); }} className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-rose-50 transition-colors">
+          <div className="border-t border-slate-100 p-1.5">
+            <button onClick={() => { setOpen(false); onLogout(); }} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl border-0 cursor-pointer bg-transparent text-left hover:bg-rose-50 transition-colors">
               <LogOut size={15} className="text-rose-500" />
-              <span className="text-sm font-semibold text-rose-500">Sign Out</span>
+              <span className="text-sm font-medium text-rose-500">Sign out</span>
             </button>
           </div>
         </div>
@@ -196,20 +209,24 @@ export default function DashboardPage() {
   const [disableCode, setDisableCode] = useState("");
   const [showDisableForm, setShowDisableForm] = useState(false);
   const [activeTab, setActiveTab] = useState((location.state as { tab?: string } | null)?.tab ?? "files");
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() =>
+    (localStorage.getItem("drive-view") as "grid" | "list") ?? "grid"
+  );
 
   useEffect(() => {
     const tab = (location.state as { tab?: string } | null)?.tab;
     if (tab) setActiveTab(tab);
   }, [location.state]);
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("All");
   const [localUploads, setLocalUploads] = useState<LocalUploadEntry[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-  const cardMenuRef = useRef<HTMLDivElement>(null);
+  const [menuPos, setMenuPos] = useState<{ x: number; y: number } | null>(null);
   const [settingsFile, setSettingsFile] = useState<{ id: string; name: string } | null>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [infoDoc, setInfoDoc] = useState<DashboardDocument | null>(null);
 
   const [chatFileId, setChatFileId] = useState<string | null>(null);
   const [chatFileName, setChatFileName] = useState<string>("");
@@ -223,7 +240,6 @@ export default function DashboardPage() {
 
   const [allDocs, setAllDocs] = useState<DashboardDocument[]>([]);
   const [docsLoading, setDocsLoading] = useState(false);
-
   const [starredIds, setStarredIds] = useState<Set<string>>(new Set());
   const [starLoading, setStarLoading] = useState<string | null>(null);
 
@@ -239,21 +255,29 @@ export default function DashboardPage() {
     if (!token) return;
     setDocsLoading(true);
     Promise.all([getDashboardDocuments(), getStarredFileIds()])
-      .then(([docs, ids]) => {
-        setAllDocs(docs);
-        setStarredIds(new Set(ids));
-      })
+      .then(([docs, ids]) => { setAllDocs(docs); setStarredIds(new Set(ids)); })
       .catch(() => {})
       .finally(() => setDocsLoading(false));
   }, [token, uploadedFiles.length]);
 
+  // Listen for "New" button from sidebar
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (cardMenuRef.current && !cardMenuRef.current.contains(e.target as Node)) setActiveMenuId(null);
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    const handler = () => fileInputRef.current?.click();
+    window.addEventListener("open-upload", handler);
+    return () => window.removeEventListener("open-upload", handler);
   }, []);
+
+  // Close context menu on outside click
+  useEffect(() => {
+    const handler = () => { setActiveMenuId(null); setMenuPos(null); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  function switchView(mode: "grid" | "list") {
+    setViewMode(mode);
+    localStorage.setItem("drive-view", mode);
+  }
 
   const handleLogout = () => { dispatch(logout()); navigate("/signin"); };
 
@@ -266,8 +290,6 @@ export default function DashboardPage() {
       dispatch(fetchMeThunk());
     }
   };
-
-  const triggerUpload = () => fileInputRef.current?.click();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawFiles = e.target.files;
@@ -285,6 +307,7 @@ export default function DashboardPage() {
           setLocalUploads((prev) => prev.map((e) => e.localId === localId ? { ...e, status: "error", errorMsg: msg } : e));
         });
     });
+    e.target.value = "";
   };
 
   const handleDownload = (fileId: string, fileName: string) => {
@@ -300,7 +323,7 @@ export default function DashboardPage() {
 
   const handleDelete = (fileId: string) => {
     setActiveMenuId(null);
-    if (confirm("Are you sure you want to delete this file?")) dispatch(deleteFileThunk(fileId));
+    if (confirm("Move this file to trash?")) dispatch(deleteFileThunk(fileId));
   };
 
   const handleToggleStar = async (e: React.MouseEvent, fileId: string) => {
@@ -308,365 +331,410 @@ export default function DashboardPage() {
     if (starLoading) return;
     setStarLoading(fileId);
     const wasStarred = starredIds.has(fileId);
-    setStarredIds((prev) => {
-      const next = new Set(prev);
-      wasStarred ? next.delete(fileId) : next.add(fileId);
-      return next;
-    });
+    setStarredIds((prev) => { const n = new Set(prev); wasStarred ? n.delete(fileId) : n.add(fileId); return n; });
     try {
       if (wasStarred) await unstarFile(fileId);
       else await starFile(fileId);
     } catch {
-      setStarredIds((prev) => {
-        const next = new Set(prev);
-        wasStarred ? next.add(fileId) : next.delete(fileId);
-        return next;
-      });
+      setStarredIds((prev) => { const n = new Set(prev); wasStarred ? n.add(fileId) : n.delete(fileId); return n; });
     } finally {
       setStarLoading(null);
     }
   };
 
-  const filteredFiles = allDocs.filter((doc) => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
-    if (!matchesSearch) return false;
-    if (activeFilter === "All" || activeFilter === "Encrypted") return true;
-    if (activeFilter === "Shared") return doc.ownership === "shared";
-    const ext = doc.name.split(".").pop()?.toLowerCase() ?? "";
-    if (activeFilter === "PDFs") return ext === "pdf";
-    if (activeFilter === "Images") return ["png", "jpg", "jpeg", "webp", "gif", "svg"].includes(ext);
-    if (activeFilter === "Docs") return ["doc", "docx", "txt", "rtf", "xls", "xlsx", "ppt", "pptx", "csv"].includes(ext);
-    return true;
-  });
+  const openMenu = (e: React.MouseEvent, docId: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setActiveMenuId(docId);
+    setMenuPos({ x: e.clientX, y: e.clientY });
+  };
 
+  const filteredFiles = allDocs.filter((doc) =>
+    doc.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   const starredDocs = allDocs.filter((d) => starredIds.has(d.id));
+  const recentDocs  = [...allDocs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 6);
 
-  function FileCard({ doc }: { doc: DashboardDocument }) {
+  // ─── File card: Grid view ─────────────────────────────────────────────────
+  function GridCard({ doc }: { doc: DashboardDocument }) {
     const typeInfo = getFileTypeInfo(doc.name);
-    const isMenuOpen = activeMenuId === doc.id;
     const isStarred = starredIds.has(doc.id);
     const isOwner = doc.ownership === "owned";
-    const canDownload = isOwner || doc.accessLevel === "editor";
-    const borderClass = doc.ownership === "shared"
-      ? "border-l-4 border-l-violet-500"
-      : typeInfo.borderColor;
 
     return (
-      <div className={`bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-4 relative hover:border-slate-300 hover:shadow-sm transition-all duration-200 ${borderClass} ${doc.ownership === "shared" ? "bg-violet-50/30" : ""}`}>
-        {/* Top row */}
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`text-[10px] font-bold tracking-wider px-2 py-0.5 rounded ${typeInfo.bgColor} ${typeInfo.textColor}`}>
-              {typeInfo.label}
-            </span>
-            {doc.ownership === "shared" && (
-              <span className="flex items-center gap-1 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded bg-violet-100 text-violet-700">
-                <BadgeCheck size={10} />
-                Shared
-              </span>
-            )}
-          </div>
+      <div
+        className="group relative bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-violet-300 hover:shadow-md transition-all duration-150 cursor-pointer select-none"
+        onClick={() => navigate(`/files/${doc.id}`)}
+        onContextMenu={(e) => openMenu(e, doc.id)}
+      >
+        {/* Preview area */}
+        <div className={`h-32 flex items-center justify-center ${typeInfo.previewBg} relative`}>
+          {typeInfo.icon}
 
-          <div className="flex items-center gap-0.5">
+          {/* Hover overlay actions */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
+
+          {/* Top-right actions (show on hover) */}
+          <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={(e) => handleToggleStar(e, doc.id)}
-              disabled={starLoading === doc.id}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 transition-colors border-0 bg-transparent cursor-pointer"
-              title={isStarred ? "Unstar" : "Star"}
+              className={`w-7 h-7 rounded-full flex items-center justify-center border-0 cursor-pointer transition-colors ${isStarred ? "bg-white text-amber-500" : "bg-white/80 text-slate-400 hover:text-amber-500"}`}
             >
-              <Star
-                size={14}
-                className={isStarred ? "fill-amber-400 text-amber-500" : ""}
-              />
+              <Star size={13} className={isStarred ? "fill-amber-400" : ""} />
             </button>
-
-            <div className="relative">
-              <button
-                onClick={(e) => { e.stopPropagation(); setActiveMenuId(isMenuOpen ? null : doc.id); }}
-                className="bg-transparent border-0 cursor-pointer text-slate-400 hover:text-slate-700 p-1.5"
-              >
-                <MoreVertical size={16} />
-              </button>
-
-              {isMenuOpen && (
-                <div ref={cardMenuRef} className="absolute right-0 top-full mt-1.5 w-36 bg-white border border-slate-200 rounded-xl p-1 z-50 shadow-lg">
-                  <button onClick={() => { setActiveMenuId(null); navigate(`/files/${doc.id}`); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                    <Eye size={13} /><span>View</span>
-                  </button>
-                  {canDownload && (
-                    <button onClick={() => handleDownload(doc.id, doc.name)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                      <Download size={13} /><span>Download</span>
-                    </button>
-                  )}
-                  {isOwner && (
-                    <button onClick={() => handleShareLink(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                      <Share2 size={13} /><span>Share Link</span>
-                    </button>
-                  )}
-                  {isOwner && (
-                    <button onClick={() => { setActiveMenuId(null); setSettingsFile({ id: doc.id, name: doc.name }); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-600 text-sm font-semibold cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                      <Settings size={13} /><span>Settings</span>
-                    </button>
-                  )}
-                  {isOwner && (
-                    <>
-                      <div className="border-t border-slate-100 my-1" />
-                      <button onClick={() => handleDelete(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-rose-500 text-sm font-semibold cursor-pointer hover:bg-rose-50 transition-colors">
-                        <Trash2 size={13} /><span>Delete</span>
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Name */}
-        <div className="flex flex-col gap-1 cursor-pointer" onClick={() => navigate(`/files/${doc.id}`)}>
-          <span className="font-bold text-slate-800 text-base tracking-tight truncate pr-2 hover:text-violet-700 transition-colors">
-            {doc.name}
-          </span>
-          <span className="text-[11px] text-slate-500">
-            {formatBytes(doc.size)} · {new Date(doc.createdAt).toLocaleDateString()}
-            {doc.ownership === "shared" && doc.ownerName && (
-              <span className="text-violet-600"> · by {doc.ownerName}</span>
-            )}
-          </span>
-        </div>
-
-        {/* Bottom row */}
-        <div className="flex items-center justify-between border-t border-slate-100 pt-3">
-          <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
-            <Lock size={12} />
-            <span className="text-[10px] font-bold uppercase tracking-wider">Encrypted</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {doc.collaborators.length > 0 && (
-              <CollaboratorAvatars collaborators={doc.collaborators} />
-            )}
-            {doc.ownership === "shared" && (
-              <span className="text-[10px] font-semibold capitalize text-violet-700 bg-violet-100 px-1.5 py-0.5 rounded">
-                {doc.accessLevel}
-              </span>
-            )}
             <button
-              onClick={(e) => { e.stopPropagation(); openChat(doc.id, doc.name); }}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-violet-50 hover:bg-violet-100 text-violet-600 border-0 cursor-pointer transition-colors"
-              title="Open chat for this file"
+              onClick={(e) => openMenu(e, doc.id)}
+              className="w-7 h-7 rounded-full bg-white/80 hover:bg-white flex items-center justify-center border-0 cursor-pointer text-slate-500 hover:text-slate-800 transition-colors"
             >
-              <MessageSquare size={12} />
-              <span className="text-[10px] font-semibold">Chat</span>
+              <ChevronDown size={13} />
             </button>
           </div>
+
+          {/* Shared badge */}
+          {doc.ownership === "shared" && (
+            <div className="absolute top-2 left-2">
+              <span className="flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-700">
+                <BadgeCheck size={10} />Shared
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center gap-2 px-3 py-2.5 border-t border-slate-100 bg-white">
+          <SmallFileIcon fileName={doc.name} size={16} />
+          <span className="flex-1 text-sm font-medium text-slate-800 truncate">{doc.name}</span>
+          <button
+            onClick={(e) => openMenu(e, doc.id)}
+            className="w-6 h-6 rounded-full flex items-center justify-center border-0 cursor-pointer text-slate-400 hover:bg-slate-100 hover:text-slate-700 opacity-0 group-hover:opacity-100 transition-all bg-transparent shrink-0"
+          >
+            <ChevronDown size={13} />
+          </button>
         </div>
       </div>
     );
   }
 
+  // ─── File row: List view ──────────────────────────────────────────────────
+  function ListRow({ doc }: { doc: DashboardDocument }) {
+    const isStarred = starredIds.has(doc.id);
+    const isOwner = doc.ownership === "owned";
+
+    return (
+      <div
+        className="group flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors select-none"
+        onClick={() => navigate(`/files/${doc.id}`)}
+        onContextMenu={(e) => openMenu(e, doc.id)}
+      >
+        <SmallFileIcon fileName={doc.name} size={18} />
+        <span className="flex-1 text-sm font-medium text-slate-800 truncate">{doc.name}</span>
+        {doc.ownership === "shared" && (
+          <span className="text-[11px] font-medium text-violet-600 bg-violet-50 px-2 py-0.5 rounded-lg shrink-0">Shared</span>
+        )}
+        {doc.collaborators.length > 0 && (
+          <div className="shrink-0"><CollaboratorAvatars collaborators={doc.collaborators} /></div>
+        )}
+        <span className="text-sm text-slate-400 w-32 text-right shrink-0 hidden md:block">
+          {new Date(doc.createdAt).toLocaleDateString()}
+        </span>
+        <span className="text-sm text-slate-400 w-20 text-right shrink-0 hidden lg:block">{formatBytes(doc.size)}</span>
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            onClick={(e) => handleToggleStar(e, doc.id)}
+            className={`w-7 h-7 rounded-full flex items-center justify-center border-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-all ${isStarred ? "opacity-100 text-amber-500 bg-transparent" : "text-slate-400 hover:text-amber-500 bg-transparent"}`}
+          >
+            <Star size={14} className={isStarred ? "fill-amber-400" : ""} />
+          </button>
+          <button
+            onClick={(e) => openMenu(e, doc.id)}
+            className="w-7 h-7 rounded-full flex items-center justify-center border-0 cursor-pointer text-slate-400 hover:bg-slate-200 hover:text-slate-700 opacity-0 group-hover:opacity-100 transition-all bg-transparent"
+          >
+            <ChevronDown size={14} />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setInfoDoc(doc); }}
+            className="w-7 h-7 rounded-full flex items-center justify-center border-0 cursor-pointer text-slate-400 hover:bg-slate-200 hover:text-slate-700 opacity-0 group-hover:opacity-100 transition-all bg-transparent"
+          >
+            <Info size={14} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Context menu ─────────────────────────────────────────────────────────
+  const activeDoc = allDocs.find((d) => d.id === activeMenuId);
+
   return (
     <>
-      {/* Main */}
-      <main className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-slate-200 px-6 flex items-center justify-between bg-white sticky top-0 z-30">
-          <div className="relative w-72 max-w-full">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+      <main className="flex-1 flex flex-col min-w-0 bg-white">
+
+        {/* ── Top bar ── */}
+        <header className="h-16 px-4 flex items-center gap-4 border-b border-slate-200 sticky top-0 bg-white z-30">
+          {/* Search */}
+          <div className="flex-1 max-w-2xl mx-auto relative">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Search files..."
+              placeholder="Search in Drive"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-base text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-300 transition-all duration-200"
+              className="w-full bg-slate-100 hover:bg-slate-200 focus:bg-white border border-transparent focus:border-slate-300 rounded-full py-2.5 pl-12 pr-4 text-base text-slate-800 placeholder:text-slate-500 focus:outline-none focus:shadow-sm transition-all duration-200"
             />
           </div>
-          <div className="flex items-center gap-4">
+
+          {/* Right icons */}
+          <div className="flex items-center gap-2 ml-auto shrink-0">
             <input type="file" ref={fileInputRef} multiple onChange={handleFileChange} className="hidden" />
-            <button onClick={triggerUpload} className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-base font-semibold cursor-pointer shadow-sm active:scale-[0.98] transition-all duration-150">
-              <Plus size={16} strokeWidth={2.5} /><span>Upload</span>
+            <button
+              onClick={() => switchView(viewMode === "grid" ? "list" : "grid")}
+              title={viewMode === "grid" ? "Switch to list view" : "Switch to grid view"}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 border-0 bg-transparent cursor-pointer transition-colors"
+            >
+              {viewMode === "grid" ? <List size={18} /> : <LayoutGrid size={18} />}
             </button>
             <NotificationBell />
-            <ProfileDropdown name={user?.name ?? "User"} email={user?.email ?? ""} is2faEnabled={is2faEnabled} onLogout={handleLogout} onChangeTab={(tab) => setActiveTab(tab)} />
+            <ProfileDropdown
+              name={user?.name ?? "User"}
+              email={user?.email ?? ""}
+              is2faEnabled={is2faEnabled}
+              onLogout={handleLogout}
+              onChangeTab={(tab) => setActiveTab(tab)}
+            />
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+        <div className="flex-1 overflow-y-auto">
 
           {/* ── Files Tab ── */}
           {activeTab === "files" && (
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-0.5">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">My Files</h1>
-                <span className="text-sm text-slate-500">All your owned and shared files in one place.</span>
-              </div>
+            <div className="p-6 flex flex-col gap-8">
 
-              <div className="flex gap-2 pb-1 overflow-x-auto">
-                {["All", "PDFs", "Images", "Docs", "Encrypted", "Shared"].map((filter) => (
-                  <button
-                    key={filter}
-                    onClick={() => setActiveFilter(filter)}
-                    className={`px-4 py-1.5 rounded-lg border-0 text-sm font-semibold tracking-wide cursor-pointer transition-all duration-150 whitespace-nowrap ${activeFilter === filter ? "bg-violet-600 text-white shadow-sm" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
-
+              {/* Upload progress toast */}
               {localUploads.length > 0 && (
-                <div className="flex flex-col gap-3 p-4 bg-white border border-slate-200 rounded-2xl">
-                  <span className="text-sm font-semibold text-slate-600 flex items-center gap-2">
-                    <Loader2 size={13} className="animate-spin text-violet-600" />Uploading files...
+                <div className="fixed bottom-6 right-6 z-50 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 flex flex-col gap-3">
+                  <span className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                    <Loader2 size={14} className="animate-spin text-violet-600" />Uploading {localUploads.length} file{localUploads.length > 1 ? "s" : ""}…
                   </span>
-                  <div className="flex flex-col gap-2">
-                    {localUploads.map((entry) => {
-                      const progress = uploadProgress[entry.localId] ?? 0;
+                  {localUploads.map((entry) => {
+                    const progress = uploadProgress[entry.localId] ?? 0;
+                    return (
+                      <div key={entry.localId} className="flex flex-col gap-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-slate-600 truncate max-w-[200px]">{entry.name}</span>
+                          <span className="text-sm font-semibold text-violet-600">{progress}%</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                          <div className="h-full bg-violet-500 rounded-full transition-all" style={{ width: `${progress}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Suggested / Quick access */}
+              {recentDocs.length > 0 && !searchQuery && (
+                <section>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Clock size={16} className="text-slate-500" />
+                    <h2 className="text-base font-semibold text-slate-700">Suggested</h2>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    {recentDocs.map((doc) => {
+                      const typeInfo = getFileTypeInfo(doc.name);
                       return (
-                        <div key={entry.localId} className="flex items-center justify-between text-sm p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                          <span className="text-slate-700 truncate max-w-sm">{entry.name}</span>
-                          <div className="flex items-center gap-3">
-                            <span className="text-slate-500">{entry.size}</span>
-                            <div className="w-20 h-1.5 rounded-full bg-slate-200 overflow-hidden">
-                              <div className="h-full bg-violet-500 rounded-full" style={{ width: `${progress}%` }} />
-                            </div>
-                            <span className="text-[10px] font-bold text-violet-600">{progress}%</span>
+                        <div
+                          key={doc.id}
+                          onClick={() => navigate(`/files/${doc.id}`)}
+                          className="flex flex-col items-center gap-2 p-3 rounded-xl border border-slate-200 hover:border-violet-300 hover:bg-slate-50 cursor-pointer transition-all group"
+                        >
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${typeInfo.previewBg}`}>
+                            <SmallFileIcon fileName={doc.name} size={20} />
                           </div>
+                          <span className="text-[11px] font-medium text-slate-700 text-center line-clamp-2 leading-tight w-full">{doc.name}</span>
                         </div>
                       );
                     })}
                   </div>
-                </div>
+                </section>
               )}
 
-              {docsLoading ? (
-                <div className="flex items-center justify-center py-20">
-                  <Loader2 size={24} className="animate-spin text-violet-600" />
-                </div>
-              ) : filteredFiles.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {filteredFiles.map((doc) => <FileCard key={doc.id} doc={doc} />)}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center p-12 bg-white border border-slate-200 rounded-3xl text-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400"><Folder size={24} /></div>
-                  <div className="flex flex-col gap-1 max-w-sm">
-                    <h3 className="text-base font-semibold text-slate-700">No files found</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed">
-                      {searchQuery ? `No match for "${searchQuery}".` : "You haven't uploaded any files yet."}
-                    </p>
-                  </div>
-                  {!searchQuery && (
-                    <button onClick={triggerUpload} className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-sm font-semibold cursor-pointer transition-all">
-                      Upload First File
+              {/* My Drive section */}
+              <section>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base font-semibold text-slate-700">
+                    {searchQuery ? `Results for "${searchQuery}"` : "My Drive"}
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <button className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 border-0 bg-transparent cursor-pointer">
+                      <SortAsc size={15} />Name
                     </button>
-                  )}
+                    <div className="flex items-center gap-0.5 bg-slate-100 rounded-lg p-0.5">
+                      <button
+                        onClick={() => switchView("grid")}
+                        className={`p-1.5 rounded-md border-0 cursor-pointer transition-colors ${viewMode === "grid" ? "bg-white shadow-sm text-slate-800" : "bg-transparent text-slate-500 hover:text-slate-700"}`}
+                      >
+                        <LayoutGrid size={15} />
+                      </button>
+                      <button
+                        onClick={() => switchView("list")}
+                        className={`p-1.5 rounded-md border-0 cursor-pointer transition-colors ${viewMode === "list" ? "bg-white shadow-sm text-slate-800" : "bg-transparent text-slate-500 hover:text-slate-700"}`}
+                      >
+                        <List size={15} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              )}
+
+                {/* List header */}
+                {viewMode === "list" && filteredFiles.length > 0 && (
+                  <div className="flex items-center gap-3 px-4 py-1.5 text-sm text-slate-400 font-medium border-b border-slate-100 mb-1">
+                    <span className="w-5 shrink-0" />
+                    <span className="flex-1">Name</span>
+                    <span className="w-32 text-right hidden md:block">Modified</span>
+                    <span className="w-20 text-right hidden lg:block">Size</span>
+                    <span className="w-20 shrink-0" />
+                  </div>
+                )}
+
+                {docsLoading ? (
+                  <div className="flex items-center justify-center py-20">
+                    <Loader2 size={28} className="animate-spin text-violet-500" />
+                  </div>
+                ) : filteredFiles.length > 0 ? (
+                  viewMode === "grid" ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                      {filteredFiles.map((doc) => <GridCard key={doc.id} doc={doc} />)}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col">
+                      {filteredFiles.map((doc) => <ListRow key={doc.id} doc={doc} />)}
+                    </div>
+                  )
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center">
+                      <Folder size={28} className="text-slate-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-semibold text-slate-700 mb-1">
+                        {searchQuery ? `No results for "${searchQuery}"` : "My Drive is empty"}
+                      </h3>
+                      <p className="text-sm text-slate-500">
+                        {searchQuery ? "Try a different search term." : "Click the + New button to upload files."}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </section>
             </div>
           )}
 
           {/* ── Starred Tab ── */}
           {activeTab === "starred" && (
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-0.5">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0 flex items-center gap-2">
-                  <Star size={22} className="fill-amber-400 text-amber-500" />Starred Files
-                </h1>
-                <span className="text-sm text-slate-500">Files you've marked as important.</span>
+            <div className="p-6 flex flex-col gap-6">
+              <div className="flex items-center gap-2">
+                <Star size={20} className="fill-amber-400 text-amber-500" />
+                <h1 className="text-xl font-semibold text-slate-800">Starred</h1>
               </div>
 
               {docsLoading ? (
-                <div className="flex items-center justify-center py-20">
-                  <Loader2 size={24} className="animate-spin text-amber-500" />
-                </div>
+                <div className="flex items-center justify-center py-20"><Loader2 size={28} className="animate-spin text-violet-500" /></div>
               ) : starredDocs.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {starredDocs.map((doc) => (
-                    <div key={doc.id} className="ring-1 ring-amber-300 rounded-2xl">
-                      <FileCard doc={doc} />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center p-12 bg-white border border-slate-200 rounded-3xl text-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
-                    <Star size={24} className="text-amber-500" />
+                viewMode === "grid" ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                    {starredDocs.map((doc) => <GridCard key={doc.id} doc={doc} />)}
                   </div>
-                  <div className="flex flex-col gap-1 max-w-sm">
-                    <h3 className="text-base font-semibold text-slate-700">No starred files</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed">Click the star icon on any file card to add it here.</p>
+                ) : (
+                  <div className="flex flex-col">
+                    {starredDocs.map((doc) => <ListRow key={doc.id} doc={doc} />)}
+                  </div>
+                )
+              ) : (
+                <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center">
+                    <Star size={28} className="text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-slate-700 mb-1">No starred files</h3>
+                    <p className="text-sm text-slate-500">Star files to quickly find them here.</p>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* ── Dashboard Tab ── */}
+          {/* ── Dashboard overview Tab ── */}
           {activeTab === "dashboard" && (
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-0.5">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Welcome back, {user?.name ?? "User"}!</h1>
-                <span className="text-sm text-slate-500">Your secure document dashboard and account overview.</span>
+            <div className="p-6 flex flex-col gap-6 max-w-3xl">
+              <h1 className="text-xl font-semibold text-slate-800">Welcome back, {user?.name ?? "User"}</h1>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { label: "Files Stored", value: allDocs.filter(d => d.ownership === "owned").length, sub: "Files you own", color: "text-violet-600" },
+                  { label: "Shared with me", value: allDocs.filter(d => d.ownership === "shared").length, sub: "From collaborators", color: "text-blue-600" },
+                  { label: "Starred", value: starredIds.size, sub: "Marked as important", color: "text-amber-600" },
+                ].map(({ label, value, sub, color }) => (
+                  <div key={label} className="bg-white border border-slate-200 rounded-2xl p-5">
+                    <p className="text-sm text-slate-500 font-medium mb-1">{label}</p>
+                    <p className={`text-3xl font-bold ${color} mb-1`}>{value}</p>
+                    <p className="text-sm text-slate-400">{sub}</p>
+                  </div>
+                ))}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-2.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Files Stored</span>
-                  <span className="text-3xl font-extrabold text-slate-900">{allDocs.filter(d => d.ownership === "owned").length}</span>
-                  <span className="text-sm text-slate-500">Files you own</span>
+
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-base font-semibold text-slate-800 flex items-center gap-2">
+                    Two-Factor Authentication
+                    {is2faEnabled ? <ShieldCheck size={16} className="text-emerald-500" /> : <ShieldAlert size={16} className="text-amber-500" />}
+                  </p>
+                  <p className="text-sm text-slate-500 mt-1">
+                    {is2faEnabled ? "Active — your account is protected." : "Not enabled — add extra security."}
+                  </p>
                 </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-2.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Shared with me</span>
-                  <span className="text-3xl font-extrabold text-slate-900">{allDocs.filter(d => d.ownership === "shared").length}</span>
-                  <span className="text-sm text-slate-500">Files others shared with you</span>
-                </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-2.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Security Level</span>
-                  <span className={`text-base font-bold flex items-center gap-1.5 ${is2faEnabled ? "text-emerald-600" : "text-amber-600"}`}>
-                    {is2faEnabled ? <><ShieldCheck size={18} /><span>2FA Protected</span></> : <><ShieldAlert size={18} /><span>2FA Disabled</span></>}
-                  </span>
-                  <span className="text-sm text-slate-500 mt-2">{is2faEnabled ? "Login requires OTP." : "Enable 2FA for better security."}</span>
-                </div>
+                <button
+                  onClick={() => setActiveTab("settings")}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-sm font-medium text-slate-700 border-0 cursor-pointer transition-colors shrink-0"
+                >
+                  Manage
+                </button>
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col gap-4">
-                <h3 className="text-base font-semibold text-slate-800 m-0 border-b border-slate-100 pb-2">Quick Actions</h3>
-                <div className="flex flex-wrap gap-3">
-                  <button onClick={() => setActiveTab("files")} className="px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold cursor-pointer active:scale-[0.98] transition-all">View File Repository</button>
-                  <button onClick={() => setActiveTab("settings")} className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-semibold cursor-pointer active:scale-[0.98] transition-all">Manage 2FA Protection</button>
-                  <button onClick={() => navigate("/activity")} className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-semibold cursor-pointer active:scale-[0.98] transition-all">View My Activity</button>
-                </div>
+
+              <div className="flex flex-wrap gap-3">
+                <button onClick={() => setActiveTab("files")} className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold border-0 cursor-pointer transition-colors">Open My Drive</button>
+                <button onClick={() => navigate("/activity")} className="px-4 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-sm font-medium text-slate-700 cursor-pointer transition-colors">View Activity</button>
               </div>
             </div>
           )}
 
           {/* ── Settings Tab ── */}
           {activeTab === "settings" && (
-            <div className="flex flex-col gap-6 max-w-xl">
-              <div className="flex flex-col gap-0.5">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Account Settings</h1>
-                <span className="text-sm text-slate-500">Manage security protection options, active sessions, and verification methods.</span>
-              </div>
+            <div className="p-6 flex flex-col gap-6 max-w-xl">
+              <h1 className="text-xl font-semibold text-slate-800">Settings</h1>
               <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col gap-5">
-                <h2 className="text-base font-semibold text-slate-900 m-0 border-b border-slate-100 pb-3 flex items-center gap-2">
-                  <Lock size={16} /><span>Security Settings</span>
+                <h2 className="text-base font-semibold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+                  <Lock size={16} className="text-slate-500" />Security
                 </h2>
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-base font-semibold text-slate-800 m-0 flex items-center gap-2">
-                      Two-Factor Authentication (2FA)
-                      {is2faEnabled ? <ShieldCheck size={16} className="text-emerald-600" /> : <ShieldAlert size={16} className="text-amber-600" />}
+                    <h3 className="text-base font-semibold text-slate-800 flex items-center gap-2">
+                      Two-Factor Authentication
+                      {is2faEnabled ? <ShieldCheck size={16} className="text-emerald-500" /> : <ShieldAlert size={16} className="text-amber-500" />}
                     </h3>
-                    <p className="text-sm text-slate-500 leading-relaxed m-0 mt-1 max-w-sm">
-                      {is2faEnabled ? "Your account is secure. 2FA is active and guards login actions." : "Enable 2FA to guard your account against unauthorized access."}
+                    <p className="text-sm text-slate-500 mt-1 max-w-sm">
+                      {is2faEnabled ? "Your account is protected with 2FA." : "Add an extra layer of security to your account."}
                     </p>
                   </div>
                   {is2faEnabled ? (
-                    <Button size="sm" className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-semibold border-0 py-2 cursor-pointer" onClick={() => setShowDisableForm(!showDisableForm)}>Disable</Button>
+                    <Button size="sm" className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-semibold border-0 cursor-pointer shrink-0" onClick={() => setShowDisableForm(!showDisableForm)}>Disable</Button>
                   ) : (
-                    <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-semibold border-0 py-2 cursor-pointer" onClick={() => navigate("/2fa-setup")}>Enable 2FA</Button>
+                    <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-semibold border-0 cursor-pointer shrink-0" onClick={() => navigate("/2fa-setup")}>Enable</Button>
                   )}
                 </div>
                 {showDisableForm && is2faEnabled && (
                   <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col gap-3">
-                    <p className="text-sm text-slate-600 leading-relaxed m-0">Enter the 6-digit code from your authenticator app to disable 2FA.</p>
+                    <p className="text-sm text-slate-600">Enter the 6-digit code from your authenticator app.</p>
                     <form onSubmit={handleDisable2fa} className="flex gap-3">
                       <input
                         type="text" required maxLength={6} value={disableCode}
@@ -678,7 +746,7 @@ export default function DashboardPage() {
                         {authLoading ? <Loader2 size={14} className="animate-spin" /> : "Confirm"}
                       </Button>
                     </form>
-                    {authError && <p className="text-rose-600 text-sm font-semibold m-0 mt-1">{authError}</p>}
+                    {authError && <p className="text-rose-600 text-sm font-semibold">{authError}</p>}
                   </div>
                 )}
               </div>
@@ -687,48 +755,113 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Share link modal */}
+      {/* ── Context menu (right-click / three-dot) ── */}
+      {activeMenuId && menuPos && activeDoc && (
+        <div
+          className="fixed z-[200] bg-white border border-slate-200 rounded-xl shadow-xl py-1 w-48"
+          style={{ top: menuPos.y, left: menuPos.x }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button onClick={() => { setActiveMenuId(null); navigate(`/files/${activeDoc.id}`); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 border-0 bg-transparent cursor-pointer">
+            <Eye size={15} className="text-slate-400" />Open
+          </button>
+          {(activeDoc.ownership === "owned" || activeDoc.accessLevel === "editor") && (
+            <button onClick={() => handleDownload(activeDoc.id, activeDoc.name)} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 border-0 bg-transparent cursor-pointer">
+              <Download size={15} className="text-slate-400" />Download
+            </button>
+          )}
+          <button
+            onClick={(e) => { handleToggleStar(e, activeDoc.id); setActiveMenuId(null); }}
+            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 border-0 bg-transparent cursor-pointer"
+          >
+            <Star size={15} className={`${starredIds.has(activeDoc.id) ? "fill-amber-400 text-amber-500" : "text-slate-400"}`} />
+            {starredIds.has(activeDoc.id) ? "Remove star" : "Add to starred"}
+          </button>
+          <button onClick={() => { openChat(activeDoc.id, activeDoc.name); setActiveMenuId(null); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 border-0 bg-transparent cursor-pointer">
+            <MessageSquare size={15} className="text-slate-400" />Open chat
+          </button>
+          {activeDoc.ownership === "owned" && (
+            <button onClick={() => { setActiveMenuId(null); handleShareLink(activeDoc.id); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 border-0 bg-transparent cursor-pointer">
+              <Share2 size={15} className="text-slate-400" />Get link
+            </button>
+          )}
+          {activeDoc.ownership === "owned" && (
+            <button onClick={() => { setActiveMenuId(null); setSettingsFile({ id: activeDoc.id, name: activeDoc.name }); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 border-0 bg-transparent cursor-pointer">
+              <Settings size={15} className="text-slate-400" />File settings
+            </button>
+          )}
+          {activeDoc.ownership === "owned" && (
+            <>
+              <div className="border-t border-slate-100 my-1" />
+              <button onClick={() => handleDelete(activeDoc.id)} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-rose-500 hover:bg-rose-50 border-0 bg-transparent cursor-pointer">
+                <Trash2 size={15} />Move to trash
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* ── Share link modal ── */}
       {shareUrl && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-md flex flex-col gap-4 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-900 m-0">Temporary Preview Link</h3>
-              <button onClick={() => setShareUrl(null)} className="bg-transparent border-0 text-slate-500 hover:text-slate-700 cursor-pointer text-base font-semibold p-1">✕</button>
+              <h3 className="text-base font-bold text-slate-900">Share link</h3>
+              <button onClick={() => setShareUrl(null)} className="bg-transparent border-0 text-slate-400 hover:text-slate-700 cursor-pointer p-1">✕</button>
             </div>
-            <p className="text-sm text-slate-500 leading-relaxed m-0">
-              This preview URL only works in your current browser session. Use Manage Sharing for permissioned share links.
-            </p>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-violet-700 font-mono break-all line-clamp-3 select-all leading-normal">{shareUrl}</div>
-            <div className="flex gap-3 mt-1.5">
+            <p className="text-sm text-slate-500">This link is valid for your current session only.</p>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-violet-700 font-mono break-all select-all leading-normal">{shareUrl}</div>
+            <div className="flex gap-3">
               <button
                 onClick={() => { navigator.clipboard.writeText(shareUrl).catch(() => {}); setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000); }}
-                className={`flex-1 py-2 border-0 rounded-xl text-sm font-semibold cursor-pointer transition-all ${copiedLink ? "bg-emerald-600 text-white" : "bg-violet-600 hover:bg-violet-500 text-white"}`}
+                className={`flex-1 py-2.5 border-0 rounded-xl text-sm font-semibold cursor-pointer transition-all ${copiedLink ? "bg-emerald-600 text-white" : "bg-violet-600 hover:bg-violet-500 text-white"}`}
               >
-                {copiedLink ? "✓ Copied" : "Copy Link"}
+                {copiedLink ? "✓ Copied!" : "Copy link"}
               </button>
-              <a href={shareUrl} target="_blank" rel="noreferrer" className="flex-1 py-2 border border-slate-200 rounded-xl text-sm text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 text-center font-semibold no-underline transition-all flex items-center justify-center gap-1.5">
-                <span>Preview</span><ExternalLink size={12} />
+              <a href={shareUrl} target="_blank" rel="noreferrer" className="flex-1 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 bg-white hover:bg-slate-50 text-center font-medium no-underline transition-all flex items-center justify-center gap-1.5">
+                Open <ExternalLink size={12} />
               </a>
             </div>
           </div>
         </div>
       )}
 
+      {/* ── File info panel ── */}
+      {infoDoc && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => setInfoDoc(null)}>
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 w-full max-w-sm flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-base font-bold text-slate-900">File info</h3>
+              <button onClick={() => setInfoDoc(null)} className="border-0 bg-transparent text-slate-400 hover:text-slate-700 cursor-pointer p-1">✕</button>
+            </div>
+            <div className={`h-20 rounded-xl flex items-center justify-center ${getFileTypeInfo(infoDoc.name).previewBg}`}>
+              {getFileTypeInfo(infoDoc.name).icon}
+            </div>
+            {[
+              { label: "Name", value: infoDoc.name },
+              { label: "Size", value: formatBytes(infoDoc.size) },
+              { label: "Uploaded", value: new Date(infoDoc.createdAt).toLocaleString() },
+              { label: "Ownership", value: infoDoc.ownership === "owned" ? "Owned by you" : `Shared by ${infoDoc.ownerName ?? "someone"}` },
+            ].map(({ label, value }) => (
+              <div key={label} className="flex items-start gap-3 text-sm">
+                <span className="text-slate-400 w-20 shrink-0">{label}</span>
+                <span className="text-slate-800 font-medium break-all">{value}</span>
+              </div>
+            ))}
+            <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-200 mt-1">
+              <Lock size={13} />
+              <span className="text-sm font-semibold">End-to-end encrypted</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {chatFileId && (
-        <ChatSidebar
-          fileId={chatFileId}
-          fileName={chatFileName}
-          isOpen={chatOpen}
-          onToggle={toggleChat}
-        />
+        <ChatSidebar fileId={chatFileId} fileName={chatFileName} isOpen={chatOpen} onToggle={toggleChat} />
       )}
 
       {settingsFile && (
-        <FileSettingsModal
-          fileId={settingsFile.id}
-          fileName={settingsFile.name}
-          onClose={() => setSettingsFile(null)}
-        />
+        <FileSettingsModal fileId={settingsFile.id} fileName={settingsFile.name} onClose={() => setSettingsFile(null)} />
       )}
     </>
   );
