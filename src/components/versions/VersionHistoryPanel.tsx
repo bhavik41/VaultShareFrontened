@@ -283,7 +283,7 @@ export default function VersionHistoryPanel({
 
         {/* My request status (collaborator view) */}
         {!isOwner && myPendingRequest?.status === "pending" && (
-          <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+          <div className="relative flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 pr-10">
             <Clock size={16} className="mt-0.5 shrink-0 text-amber-400" />
             <div className="min-w-0">
               <p className="text-sm font-semibold text-amber-300">Request Pending Approval</p>
@@ -295,10 +295,17 @@ export default function VersionHistoryPanel({
               </p>
               <p className="mt-1 text-[11px] text-slate-500">Waiting for the owner to approve or reject your upload.</p>
             </div>
+            <button
+              onClick={() => setMyPendingRequest(null)}
+              className="absolute top-3 right-3 rounded-full p-1 text-slate-500 hover:text-white hover:bg-slate-700/60 transition-colors"
+              title="Dismiss"
+            >
+              <X size={14} />
+            </button>
           </div>
         )}
         {!isOwner && myPendingRequest?.status === "rejected" && (
-          <div className="flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 p-4">
+          <div className="relative flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 p-4 pr-10">
             <X size={16} className="mt-0.5 shrink-0 text-rose-400" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-rose-300">Request Rejected</p>
@@ -319,6 +326,13 @@ export default function VersionHistoryPanel({
                 Submit New Request
               </button>
             </div>
+            <button
+              onClick={() => setMyPendingRequest(null)}
+              className="absolute top-3 right-3 rounded-full p-1 text-slate-500 hover:text-white hover:bg-rose-500/20 transition-colors"
+              title="Dismiss"
+            >
+              <X size={14} />
+            </button>
           </div>
         )}
 
