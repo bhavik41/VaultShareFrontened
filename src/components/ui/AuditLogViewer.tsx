@@ -343,8 +343,13 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 max-w-[220px]">
-                      <span className="text-slate-300 text-xs">{log.details || "—"}</span>
+                    <td className="px-6 py-4 max-w-[200px]">
+                      <span
+                        className="text-slate-300 text-xs block truncate"
+                        title={log.details || undefined}
+                      >
+                        {log.details || "—"}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <UserCell log={log} onEnter={openPopover} onLeave={scheduleHide} />
