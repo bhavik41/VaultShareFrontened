@@ -78,6 +78,11 @@ export async function getPendingRequests(fileId: string): Promise<VersionRequest
   return res.data.requests
 }
 
+export async function getMyPendingRequest(fileId: string): Promise<VersionRequest | null> {
+  const res = await api.get<{ request: VersionRequest | null }>(`/files/${fileId}/versions/my-request`)
+  return res.data.request
+}
+
 export async function getPendingRequestsForOwner(): Promise<VersionRequest[]> {
   const res = await api.get<{ requests: VersionRequest[] }>(`/version-requests`)
   return res.data.requests

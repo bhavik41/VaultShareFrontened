@@ -18,6 +18,7 @@ import {
   approveVersionRequest,
   deleteVersion,
   downloadVersion,
+  getMyPendingRequest,
   getPendingRequests,
   getVersions,
   rejectVersionRequest,
@@ -72,6 +73,7 @@ export default function VersionHistoryPanel({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [myPendingRequest, setMyPendingRequest] = useState<VersionRequest | null>(null);
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [changeNote, setChangeNote] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -93,6 +95,8 @@ export default function VersionHistoryPanel({
     ];
     if (isOwner) {
       requests.push(getPendingRequests(fileId).then(setPendingRequests).catch(() => {}));
+    } else {
+      requests.push(getMyPendingRequest(fileId).then(setMyPendingRequest).catch(() => {}));
     }
     Promise.all(requests)
       .catch(() => setError("Failed to load version history."))
@@ -119,7 +123,8 @@ export default function VersionHistoryPanel({
       if (uploadMode === "direct") {
         await uploadVersion(fileId, selectedFile, { changeNote: changeNote || undefined });
       } else if (uploadMode === "request") {
-        await requestVersionUpload(fileId, selectedFile, { changeNote: changeNote || undefined });
+        const submitted = await requestVersionUpload(fileId, selectedFile, { changeNote: changeNote || undefined });
+        setMyPendingRequest(submitted);
       }
       setShowUploadForm(false);
       setChangeNote("");
@@ -201,13 +206,20 @@ export default function VersionHistoryPanel({
             Version History
           </h2>
           {uploadMode !== "denied" && (
-            <button
-              onClick={() => setShowUploadForm((v) => !v)}
-              className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-violet-500"
-            >
-              <UploadCloud size={14} />
-              {uploadMode === "direct" ? "Upload New Version" : "Request Version Upload"}
-            </button>
+            myPendingRequest ? (
+              <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-300 cursor-default">
+                <Clock size={14} />
+                Request Pending
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowUploadForm((v) => !v)}
+                className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-violet-500"
+              >
+                <UploadCloud size={14} />
+                {uploadMode === "direct" ? "Upload New Version" : "Request Version Upload"}
+              </button>
+            )
           )}
         </div>
 
@@ -256,6 +268,23 @@ export default function VersionHistoryPanel({
               </button>
             </div>
           </form>
+        )}
+
+        {/* My pending request (collaborator view) */}
+        {!isOwner && myPendingRequest && (
+          <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+            <Clock size={16} className="mt-0.5 shrink-0 text-amber-400" />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-amber-300">Request Pending Approval</p>
+              <p className="mt-1 text-[11px] text-slate-400">
+                <span className="font-medium text-slate-300">{myPendingRequest.originalName}</span>
+                {" · "}{formatBytes(myPendingRequest.size)}
+                {" · submitted "}{formatDate(myPendingRequest.createdAt)}
+                {myPendingRequest.changeNote ? ` · "${myPendingRequest.changeNote}"` : ""}
+              </p>
+              <p className="mt-1 text-[11px] text-slate-500">Waiting for the owner to approve or reject your upload.</p>
+            </div>
+          </div>
         )}
 
         {/* Pending requests (owner only) */}
