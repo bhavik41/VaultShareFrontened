@@ -80,11 +80,13 @@ export default function GroupsPage() {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [newGroupName, setNewGroupName] = useState('')
   const [newGroupDesc, setNewGroupDesc] = useState('')
+  const [newGroupDefaultRole, setNewGroupDefaultRole] = useState<SharedRole>('viewer')
 
   // Edit group
   const [editingGroup, setEditingGroup] = useState(false)
   const [editName, setEditName] = useState('')
   const [editDesc, setEditDesc] = useState('')
+  const [editDefaultRole, setEditDefaultRole] = useState<SharedRole>('viewer')
 
   // Add member form
   const [memberEmail, setMemberEmail] = useState('')
@@ -130,6 +132,8 @@ export default function GroupsPage() {
       setSelectedGroup(detail)
       setEditName(detail.name)
       setEditDesc(detail.description ?? '')
+      setEditDefaultRole((detail as any).defaultRole ?? 'viewer')
+      setShareFileRole((detail as any).defaultRole ?? 'viewer')
     } catch {
       setError('Unable to load group details.')
     } finally {
@@ -155,10 +159,11 @@ export default function GroupsPage() {
     try {
       setActionLoading(true)
       setError('')
-      const group = await createGroup({ name: newGroupName.trim(), description: newGroupDesc.trim() || undefined })
+      const group = await createGroup({ name: newGroupName.trim(), description: newGroupDesc.trim() || undefined, defaultRole: newGroupDefaultRole })
       setGroups((prev) => [{ ...group, role: 'owner', memberCount: 1 }, ...prev])
       setNewGroupName('')
       setNewGroupDesc('')
+      setNewGroupDefaultRole('viewer')
       setShowCreateForm(false)
       flashSuccess('Group created.')
     } catch (err: any) {
@@ -174,7 +179,7 @@ export default function GroupsPage() {
     try {
       setActionLoading(true)
       setError('')
-      await updateGroup(selectedGroup.id, { name: editName.trim(), description: editDesc.trim() || undefined })
+      await updateGroup(selectedGroup.id, { name: editName.trim(), description: editDesc.trim() || undefined, defaultRole: editDefaultRole })
       await loadGroupDetail(selectedGroup.id)
       setEditingGroup(false)
       flashSuccess('Group updated.')
@@ -335,6 +340,14 @@ export default function GroupsPage() {
                     placeholder="Description (optional)"
                     className="bg-[#1e293b] border border-slate-700 rounded-lg px-3 py-1 text-slate-300 text-sm flex-1"
                   />
+                  <select
+                    value={editDefaultRole}
+                    onChange={(e) => setEditDefaultRole(e.target.value as SharedRole)}
+                    className="bg-[#0f172a] border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-300"
+                  >
+                    <option value="viewer">Default: Viewer</option>
+                    <option value="editor">Default: Editor</option>
+                  </select>
                   <button
                     type="submit"
                     disabled={actionLoading}
@@ -353,7 +366,16 @@ export default function GroupsPage() {
               ) : (
                 <div className="flex items-center gap-3">
                   <div>
-                    <h1 className="text-xl font-bold">{selectedGroup.name}</h1>
+                    <div className="flex items-center gap-2">
+                      <h1 className="text-xl font-bold">{selectedGroup.name}</h1>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold capitalize ${
+                        (selectedGroup as any).defaultRole === 'editor'
+                          ? 'bg-blue-500/20 text-blue-300'
+                          : 'bg-slate-500/20 text-slate-300'
+                      }`}>
+                        {(selectedGroup as any).defaultRole ?? 'viewer'} access
+                      </span>
+                    </div>
                     {selectedGroup.description && (
                       <p className="text-slate-400 text-sm">{selectedGroup.description}</p>
                     )}
@@ -725,6 +747,30 @@ export default function GroupsPage() {
                 placeholder="Description (optional)"
                 className="w-full bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
               />
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5">Default role for all members</label>
+                <div className="flex gap-2">
+                  {(['viewer', 'editor'] as SharedRole[]).map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setNewGroupDefaultRole(r)}
+                      className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-colors capitalize ${
+                        newGroupDefaultRole === r
+                          ? r === 'editor'
+                            ? 'bg-blue-500/20 border-blue-500/50 text-blue-300'
+                            : 'bg-slate-500/20 border-slate-500/50 text-slate-300'
+                          : 'bg-transparent border-slate-700 text-slate-500 hover:text-slate-300'
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-1.5 text-[11px] text-slate-500">
+                  {newGroupDefaultRole === 'editor' ? 'Members can view and edit files shared with this group.' : 'Members can only view files shared with this group.'}
+                </p>
+              </div>
               <div className="flex gap-2">
                 <button
                   type="submit"
@@ -736,7 +782,7 @@ export default function GroupsPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setShowCreateForm(false); setNewGroupName(''); setNewGroupDesc('') }}
+                  onClick={() => { setShowCreateForm(false); setNewGroupName(''); setNewGroupDesc(''); setNewGroupDefaultRole('viewer') }}
                   className="px-4 py-2 text-slate-400 hover:text-white rounded-lg text-sm transition-colors"
                 >
                   Cancel
@@ -785,9 +831,16 @@ export default function GroupsPage() {
                           )}
                         </div>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${ROLE_COLORS[group.role] ?? ROLE_COLORS.viewer}`}>
-                        {group.role}
-                      </span>
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ROLE_COLORS[group.role] ?? ROLE_COLORS.viewer}`}>
+                          {group.role}
+                        </span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize ${
+                          group.defaultRole === 'editor' ? 'bg-blue-500/15 text-blue-400' : 'bg-slate-500/15 text-slate-400'
+                        }`}>
+                          {group.defaultRole ?? 'viewer'} access
+                        </span>
+                      </div>
                     </div>
                     <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
                       <span className="flex items-center gap-1">

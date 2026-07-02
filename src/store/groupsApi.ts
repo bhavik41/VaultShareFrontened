@@ -17,6 +17,7 @@ export interface Group {
   name: string
   description?: string
   ownerId: string
+  defaultRole: SharedRole
   role: string
   memberCount: number
   createdAt: string
@@ -64,7 +65,7 @@ export interface GroupFileForMe {
 
 // ── Groups ─────────────────────────────────────────────────────────────────────
 
-export async function createGroup(body: { name: string; description?: string }): Promise<Group> {
+export async function createGroup(body: { name: string; description?: string; defaultRole?: SharedRole }): Promise<Group> {
   const res = await axios.post(`${API}/groups`, body, { headers: getAuthHeaders() })
   return res.data.group
 }
@@ -81,7 +82,7 @@ export async function getGroup(groupId: string): Promise<GroupDetail> {
 
 export async function updateGroup(
   groupId: string,
-  body: { name?: string; description?: string },
+  body: { name?: string; description?: string; defaultRole?: SharedRole },
 ): Promise<Group> {
   const res = await axios.put(`${API}/groups/${groupId}`, body, { headers: getAuthHeaders() })
   return res.data.group
