@@ -33,6 +33,7 @@ interface VersionHistoryPanelProps {
   fileOwnerId: string;
   versionPolicy: VersionPolicy;
   fileName: string;
+  myRole?: "owner" | "editor" | "viewer";
 }
 
 function formatBytes(bytes: number): string {
@@ -60,6 +61,7 @@ export default function VersionHistoryPanel({
   fileOwnerId,
   versionPolicy,
   fileName,
+  myRole: myRoleProp,
 }: VersionHistoryPanelProps) {
   const authUser = useAppSelector((s) => s.auth.user);
   const isOwner = !!authUser && authUser.id === fileOwnerId;
@@ -78,9 +80,8 @@ export default function VersionHistoryPanel({
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const myRole: "owner" | "editor" | "viewer" | null = isOwner
-    ? "owner"
-    : collaborators.find((c) => c.userId === authUser?.id)?.role ?? null;
+  const myRole: "owner" | "editor" | "viewer" | null = myRoleProp
+    ?? (isOwner ? "owner" : collaborators.find((c) => c.userId === authUser?.id)?.role ?? null);
   const uploadMode = getUploadMode(versionPolicy, myRole);
 
   function load(silent = false) {

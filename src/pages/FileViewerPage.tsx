@@ -63,11 +63,12 @@ export default function FileViewerPage() {
     name: string;
     mimeType: string;
     versionPolicy: "admin_only" | "role_gated" | "open";
+    role: "owner" | "editor" | "viewer";
   } | null>(null)
 
   useEffect(() => {
     if (!id || file) return
-    api.get<{ file: { userId: string; originalName: string; mimeType: string; versionPolicy?: string } }>(`/files/${id}/view`)
+    api.get<{ file: { userId: string; originalName: string; mimeType: string; versionPolicy?: string }; role: string }>(`/files/${id}/view`)
       .then((res) => {
         const f = res.data.file
         setRemoteFile({
@@ -75,6 +76,7 @@ export default function FileViewerPage() {
           name: f.originalName,
           mimeType: f.mimeType,
           versionPolicy: (f.versionPolicy as "admin_only" | "role_gated" | "open") ?? "admin_only",
+          role: (res.data.role as "owner" | "editor" | "viewer") ?? "viewer",
         })
       })
       .catch(() => {})
@@ -226,6 +228,7 @@ export default function FileViewerPage() {
             fileOwnerId={effectiveFile?.userId ?? ""}
             versionPolicy={effectiveFile?.versionPolicy ?? "admin_only"}
             fileName={effectiveFile?.name ?? "file"}
+            myRole={file ? "owner" : remoteFile?.role ?? "viewer"}
           />
         ) : (
           <>
