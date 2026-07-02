@@ -7,17 +7,17 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks"
 export default function SignupPage() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const { loading, error, token } = useAppSelector((state) => state.auth)
+  const { loading, error, token, requiresOtp } = useAppSelector((state) => state.auth)
 
   useEffect(() => {
     dispatch(clearError())
     return () => { dispatch(clearError()) }
   }, [dispatch])
 
-  // Redirect once token is available
   useEffect(() => {
     if (token) navigate("/")
-  }, [token, navigate])
+    if (requiresOtp) navigate("/signin-otp")
+  }, [token, requiresOtp, navigate])
 
   const handleSubmit = async (data: {
     firstName: string

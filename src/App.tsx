@@ -9,6 +9,7 @@ import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import TwoFactorSetupPage from "@/pages/TwoFactorSetupPage";
 import TwoFactorPrompt from "@/components/TwoFactorPrompt";
+import EmailOtpPrompt from "@/components/EmailOtpPrompt";
 import LandingPage from "@/pages/LandingPage";
 import UploadPage from "@/pages/UploadPage";
 import CollaborationPage from "@/pages/CollaborationPage";
@@ -55,6 +56,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/2fa-validate" element={<TwoFactorPrompt />} />
+        <Route path="/signin-otp" element={<EmailOtpPrompt />} />
         <Route path="/share/:token" element={<ShareLinkPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />

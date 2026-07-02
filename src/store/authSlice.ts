@@ -21,11 +21,13 @@ interface AuthState {
   refreshToken: string | null
   loading: boolean
   error: string | null
-  // 2FA
+  // TOTP 2FA
   requires2fa: boolean
   tempToken: string | null
   twoFactorEnabled: boolean
   qrCode: string | null
+  // Email OTP on signin
+  requiresOtp: boolean
   // Password reset
   resetEmailSent: boolean
   resetSuccess: boolean
@@ -40,9 +42,10 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   requires2fa: false,
-  tempToken: null,
+  tempToken: sessionStorage.getItem("tempToken"),
   twoFactorEnabled: false,
   qrCode: null,
+  requiresOtp: !!sessionStorage.getItem("tempToken"),
   resetEmailSent: false,
   resetSuccess: false,
 }
@@ -62,6 +65,7 @@ function clearTokens() {
   localStorage.removeItem("token")
   localStorage.removeItem("refreshToken")
   localStorage.removeItem("userEmail")
+  sessionStorage.removeItem("tempToken")
 }
 
 async function apiPost<T>(url: string, body: object, headers?: Record<string, string>): Promise<T> {
@@ -73,12 +77,12 @@ async function apiPost<T>(url: string, body: object, headers?: Record<string, st
 
 // Signup
 export const signupThunk = createAsyncThunk<
-  { token: string; refreshToken: string; user: User },
+  { requiresOtp: true; tempToken: string },
   { firstName: string; lastName: string; email: string; password: string; username: string; agreedToTerms: boolean },
   { rejectValue: string }
 >("auth/signup", async (data, { rejectWithValue }) => {
   try {
-    const result = await apiPost<{ token: string; refreshToken: string; user: User }>(
+    const result = await apiPost<{ requiresOtp: true; tempToken: string }>(
       `${BASE_URL}/signup`,
       { name: `${data.firstName} ${data.lastName}`.trim(), email: data.email, password: data.password, username: data.username },
     )
@@ -89,20 +93,38 @@ export const signupThunk = createAsyncThunk<
   }
 })
 
-// Signin
+// Signin — now always returns a temp token (OTP or 2FA)
 export const signinThunk = createAsyncThunk<
-  { token: string; refreshToken: string; user: User } | { requires2fa: true; tempToken: string },
+  { requires2fa: true; tempToken: string } | { requiresOtp: true; tempToken: string },
   { email: string; password: string },
   { rejectValue: string }
 >("auth/signin", async (data, { rejectWithValue }) => {
   try {
-    const result = await apiPost<{ token: string; refreshToken: string; user: User } | { requires2fa: true; tempToken: string }>(
-      `${BASE_URL}/signin`,
-      data,
-    )
+    const result = await apiPost<
+      { requires2fa: true; tempToken: string } | { requiresOtp: true; tempToken: string }
+    >(`${BASE_URL}/signin`, data)
     return result
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) return rejectWithValue(err.response?.data?.message ?? "Sign in failed.")
+    return rejectWithValue("Network error.")
+  }
+})
+
+// Verify email OTP after signin
+export const verifySigninOtpThunk = createAsyncThunk<
+  { token: string; refreshToken: string; user: User },
+  { otp: string },
+  { rejectValue: string }
+>("auth/signin/verifyOtp", async (data, { getState, rejectWithValue }) => {
+  const { auth } = getState() as { auth: AuthState }
+  const tempToken = auth.tempToken ?? sessionStorage.getItem("tempToken")
+  try {
+    return await apiPost<{ token: string; refreshToken: string; user: User }>(
+      `${BASE_URL}/signin/verify-otp`,
+      { tempToken, otp: data.otp },
+    )
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) return rejectWithValue(err.response?.data?.message ?? "Verification failed.")
     return rejectWithValue("Network error.")
   }
 })
@@ -220,10 +242,11 @@ export const validate2faThunk = createAsyncThunk<
   { rejectValue: string }
 >("auth/2fa/validate", async (data, { getState, rejectWithValue }) => {
   const { auth } = getState() as { auth: AuthState }
+  const tempToken = auth.tempToken ?? sessionStorage.getItem("tempToken")
   try {
     const result = await apiPost<{ token: string; refreshToken: string; user: User }>(
       `${BASE_URL}/2fa/validate`,
-      { tempToken: auth.tempToken, token: data.token },
+      { tempToken, token: data.token },
     )
     return result
   } catch (err: unknown) {
@@ -263,12 +286,20 @@ const authSlice = createSlice({
       state.refreshToken = null
       state.error = null
       state.requires2fa = false
+      state.requiresOtp = false
       state.tempToken = null
       state.twoFactorEnabled = false
       state.qrCode = null
       clearTokens()
     },
     clearError: (state) => { state.error = null },
+    clearOtpState: (state) => {
+      state.requiresOtp = false
+      state.requires2fa = false
+      state.tempToken = null
+      state.error = null
+      sessionStorage.removeItem("tempToken")
+    },
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload
       localStorage.setItem("token", action.payload)
@@ -286,11 +317,9 @@ const authSlice = createSlice({
       .addCase(signupThunk.pending, (s) => { s.loading = true; s.error = null })
       .addCase(signupThunk.fulfilled, (s, a) => {
         s.loading = false
-        s.token = a.payload.token
-        s.refreshToken = a.payload.refreshToken
-        s.user = a.payload.user
-        saveTokens(a.payload.token, a.payload.refreshToken)
-        saveUserEmail(a.payload.user.email)
+        s.tempToken = a.payload.tempToken
+        sessionStorage.setItem("tempToken", a.payload.tempToken)
+        s.requiresOtp = true
       })
       .addCase(signupThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Signup failed." })
 
@@ -299,20 +328,33 @@ const authSlice = createSlice({
       .addCase(signinThunk.pending, (s) => { s.loading = true; s.error = null })
       .addCase(signinThunk.fulfilled, (s, a) => {
         s.loading = false
+        s.tempToken = a.payload.tempToken
+        sessionStorage.setItem("tempToken", a.payload.tempToken)
         if ("requires2fa" in a.payload) {
           s.requires2fa = true
-          s.tempToken = a.payload.tempToken
+          s.requiresOtp = false
         } else {
-          s.token = a.payload.token
-          s.refreshToken = a.payload.refreshToken
-          s.user = a.payload.user
+          s.requiresOtp = true
           s.requires2fa = false
-          s.tempToken = null
-          saveTokens(a.payload.token, a.payload.refreshToken)
-          saveUserEmail(a.payload.user.email)
         }
       })
       .addCase(signinThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Sign in failed." })
+
+    // ── verify signin OTP ──────────────────────────────────────────────────────
+    builder
+      .addCase(verifySigninOtpThunk.pending, (s) => { s.loading = true; s.error = null })
+      .addCase(verifySigninOtpThunk.fulfilled, (s, a) => {
+        s.loading = false
+        s.token = a.payload.token
+        s.refreshToken = a.payload.refreshToken
+        s.user = a.payload.user
+        s.requiresOtp = false
+        s.tempToken = null
+        sessionStorage.removeItem("tempToken")
+        saveTokens(a.payload.token, a.payload.refreshToken)
+        saveUserEmail(a.payload.user.email)
+      })
+      .addCase(verifySigninOtpThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Verification failed." })
 
     // ── refresh ────────────────────────────────────────────────────────────────
     builder
@@ -370,6 +412,7 @@ const authSlice = createSlice({
         s.requires2fa = false
         s.tempToken = null
         s.twoFactorEnabled = true
+        sessionStorage.removeItem("tempToken")
         saveTokens(a.payload.token, a.payload.refreshToken)
         saveUserEmail(a.payload.user.email)
       })
@@ -383,5 +426,5 @@ const authSlice = createSlice({
   },
 })
 
-export const { logout, clearError, setToken, clearResetState } = authSlice.actions
+export const { logout, clearError, setToken, clearResetState, clearOtpState } = authSlice.actions
 export default authSlice.reducer
