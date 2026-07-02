@@ -1,5 +1,4 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
 import {
   ChevronLeft,
   FileText,
@@ -306,20 +305,20 @@ export default function GroupsPage() {
   // ── Group detail view ────────────────────────────────────────────────────────
 
   if (selectedGroup) {
-    const canManage = ['owner', 'admin'].includes(
-      groups.find((g) => g.id === selectedGroup.id)?.role ?? '',
-    )
+    const myGroupRole = groups.find((g) => g.id === selectedGroup.id)?.role ?? 'viewer'
+    const canManage = myGroupRole === 'owner' || myGroupRole === 'admin'
 
     return (
-      <main className="min-h-screen bg-[#0b0f1a] text-slate-100 p-6">
-        <div className="max-w-4xl mx-auto">
+      <div className="flex-1 overflow-y-auto bg-[#0b0f1a] text-slate-100">
+        <div className="max-w-4xl mx-auto p-6">
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => { setSelectedGroup(null); setEditingGroup(false) }}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors text-sm"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
+              Groups
             </button>
             <div className="flex-1 min-w-0">
               {editingGroup ? (
@@ -631,21 +630,19 @@ export default function GroupsPage() {
             </div>
           )}
         </div>
-      </main>
+      </div>
+    </div>
     )
   }
 
   // ── Groups list view ──────────────────────────────────────────────────────────
 
   return (
-    <main className="min-h-screen bg-[#0b0f1a] text-slate-100 p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="flex-1 overflow-y-auto bg-[#0b0f1a] text-slate-100">
+      <div className="max-w-4xl mx-auto p-6">
         {/* Page Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <RouterLink to="/dashboard" className="text-slate-400 hover:text-white transition-colors">
-              <ChevronLeft className="w-5 h-5" />
-            </RouterLink>
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <Users className="w-6 h-6 text-indigo-400" />
@@ -862,6 +859,6 @@ export default function GroupsPage() {
           </>
         )}
       </div>
-    </main>
+    </div>
   )
 }

@@ -11,6 +11,7 @@ import {
   Settings,
   Share2,
   Star,
+  UsersRound,
   Users,
 } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
@@ -31,6 +32,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "starred", label: "Starred", icon: <Star size={18} />, path: "/dashboard", tab: "starred" },
   { id: "vault", label: "Encrypted Vault", icon: <Lock size={18} />, path: "/dashboard", tab: "vault", badge: "Secure" },
   { id: "team", label: "Team / Sharing", icon: <Users size={18} />, path: "/file-sharing" },
+  { id: "groups", label: "Groups", icon: <UsersRound size={18} />, path: "/groups" },
   { id: "version-requests", label: "Version Requests", icon: <History size={18} />, path: "/version-requests" },
   { id: "activity", label: "Activity", icon: <Activity size={18} />, path: "/activity" },
   { id: "settings", label: "Settings", icon: <Settings size={18} />, path: "/dashboard", tab: "settings" },
@@ -41,6 +43,7 @@ const MOCK_BASE_BYTES = 6.2 * 1024 * 1024 * 1024;
 function getActiveId(pathname: string): string {
   if (pathname.startsWith("/collaboration")) return "shared";
   if (pathname.startsWith("/file-sharing")) return "team";
+  if (pathname.startsWith("/groups")) return "groups";
   if (pathname.startsWith("/version-requests")) return "version-requests";
   if (pathname.startsWith("/activity")) return "activity";
   return "files";
