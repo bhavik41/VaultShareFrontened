@@ -18,6 +18,8 @@ import {
   approveVersionRequest,
   deleteVersion,
   downloadVersion,
+  getMyPendingRequest,
+  getMyRejectedRequests,
   getPendingRequests,
   getVersions,
   rejectVersionRequest,
@@ -33,6 +35,7 @@ interface VersionHistoryPanelProps {
   fileOwnerId: string;
   versionPolicy: VersionPolicy;
   fileName: string;
+  myRole?: "owner" | "editor" | "viewer";
 }
 
 function formatBytes(bytes: number): string {
@@ -51,7 +54,7 @@ function getUploadMode(policy: VersionPolicy, role: "owner" | "editor" | "viewer
   if (!role) return "denied";
   if (role === "owner") return "direct";
   if (policy === "admin_only") return "denied";
-  if (policy === "role_gated") return role === "editor" ? "request" : "denied";
+  if (policy === "role_gated") return "request";
   return "direct"; // open policy: editor or viewer
 }
 
@@ -60,6 +63,7 @@ export default function VersionHistoryPanel({
   fileOwnerId,
   versionPolicy,
   fileName,
+  myRole: myRoleProp,
 }: VersionHistoryPanelProps) {
   const authUser = useAppSelector((s) => s.auth.user);
   const isOwner = !!authUser && authUser.id === fileOwnerId;
@@ -70,6 +74,8 @@ export default function VersionHistoryPanel({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [myPendingRequest, setMyPendingRequest] = useState<VersionRequest | null>(null);
+  const [myRejectedRequests, setMyRejectedRequests] = useState<VersionRequest[]>([]);
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [changeNote, setChangeNote] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -78,9 +84,8 @@ export default function VersionHistoryPanel({
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const myRole: "owner" | "editor" | "viewer" | null = isOwner
-    ? "owner"
-    : collaborators.find((c) => c.userId === authUser?.id)?.role ?? null;
+  const myRole: "owner" | "editor" | "viewer" | null = myRoleProp
+    ?? (isOwner ? "owner" : collaborators.find((c) => c.userId === authUser?.id)?.role ?? null);
   const uploadMode = getUploadMode(versionPolicy, myRole);
 
   function load(silent = false) {
@@ -92,6 +97,9 @@ export default function VersionHistoryPanel({
     ];
     if (isOwner) {
       requests.push(getPendingRequests(fileId).then(setPendingRequests).catch(() => {}));
+    } else {
+      requests.push(getMyPendingRequest(fileId).then(setMyPendingRequest).catch(() => {}));
+      requests.push(getMyRejectedRequests(fileId).then(setMyRejectedRequests).catch(() => {}));
     }
     Promise.all(requests)
       .catch(() => setError("Failed to load version history."))
@@ -118,7 +126,8 @@ export default function VersionHistoryPanel({
       if (uploadMode === "direct") {
         await uploadVersion(fileId, selectedFile, { changeNote: changeNote || undefined });
       } else if (uploadMode === "request") {
-        await requestVersionUpload(fileId, selectedFile, { changeNote: changeNote || undefined });
+        const submitted = await requestVersionUpload(fileId, selectedFile, { changeNote: changeNote || undefined });
+        setMyPendingRequest(submitted);
       }
       setShowUploadForm(false);
       setChangeNote("");
@@ -200,13 +209,28 @@ export default function VersionHistoryPanel({
             Version History
           </h2>
           {uploadMode !== "denied" && (
-            <button
-              onClick={() => setShowUploadForm((v) => !v)}
-              className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-violet-500"
-            >
-              <UploadCloud size={14} />
-              {uploadMode === "direct" ? "Upload New Version" : "Request Version Upload"}
-            </button>
+            myPendingRequest?.status === "pending" ? (
+              <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-300 cursor-default">
+                <Clock size={14} />
+                Request Pending
+              </div>
+            ) : myPendingRequest?.status === "rejected" ? (
+              <button
+                onClick={() => { setMyPendingRequest(null); setShowUploadForm(true); }}
+                className="flex items-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 transition-colors"
+              >
+                <X size={14} />
+                Request Rejected — Try Again
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowUploadForm((v) => !v)}
+                className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-violet-500"
+              >
+                <UploadCloud size={14} />
+                {uploadMode === "direct" ? "Upload New Version" : "Request Version Upload"}
+              </button>
+            )
           )}
         </div>
 
@@ -255,6 +279,61 @@ export default function VersionHistoryPanel({
               </button>
             </div>
           </form>
+        )}
+
+        {/* My request status (collaborator view) */}
+        {!isOwner && myPendingRequest?.status === "pending" && (
+          <div className="relative flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 pr-10">
+            <Clock size={16} className="mt-0.5 shrink-0 text-amber-400" />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-amber-300">Request Pending Approval</p>
+              <p className="mt-1 text-[11px] text-slate-400">
+                <span className="font-medium text-slate-300">{myPendingRequest.originalName}</span>
+                {" · "}{formatBytes(myPendingRequest.size)}
+                {" · submitted "}{formatDate(myPendingRequest.createdAt)}
+                {myPendingRequest.changeNote ? ` · "${myPendingRequest.changeNote}"` : ""}
+              </p>
+              <p className="mt-1 text-[11px] text-slate-500">Waiting for the owner to approve or reject your upload.</p>
+            </div>
+            <button
+              onClick={() => setMyPendingRequest(null)}
+              className="absolute top-3 right-3 rounded-full p-1 text-slate-500 hover:text-white hover:bg-slate-700/60 transition-colors"
+              title="Dismiss"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
+        {!isOwner && myPendingRequest?.status === "rejected" && (
+          <div className="relative flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 p-4 pr-10">
+            <X size={16} className="mt-0.5 shrink-0 text-rose-400" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-rose-300">Request Rejected</p>
+              <p className="mt-1 text-[11px] text-slate-400">
+                <span className="font-medium text-slate-300">{myPendingRequest.originalName}</span>
+                {" · "}{formatBytes(myPendingRequest.size)}
+                {" · submitted "}{formatDate(myPendingRequest.createdAt)}
+                {myPendingRequest.changeNote ? ` · "${myPendingRequest.changeNote}"` : ""}
+              </p>
+              <p className="mt-1 text-[11px] text-slate-500">
+                The owner rejected your upload.
+              </p>
+              <button
+                onClick={() => { setMyPendingRequest(null); setShowUploadForm(true); }}
+                className="mt-3 flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-500 transition-colors"
+              >
+                <UploadCloud size={13} />
+                Submit New Request
+              </button>
+            </div>
+            <button
+              onClick={() => setMyPendingRequest(null)}
+              className="absolute top-3 right-3 rounded-full p-1 text-slate-500 hover:text-white hover:bg-rose-500/20 transition-colors"
+              title="Dismiss"
+            >
+              <X size={14} />
+            </button>
+          </div>
         )}
 
         {/* Pending requests (owner only) */}
@@ -323,17 +402,17 @@ export default function VersionHistoryPanel({
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-slate-200">
-                          {uploaderName(v.uploadedBy)}
+                        <span className="text-sm font-medium text-slate-200 truncate">
+                          {v.originalName || fileName}
                         </span>
                         {v.isActive && (
-                          <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                          <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300 shrink-0">
                             <ShieldCheck size={10} /> Active
                           </span>
                         )}
                       </div>
                       <p className="mt-0.5 truncate text-[11px] text-slate-500">
-                        {formatBytes(v.size)} · {formatDate(v.createdAt)}
+                        {uploaderName(v.uploadedBy)} · {formatBytes(v.size)} · {formatDate(v.createdAt)}
                         {v.changeNote ? ` · "${v.changeNote}"` : ""}
                       </p>
                     </div>
@@ -377,6 +456,39 @@ export default function VersionHistoryPanel({
             </div>
           )}
         </div>
+
+        {/* Rejected upload requests (collaborator view) */}
+        {!isOwner && myRejectedRequests.length > 0 && (
+          <div className="overflow-hidden rounded-xl border border-white/5 bg-[#0d0d1a]">
+            <div className="flex items-center gap-2 border-b border-white/5 px-5 py-3">
+              <X size={13} className="text-rose-400" />
+              <span className="text-xs font-semibold text-slate-400">Rejected Requests</span>
+            </div>
+            <div className="divide-y divide-white/5">
+              {myRejectedRequests.map((req) => (
+                <div key={req.id} className="flex items-center justify-between gap-3 px-5 py-3.5 opacity-70">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-rose-900/40 text-xs font-bold text-rose-400">
+                      <X size={14} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-slate-300 truncate">{req.originalName}</span>
+                        <span className="flex items-center gap-1 rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-semibold text-rose-300 shrink-0">
+                          Rejected
+                        </span>
+                      </div>
+                      <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                        {formatBytes(req.size)} · {formatDate(req.createdAt)}
+                        {req.changeNote ? ` · "${req.changeNote}"` : ""}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {myRole && myRole !== "owner" && (
           <p className="flex items-center gap-2 text-[11px] text-slate-600">

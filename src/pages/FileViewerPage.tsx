@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react"
-import { Link, useParams, useNavigate } from "react-router-dom"
-import { AtSign, ChevronRight, Download, Loader2, Lock, Minus, Plus, Reply, Send, ShieldCheck, X } from "lucide-react"
+import { useParams, useNavigate } from "react-router-dom"
+import { AtSign, ChevronLeft, ChevronRight, Download, Loader2, Lock, Minus, Plus, Reply, Send, ShieldCheck, X } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import { getFileSignedUrl, downloadFile } from "@/store/filesApi"
+import api from "@/store/api"
 import { useChat } from "@/hooks/useChat"
 import { useAppDispatch } from "@/store/hooks"
 import { listFilesThunk } from "@/store/filesSlice"
@@ -35,6 +36,7 @@ export default function FileViewerPage() {
   const [zoom, setZoom] = useState(100)
   const [page] = useState(2)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
+  const [previewError, setPreviewError] = useState(false)
   const [comments] = useState<Comment[]>(INITIAL_COMMENTS)
   const [input, setInput] = useState("")
   const [replyTo, setReplyTo] = useState<{ id: string; userName: string; content: string } | null>(null)
@@ -54,7 +56,38 @@ export default function FileViewerPage() {
   } = useChat(id ?? "")
 
   const file = uploadedFiles.find((f) => f.id === id)
-  const mimeType = file?.mimeType ?? ""
+
+  // For collaborators the file won't be in uploadedFiles (that's owner-only).
+  // Fetch the minimal details we need from the view endpoint instead.
+  const [remoteFile, setRemoteFile] = useState<{
+    userId: string;
+    name: string;
+    mimeType: string;
+    versionPolicy: "admin_only" | "role_gated" | "open";
+    role: "owner" | "editor" | "viewer";
+  } | null>(null)
+
+  useEffect(() => {
+    if (!id || file) return
+    api.get<{ file: { userId: string; originalName: string; mimeType: string; versionPolicy?: string }; role: string }>(`/files/${id}/view`)
+      .then((res) => {
+        const f = res.data.file
+        setRemoteFile({
+          userId: f.userId,
+          name: f.originalName,
+          mimeType: f.mimeType,
+          versionPolicy: (f.versionPolicy as "admin_only" | "role_gated" | "open") ?? "admin_only",
+          role: (res.data.role as "owner" | "editor" | "viewer") ?? "viewer",
+        })
+      })
+      .catch(() => {})
+  }, [id, file])
+
+  const effectiveFile = file
+    ? { userId: file.userId, name: file.name, mimeType: file.mimeType, versionPolicy: file.versionPolicy ?? "admin_only" }
+    : remoteFile
+
+  const mimeType = effectiveFile?.mimeType ?? ""
   const isImage = mimeType.startsWith("image/")
   const isPdf = mimeType === "application/pdf"
   const isText =
@@ -84,7 +117,7 @@ export default function FileViewerPage() {
         objectUrl = url
         setFileUrl(url)
       })
-      .catch(() => {})
+      .catch(() => { setPreviewError(true) })
     return () => {
       if (objectUrl) window.URL.revokeObjectURL(objectUrl)
     }
@@ -128,18 +161,19 @@ export default function FileViewerPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-[#080810] text-white overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden">
       {/* Top Header */}
       <header className="shrink-0 border-b border-white/5 bg-[#0a0a18]">
         <div className="flex items-center justify-between px-5 py-0">
-          <div className="flex items-center gap-6">
-            <Link to="/dashboard" className="flex items-center gap-2 py-4">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-violet-600 to-indigo-600 text-xs font-extrabold text-white">
-                V
-              </div>
-              <span className="text-sm font-bold text-white">VaultShare</span>
-            </Link>
-
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors shrink-0"
+            >
+              <ChevronLeft size={15} />
+              Back
+            </button>
+            <div className="w-px h-5 bg-slate-800 shrink-0" />
             <div className="flex items-center">
               {TABS.map((tab) => (
                 <button
@@ -175,10 +209,8 @@ export default function FileViewerPage() {
             My Files
           </button>
           <ChevronRight size={12} className="text-slate-600" />
-          <span className="text-xs text-slate-400">Project Alpha</span>
-          <ChevronRight size={12} className="text-slate-600" />
-          <span className="text-xs text-white font-medium">
-            {file?.name ?? "Q3 Report - Draft v2.pdf"}
+          <span className="text-xs text-white font-medium truncate max-w-[320px]">
+            {effectiveFile?.name ?? "…"}
           </span>
           <span className="ml-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-300">
             AES-256
@@ -193,9 +225,10 @@ export default function FileViewerPage() {
         ) : activeTab === "Versions" && id ? (
           <VersionHistoryPanel
             fileId={id}
-            fileOwnerId={file?.userId ?? ""}
-            versionPolicy={file?.versionPolicy ?? "admin_only"}
-            fileName={file?.name ?? "file"}
+            fileOwnerId={effectiveFile?.userId ?? ""}
+            versionPolicy={effectiveFile?.versionPolicy ?? "admin_only"}
+            fileName={effectiveFile?.name ?? "file"}
+            myRole={file ? "owner" : remoteFile?.role ?? "viewer"}
           />
         ) : (
           <>
@@ -230,7 +263,25 @@ export default function FileViewerPage() {
           <div className="flex flex-1 overflow-hidden bg-[#0d0d1a]">
             {/* Main file viewer */}
             <div className="flex flex-1 overflow-hidden">
-              {!fileUrl ? (
+              {previewError ? (
+                <div className="flex flex-1 items-center justify-center p-8">
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    <Download size={32} className="text-slate-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-200">Preview unavailable</p>
+                      <p className="mt-1 text-xs text-slate-500">The file could not be loaded for preview.</p>
+                    </div>
+                    {effectiveFile && id && (
+                      <button
+                        onClick={() => downloadFile(id, effectiveFile.name)}
+                        className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-500 transition-colors"
+                      >
+                        <Download size={14} /> Download file
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : !fileUrl ? (
                 <div className="flex flex-1 items-center justify-center">
                   <div className="flex flex-col items-center gap-3 text-slate-500">
                     <Loader2 className="animate-spin" size={24} />

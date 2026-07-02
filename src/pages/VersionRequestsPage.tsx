@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { CheckCircle2, ChevronLeft, Clock, Loader2, X } from "lucide-react";
+import { Link } from "react-router-dom";
+import PageHeader from "@/components/PageHeader";
+import { CheckCircle2, Clock, Loader2, X } from "lucide-react";
 import {
   approveVersionRequest,
   getPendingRequestsForOwner,
@@ -20,7 +21,6 @@ function formatDate(value: string): string {
 }
 
 export default function VersionRequestsPage() {
-  const navigate = useNavigate();
   const [requests, setRequests] = useState<VersionRequest[]>([]);
   const [fileNames, setFileNames] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
@@ -70,16 +70,9 @@ export default function VersionRequestsPage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#06060c] text-slate-100">
-      <header className="flex items-center gap-3 border-b border-slate-900 px-6 py-4">
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white"
-        >
-          <ChevronLeft size={14} /> Dashboard
-        </button>
-      </header>
-
+    <>
+      <PageHeader />
+      <div className="flex-1 overflow-y-auto">
       <div className="mx-auto max-w-4xl p-8">
         <div className="mb-6 flex flex-col gap-0.5">
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white">
@@ -158,5 +151,6 @@ export default function VersionRequestsPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

@@ -8,6 +8,7 @@ export interface FileVersion {
   fileId: string
   versionNumber: number
   uploadedBy: string
+  originalName: string
   size: number
   mimeType: string
   changeNote?: string
@@ -74,6 +75,16 @@ export async function requestVersionUpload(
 
 export async function getPendingRequests(fileId: string): Promise<VersionRequest[]> {
   const res = await api.get<{ requests: VersionRequest[] }>(`/files/${fileId}/versions/requests`)
+  return res.data.requests
+}
+
+export async function getMyPendingRequest(fileId: string): Promise<VersionRequest | null> {
+  const res = await api.get<{ request: VersionRequest | null }>(`/files/${fileId}/versions/my-request`)
+  return res.data.request
+}
+
+export async function getMyRejectedRequests(fileId: string): Promise<VersionRequest[]> {
+  const res = await api.get<{ requests: VersionRequest[] }>(`/files/${fileId}/versions/my-rejected`)
   return res.data.requests
 }
 

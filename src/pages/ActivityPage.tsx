@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState, useCallback } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import PageHeader from "@/components/PageHeader";
 import {
   Activity,
   UploadCloud,
@@ -15,7 +15,6 @@ import {
   Image,
   FileArchive,
   Code,
-  ChevronLeft,
   RefreshCw,
   Clock,
   CheckCircle2,
@@ -166,7 +165,6 @@ function formatTime(ts: string) {
 }
 
 export default function ActivityPage() {
-  const navigate = useNavigate();
   const [tab, setTab] = useState<FilterTab>("all");
   const [activities, setActivities] = useState<UserActivity[]>([]);
   const [total, setTotal] = useState(0);
@@ -207,20 +205,20 @@ export default function ActivityPage() {
   const hasMore = activities.length < total;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-10 border-b border-white/5 bg-slate-950/95 backdrop-blur">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
+    <>
+      <PageHeader />
+      <div className="flex-1 overflow-y-auto">
+      <main className="mx-auto max-w-4xl px-6 py-8">
+        {/* Title */}
+        <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <Link to="/dashboard" className="text-lg font-bold text-white">
-              VaultShare
-            </Link>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600/20">
+              <Activity size={20} className="text-violet-400" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">My Activity</h1>
+              <p className="text-sm text-slate-500">Your file history across VaultShare</p>
+            </div>
           </div>
           <button
             onClick={() => load(0, true)}
@@ -229,19 +227,6 @@ export default function ActivityPage() {
             <RefreshCw size={13} />
             Refresh
           </button>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-4xl px-6 py-8">
-        {/* Title */}
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600/20">
-            <Activity size={20} className="text-violet-400" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-white">My Activity</h1>
-            <p className="text-sm text-slate-500">Your file history across VaultShare</p>
-          </div>
         </div>
 
         {/* Filter tabs */}
@@ -361,6 +346,7 @@ export default function ActivityPage() {
         )}
       </main>
     </div>
+    </>
   );
 }
 

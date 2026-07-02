@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,12 +11,10 @@ import {
   KeyRound,
   Home,
   ChevronDown,
-  LayoutGrid,
   Folder,
   Share2,
   Star,
   Users,
-  Activity,
   Settings,
   Search,
   Plus,
@@ -32,7 +30,6 @@ import {
   Eye,
   BadgeCheck,
   MessageSquare,
-  History,
 } from "lucide-react";
 import { logout, disable2faThunk, fetchMeThunk } from "@/store/authSlice";
 import {
@@ -46,6 +43,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getDashboardDocuments, type DashboardDocument, type DashboardCollaborator } from "@/store/dashboardApi";
 import { getStarredFileIds, starFile, unstarFile } from "@/store/starredApi";
 import NotificationBell from "@/components/NotificationBell";
+import FileSettingsModal from "@/components/FileSettingsModal";
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -189,6 +187,7 @@ function ProfileDropdown({
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const { user, loading: authLoading, error: authError, token, twoFactorEnabled } = useAppSelector((s) => s.auth);
   const { items: uploadedFilesRaw, uploadProgress } = useAppSelector((s) => s.files);
@@ -197,13 +196,14 @@ export default function DashboardPage() {
 
   const [disableCode, setDisableCode] = useState("");
   const [showDisableForm, setShowDisableForm] = useState(false);
-  const [activeTab, setActiveTab] = useState("files");
+  const [activeTab, setActiveTab] = useState((location.state as { tab?: string } | null)?.tab ?? "files");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [localUploads, setLocalUploads] = useState<LocalUploadEntry[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const cardMenuRef = useRef<HTMLDivElement>(null);
+  const [settingsFile, setSettingsFile] = useState<{ id: string; name: string } | null>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -329,12 +329,6 @@ export default function DashboardPage() {
     }
   };
 
-  const mockBaseBytes = 6.2 * 1024 * 1024 * 1024;
-  const userUploadedBytes = uploadedFiles.reduce((acc, f) => acc + f.size, 0);
-  const totalBytes = mockBaseBytes + userUploadedBytes;
-  const totalGB = totalBytes / (1024 * 1024 * 1024);
-  const progressPct = Math.min((totalGB / 10) * 100, 100);
-
   const filteredFiles = allDocs.filter((doc) => {
     const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
     if (!matchesSearch) return false;
@@ -349,23 +343,6 @@ export default function DashboardPage() {
 
   const starredDocs = allDocs.filter((d) => starredIds.has(d.id));
 
-  const NAV_ITEMS = [
-    { id: "dashboard", label: "Dashboard", icon: <LayoutGrid size={18} /> },
-    { id: "files", label: "My Files", icon: <Folder size={18} /> },
-    { id: "shared", label: "Shared with me", icon: <Share2 size={18} /> },
-    { id: "starred", label: "Starred", icon: <Star size={18} /> },
-    { id: "vault", label: "Encrypted Vault", icon: <Lock size={18} />, badge: "Secure" },
-    { id: "team", label: "Team / Sharing", icon: <Users size={18} /> },
-    { id: "version-requests", label: "Version Requests", icon: <History size={18} /> },
-    { id: "activity", label: "Activity", icon: <Activity size={18} /> },
-    { id: "settings", label: "Settings", icon: <Settings size={18} /> },
-  ];
-  const isInteractable = (id: string) =>
-    ["dashboard", "files", "settings", "starred"].includes(id) ||
-    id === "shared" ||
-    id === "team" ||
-    id === "activity" ||
-    id === "version-requests";
 
   function FileCard({ doc }: { doc: DashboardDocument }) {
     const typeInfo = getFileTypeInfo(doc.name);
@@ -432,6 +409,11 @@ export default function DashboardPage() {
                     </button>
                   )}
                   {isOwner && (
+                    <button onClick={() => { setActiveMenuId(null); setSettingsFile({ id: doc.id, name: doc.name }); }} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-900/60 hover:text-white transition-colors">
+                      <Settings size={13} /><span>Settings</span>
+                    </button>
+                  )}
+                  {isOwner && (
                     <>
                       <div className="border-t border-slate-900 my-1" />
                       <button onClick={() => handleDelete(doc.id)} className="w-full border-0 bg-transparent flex items-center gap-2.5 p-2 rounded-lg text-rose-500 text-xs font-semibold cursor-pointer hover:bg-rose-950/20 transition-colors">
@@ -489,64 +471,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex bg-[#06060c] text-slate-100 font-sans selection:bg-violet-500/30 selection:text-white">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-slate-900 bg-[#090911]/90 flex flex-col justify-between p-4 flex-shrink-0 z-40">
-        <div className="flex flex-col gap-6">
-          <Link to="/" className="flex items-center gap-3 px-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shadow-lg shadow-violet-500/20 group-hover:scale-105 transition-transform duration-200">V</div>
-            <span className="font-bold text-lg text-white tracking-tight group-hover:text-slate-200 transition-colors">VaultShare</span>
-          </Link>
-
-          <nav className="flex flex-col gap-1">
-            {NAV_ITEMS.map(({ id, label, icon, badge }) => {
-              const isActive = activeTab === id;
-              const clickable = isInteractable(id);
-              return (
-                <button
-                  key={id}
-                  onClick={() => {
-                    if (id === "shared") navigate("/collaboration");
-                    else if (id === "team") navigate("/file-sharing");
-                    else if (id === "activity") navigate("/activity");
-                    else if (id === "version-requests") navigate("/version-requests");
-                    else if (clickable) setActiveTab(id);
-                  }}
-                  disabled={!clickable}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border-0 text-left font-medium text-sm transition-all duration-200 ${
-                    isActive
-                      ? "bg-violet-600/10 text-violet-400 shadow-inner"
-                      : clickable
-                        ? "bg-transparent text-slate-400 hover:bg-slate-900/40 hover:text-slate-200 cursor-pointer"
-                        : "bg-transparent text-slate-600 cursor-not-allowed"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">{icon}<span>{label}</span></div>
-                  {badge && (
-                    <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${badge === "Secure" ? "bg-emerald-500/10 text-emerald-400" : "bg-slate-800 text-slate-500"}`}>
-                      {badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        <div className="bg-slate-950/40 border border-slate-900/60 rounded-2xl p-4 flex flex-col gap-3">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Storage used</span>
-            <div className="flex items-baseline gap-1 font-semibold text-slate-200">
-              <span className="text-sm">{totalGB.toFixed(1)} GB</span>
-              <span className="text-xs text-slate-500">/ 10 GB</span>
-            </div>
-          </div>
-          <div className="w-full h-2 rounded-full bg-slate-900 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full transition-all duration-500" style={{ width: `${progressPct}%` }} />
-          </div>
-        </div>
-      </aside>
-
+    <>
       {/* Main */}
       <main className="flex-1 flex flex-col min-w-0">
         <header className="h-16 border-b border-slate-900 px-6 flex items-center justify-between bg-[#06060c] sticky top-0 z-30">
@@ -803,7 +728,16 @@ export default function DashboardPage() {
           onToggle={toggleChat}
         />
       )}
-    </div>
+
+      {/* File Settings Modal */}
+      {settingsFile && (
+        <FileSettingsModal
+          fileId={settingsFile.id}
+          fileName={settingsFile.name}
+          onClose={() => setSettingsFile(null)}
+        />
+      )}
+    </>
   );
 }
 
