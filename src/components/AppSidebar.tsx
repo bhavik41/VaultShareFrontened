@@ -40,12 +40,16 @@ const NAV_ITEMS: NavItem[] = [
 
 const MOCK_BASE_BYTES = 6.2 * 1024 * 1024 * 1024;
 
-function getActiveId(pathname: string): string {
+function getActiveId(pathname: string, state: unknown): string {
   if (pathname.startsWith("/collaboration")) return "shared";
   if (pathname.startsWith("/file-sharing")) return "team";
   if (pathname.startsWith("/groups")) return "groups";
   if (pathname.startsWith("/version-requests")) return "version-requests";
   if (pathname.startsWith("/activity")) return "activity";
+  if (pathname.startsWith("/dashboard")) {
+    const tab = (state as { tab?: string } | null)?.tab;
+    if (tab) return tab;
+  }
   return "files";
 }
 
@@ -63,7 +67,7 @@ export default function AppSidebar() {
   const totalGB = (MOCK_BASE_BYTES + userUploadedBytes) / (1024 * 1024 * 1024);
   const progressPct = Math.min((totalGB / 10) * 100, 100);
 
-  const activeId = getActiveId(location.pathname);
+  const activeId = getActiveId(location.pathname, location.state);
 
   function toggle() {
     const next = !collapsed;

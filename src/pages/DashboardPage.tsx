@@ -197,6 +197,11 @@ export default function DashboardPage() {
   const [disableCode, setDisableCode] = useState("");
   const [showDisableForm, setShowDisableForm] = useState(false);
   const [activeTab, setActiveTab] = useState((location.state as { tab?: string } | null)?.tab ?? "files");
+
+  useEffect(() => {
+    const tab = (location.state as { tab?: string } | null)?.tab;
+    if (tab) setActiveTab(tab);
+  }, [location.state]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [localUploads, setLocalUploads] = useState<LocalUploadEntry[]>([]);
