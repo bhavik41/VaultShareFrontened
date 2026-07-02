@@ -1,4 +1,4 @@
-﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { fetchMeThunk } from "@/store/authSlice";
@@ -23,6 +23,7 @@ import FileAuditPage from "@/pages/FileAuditPage";
 import ChatPage from "@/pages/ChatPage";
 import GroupsPage from "@/pages/GroupsPage";
 import VersionRequestsPage from "@/pages/VersionRequestsPage";
+import AppLayout from "@/components/AppLayout";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((state) => state.auth.token);
@@ -38,9 +39,7 @@ export default function App() {
   const dispatch = useAppDispatch();
   const { token, user } = useAppSelector((state) => state.auth);
 
-  // Initialize authentication on app load
   useEffect(() => {
-    // If we have a token but no user, fetch the current user
     if (token && !user) {
       dispatch(fetchMeThunk());
     }
@@ -49,6 +48,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<RootRoute />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/signin" element={<SigninPage />} />
@@ -56,93 +56,57 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/2fa-validate" element={<TwoFactorPrompt />} />
         <Route path="/share/:token" element={<ShareLinkPage />} />
-        <Route
-          path="/2fa-setup"
-          element={
-            <ProtectedRoute>
-              <TwoFactorSetupPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/upload"
-          element={
-            <ProtectedRoute>
-              <UploadPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/collaboration"
-          element={
-            <ProtectedRoute>
-              <CollaborationPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/file-sharing"
-          element={
-            <ProtectedRoute>
-              <FileSharingPage />
-            </ProtectedRoute>
-          }
-        />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/team" element={<TeamPage />} />
+
+        {/* Protected routes — all share the persistent sidebar layout */}
+        <Route
+          path="/2fa-setup"
+          element={<ProtectedRoute><TwoFactorSetupPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/dashboard"
+          element={<ProtectedRoute><AppLayout><DashboardPage /></AppLayout></ProtectedRoute>}
+        />
+        <Route
+          path="/upload"
+          element={<ProtectedRoute><AppLayout><UploadPage /></AppLayout></ProtectedRoute>}
+        />
+        <Route
+          path="/collaboration"
+          element={<ProtectedRoute><AppLayout><CollaborationPage /></AppLayout></ProtectedRoute>}
+        />
+        <Route
+          path="/file-sharing"
+          element={<ProtectedRoute><AppLayout><FileSharingPage /></AppLayout></ProtectedRoute>}
+        />
         <Route
           path="/files/:id"
-          element={
-            <ProtectedRoute>
-              <FileViewerPage />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute><AppLayout><FileViewerPage /></AppLayout></ProtectedRoute>}
         />
         <Route
           path="/activity"
-          element={
-            <ProtectedRoute>
-              <ActivityPage />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute><AppLayout><ActivityPage /></AppLayout></ProtectedRoute>}
         />
-        <Route path="/files/:fileId/audit" element={<ProtectedRoute><FileAuditPage /></ProtectedRoute>} />
+        <Route
+          path="/files/:fileId/audit"
+          element={<ProtectedRoute><AppLayout><FileAuditPage /></AppLayout></ProtectedRoute>}
+        />
         <Route
           path="/chat/:fileId"
-          element={
-            <ProtectedRoute>
-              <ChatPage />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute><AppLayout><ChatPage /></AppLayout></ProtectedRoute>}
         />
         <Route
           path="/groups"
-          element={
-            <ProtectedRoute>
-              <GroupsPage />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute><AppLayout><GroupsPage /></AppLayout></ProtectedRoute>}
         />
         <Route
           path="/version-requests"
-          element={
-            <ProtectedRoute>
-              <VersionRequestsPage />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute><AppLayout><VersionRequestsPage /></AppLayout></ProtectedRoute>}
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
-
