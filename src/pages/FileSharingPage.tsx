@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { Link as RouterLink } from "react-router-dom"
 import {
   Copy,
   Link,
@@ -242,39 +241,23 @@ export default function FileSharingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-white/10 bg-slate-950/95">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <RouterLink to="/dashboard" className="text-lg font-semibold text-white">
-            VaultShare
-          </RouterLink>
-
-          <div className="flex gap-2">
-            <RouterLink
-              to="/collaboration"
-              className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white hover:bg-white/10"
-            >
-              My Access
-            </RouterLink>
-
-            <button
-              type="button"
-              onClick={loadPageData}
-              className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white hover:bg-white/10"
-            >
-              <RefreshCw size={16} />
-              Refresh
-            </button>
-          </div>
-        </div>
-      </header>
-
+    <div className="flex-1 overflow-y-auto">
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Manage File Sharing</h1>
-          <p className="mt-2 text-sm text-slate-400">
-            Invite collaborators, assign permissions, and control share links.
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Manage File Sharing</h1>
+            <p className="mt-2 text-sm text-slate-400">
+              Invite collaborators, assign permissions, and control share links.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={loadPageData}
+            className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white hover:bg-white/10"
+          >
+            <RefreshCw size={16} />
+            Refresh
+          </button>
         </div>
 
         {error && (
