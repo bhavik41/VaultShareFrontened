@@ -255,7 +255,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto bg-[#0a0a14] p-8">
-      <div className="mx-auto w-full max-w-4xl flex flex-col gap-5">
+      <div className="mx-auto w-full max-w-full flex flex-col gap-5">
 
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -300,15 +300,15 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         </div>
 
         {/* Table */}
-        <div className="overflow-hidden rounded-xl border border-white/5 bg-[#0d0d1a]">
-          <table className="w-full text-left text-sm text-slate-400">
+        <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#0d0d1a]">
+          <table className="w-full min-w-[820px] text-left text-sm text-slate-400">
             <thead className="border-b border-white/5 bg-white/5 text-xs uppercase tracking-wider text-slate-500">
               <tr>
-                <th className="px-6 py-4 font-medium">Action</th>
+                <th className="px-6 py-4 font-medium w-44">Action</th>
                 <th className="px-6 py-4 font-medium">Details</th>
-                <th className="px-6 py-4 font-medium">User</th>
-                <th className="px-6 py-4 font-medium">File Owner</th>
-                <th className="px-6 py-4 font-medium">Timestamp</th>
+                <th className="px-6 py-4 font-medium w-44">User</th>
+                <th className="px-6 py-4 font-medium w-44">File Owner</th>
+                <th className="px-6 py-4 font-medium w-44 whitespace-nowrap">Timestamp</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -343,13 +343,19 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 max-w-[200px]">
-                      <span
-                        className="text-slate-300 text-xs block truncate"
-                        title={log.details || undefined}
-                      >
-                        {log.details || "—"}
-                      </span>
+                    <td className="px-6 py-4 max-w-[220px]">
+                      {log.details ? (
+                        <div className="group relative">
+                          <span className="text-slate-300 text-xs block truncate cursor-default">
+                            {log.details}
+                          </span>
+                          <div className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-max max-w-xs rounded-lg border border-white/10 bg-[#1e1e2f] px-3 py-2 text-xs text-slate-200 shadow-xl group-hover:block">
+                            {log.details}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-slate-500 text-xs">—</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <UserCell log={log} onEnter={openPopover} onLeave={scheduleHide} />
