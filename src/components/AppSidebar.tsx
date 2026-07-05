@@ -1,42 +1,25 @@
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Activity,
-  Clock,
-  Folder,
-  HardDrive,
-  History,
-  Plus,
-  Share2,
-  Star,
-  Settings,
-  UsersRound,
-  Users,
-  ChevronLeft,
-  ChevronRight,
-  Trash2,
+  Activity, Clock, Folder, HardDrive, History,
+  Share2, Star, Settings, UsersRound, Users, Trash2, LogOut, User,
 } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 
-type NavItem = {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  path: string;
-  tab?: string;
-};
+type NavItem = { id: string; label: string; icon: React.ReactNode; path: string; tab?: string };
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "files",            label: "My Drive",          icon: <Folder     size={20} />, path: "/dashboard",   tab: "files"    },
-  { id: "shared",           label: "Shared with me",    icon: <Share2     size={20} />, path: "/collaboration"                },
-  { id: "starred",          label: "Starred",           icon: <Star       size={20} />, path: "/dashboard",   tab: "starred"  },
-  { id: "recent",           label: "Recent",            icon: <Clock      size={20} />, path: "/activity"                     },
-  { id: "team",             label: "Team / Sharing",    icon: <Users      size={20} />, path: "/file-sharing"                 },
-  { id: "groups",           label: "Groups",            icon: <UsersRound size={20} />, path: "/groups"                       },
-  { id: "version-requests", label: "Version Requests",  icon: <History    size={20} />, path: "/version-requests"             },
-  { id: "activity",         label: "Activity Log",      icon: <Activity   size={20} />, path: "/activity"                     },
-  { id: "trash",            label: "Trash",             icon: <Trash2     size={20} />, path: "/dashboard",   tab: "trash"    },
-  { id: "settings",         label: "Settings",          icon: <Settings   size={20} />, path: "/dashboard",   tab: "settings" },
+  { id: "files",            label: "My Drive",         icon: <Folder     size={20} />, path: "/dashboard",   tab: "files"    },
+  { id: "shared",           label: "Shared with Me",   icon: <Share2     size={20} />, path: "/collaboration"                },
+  { id: "groups",           label: "Groups",           icon: <UsersRound size={20} />, path: "/groups"                       },
+  { id: "starred",          label: "Starred",          icon: <Star       size={20} />, path: "/dashboard",   tab: "starred"  },
+  { id: "activity",         label: "Activity Log",     icon: <Activity   size={20} />, path: "/activity"                     },
+  { id: "settings",         label: "Settings",         icon: <Settings   size={20} />, path: "/dashboard",   tab: "settings" },
+];
+
+const BOTTOM_ITEMS: NavItem[] = [
+  { id: "team",             label: "Team / Sharing",   icon: <Users      size={20} />, path: "/file-sharing"                 },
+  { id: "version-requests", label: "Version Requests", icon: <History    size={20} />, path: "/version-requests"             },
+  { id: "trash",            label: "Trash",            icon: <Trash2     size={20} />, path: "/dashboard",   tab: "trash"    },
 ];
 
 const MOCK_BASE_BYTES = 6.2 * 1024 * 1024 * 1024;
@@ -54,114 +37,90 @@ function getActiveId(pathname: string, state: unknown): string {
   return "files";
 }
 
+function NavLink({ item, active, onClick }: { item: NavItem; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-3 px-6 py-3 border-0 cursor-pointer text-sm font-medium transition-colors text-left
+        ${active
+          ? "bg-[#d9e2ff] text-[#001945] border-l-4 border-[#003c90] font-semibold"
+          : "text-[#434653] hover:bg-[#eff4ff] border-l-4 border-transparent"
+        }`}
+    >
+      <span className={active ? "text-[#003c90]" : "text-[#434653]"}>{item.icon}</span>
+      <span>{item.label}</span>
+    </button>
+  );
+}
+
 export default function AppSidebar() {
   const location = useLocation();
-  const navigate  = useNavigate();
-
-  const [collapsed, setCollapsed] = useState(() =>
-    localStorage.getItem("sidebar-collapsed") === "true"
-  );
-
+  const navigate = useNavigate();
   const { items: uploadedFilesRaw } = useAppSelector((s) => s.files);
   const uploadedFiles = uploadedFilesRaw ?? [];
-  const userBytes     = uploadedFiles.reduce((acc, f) => acc + f.size, 0);
-  const totalGB       = (MOCK_BASE_BYTES + userBytes) / (1024 ** 3);
-  const progressPct   = Math.min((totalGB / 10) * 100, 100);
-  const activeId      = getActiveId(location.pathname, location.state);
+  const userBytes  = uploadedFiles.reduce((acc, f) => acc + f.size, 0);
+  const totalGB    = (MOCK_BASE_BYTES + userBytes) / 1024 ** 3;
+  const progressPct = Math.min((totalGB / 10) * 100, 100);
+  const activeId   = getActiveId(location.pathname, location.state);
 
-  function toggle() {
-    const next = !collapsed;
-    setCollapsed(next);
-    localStorage.setItem("sidebar-collapsed", String(next));
-  }
-
-  function handleNav(item: NavItem) {
+  function nav(item: NavItem) {
     item.tab ? navigate(item.path, { state: { tab: item.tab } }) : navigate(item.path);
   }
 
-  function handleNew() {
-    window.dispatchEvent(new CustomEvent("open-upload"));
-    navigate("/dashboard", { state: { tab: "files" } });
-  }
-
   return (
-    <aside className={`${collapsed ? "w-20" : "w-60"} shrink-0 bg-[#f6f8fc] flex flex-col transition-[width] duration-200 h-full overflow-hidden`}>
+    <aside className="w-[260px] shrink-0 h-full flex flex-col bg-[#ffffff] border-r border-[#c3c6d5] overflow-hidden">
 
       {/* Logo */}
-      <div className={`flex items-center gap-3 py-5 ${collapsed ? "px-4 justify-center" : "px-4"}`}>
-        {!collapsed && (
-          <button onClick={toggle} className="p-2 -ml-2 rounded-full hover:bg-slate-200 border-0 bg-transparent cursor-pointer text-slate-600 transition-colors" title="Close menu">
-            <ChevronLeft size={18} />
-          </button>
-        )}
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-extrabold text-white shrink-0">
-            V
+      <div className="px-6 py-6 mb-2">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-[#003c90] rounded flex items-center justify-center shrink-0">
+            <HardDrive size={20} className="text-white" />
           </div>
-          {!collapsed && <span className="font-bold text-base text-slate-800 tracking-tight truncate">VaultShare</span>}
+          <div>
+            <h1 className="text-lg font-bold text-[#003c90] font-display leading-tight">VaultShare</h1>
+            <p className="text-xs text-[#737784] font-medium">Secure Storage</p>
+          </div>
         </div>
       </div>
 
-      {/* + New button */}
-      <div className={`mb-4 ${collapsed ? "px-3" : "px-4"}`}>
-        <button
-          onClick={handleNew}
-          className={`flex items-center gap-3 bg-white shadow hover:shadow-md border border-slate-200/80 rounded-2xl text-slate-700 font-medium text-sm transition-all cursor-pointer
-            ${collapsed ? "w-12 h-12 justify-center p-0" : "pl-4 pr-6 py-2.5"}`}
-          title={collapsed ? "Upload file" : undefined}
-        >
-          <Plus size={20} className="shrink-0 text-slate-600" />
-          {!collapsed && <span>New</span>}
-        </button>
-      </div>
-
-      {/* Navigation */}
-      <nav className={`flex-1 flex flex-col gap-0.5 overflow-y-auto ${collapsed ? "px-2" : "px-3"}`}>
-        {collapsed && (
-          <button onClick={toggle} title="Expand" className="mx-auto mb-2 p-2 rounded-full text-slate-500 hover:bg-slate-200 border-0 bg-transparent cursor-pointer transition-colors">
-            <ChevronRight size={16} />
-          </button>
-        )}
-
-        {NAV_ITEMS.map((item) => {
-          const isActive = activeId === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => handleNav(item)}
-              title={collapsed ? item.label : undefined}
-              className={`w-full flex items-center gap-3 rounded-full border-0 text-sm font-medium transition-colors duration-100 cursor-pointer
-                ${collapsed ? "justify-center p-3" : "px-4 py-2"}
-                ${isActive ? "bg-[#e8eaf6] text-[#1a237e] font-semibold" : "bg-transparent text-slate-700 hover:bg-slate-200"}`}
-            >
-              <span className={`shrink-0 ${isActive ? "text-[#3949ab]" : "text-slate-500"}`}>
-                {item.icon}
-              </span>
-              {!collapsed && <span className="truncate">{item.label}</span>}
-            </button>
-          );
-        })}
+      {/* Main nav */}
+      <nav className="flex-1 space-y-0.5">
+        {NAV_ITEMS.map((item) => (
+          <NavLink key={item.id} item={item} active={activeId === item.id} onClick={() => nav(item)} />
+        ))}
       </nav>
 
       {/* Storage */}
-      {!collapsed && (
-        <div className="px-4 py-4 border-t border-slate-200/60 mt-2">
-          <div className="flex items-center gap-2 mb-2">
-            <HardDrive size={14} className="text-slate-500 shrink-0" />
-            <span className="text-sm font-medium text-slate-600">Storage</span>
+      <div className="mt-auto px-6 pt-4 border-t border-[#c3c6d5] space-y-4">
+        <div className="p-4 bg-[#003c90]/[0.06] rounded-lg">
+          <p className="text-xs font-semibold text-[#003c90] mb-2">{progressPct.toFixed(0)}% Used — {totalGB.toFixed(1)} GB</p>
+          <div className="w-full bg-[#c3c6d5] rounded-full h-1.5 mb-3">
+            <div className="bg-[#003c90] h-1.5 rounded-full transition-all" style={{ width: `${progressPct}%` }} />
           </div>
-          <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden mb-2">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-all duration-500"
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
-          <p className="text-sm text-slate-500">{totalGB.toFixed(1)} GB of 10 GB used</p>
-          <button className="mt-1.5 text-sm text-violet-700 font-medium hover:underline border-0 bg-transparent cursor-pointer p-0">
-            Get more storage
+          <button className="w-full py-2 bg-[#003c90] text-white text-sm font-semibold rounded hover:opacity-90 transition-opacity border-0 cursor-pointer">
+            Upgrade Storage
           </button>
         </div>
-      )}
+
+        {/* Secondary nav */}
+        <div className="space-y-0.5 -mx-6">
+          {BOTTOM_ITEMS.map((item) => (
+            <NavLink key={item.id} item={item} active={activeId === item.id} onClick={() => nav(item)} />
+          ))}
+          <NavLink
+            item={{ id: "profile", label: "Profile", icon: <User size={20} />, path: "/dashboard", tab: "settings" }}
+            active={false}
+            onClick={() => navigate("/dashboard", { state: { tab: "settings" } })}
+          />
+          <button
+            onClick={() => { /* handled by dashboard */ window.dispatchEvent(new CustomEvent("logout")); }}
+            className="w-full flex items-center gap-3 px-6 py-3 border-0 cursor-pointer text-sm font-medium text-[#ba1a1a] hover:bg-[#ffdad6]/40 border-l-4 border-transparent text-left transition-colors"
+          >
+            <LogOut size={20} />
+            <span>Log Out</span>
+          </button>
+        </div>
+      </div>
     </aside>
   );
 }

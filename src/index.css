@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* ── Stitch base ── */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #f8f9ff;
+  color: #0b1c30;
+}
+h1, h2, h3, h4, h5, h6 { font-family: 'Geist', 'Inter', sans-serif; }
+
 @layer base {
   :root {
     --background: 0 0% 100%;
