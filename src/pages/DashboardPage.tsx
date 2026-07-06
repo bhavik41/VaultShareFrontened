@@ -1,19 +1,18 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import { Button } from "@/components/ui/button";
 import {
-  LogOut, ShieldCheck, ShieldAlert, Loader2, User, KeyRound, Home,
-  Folder, Share2, Star, Users, Settings, Search, LayoutGrid, List,
+  ShieldCheck, ShieldAlert, Loader2,
+  Folder, Share2, Star, Settings, LayoutGrid, List,
   Download, Trash2, FileText, Image, FileArchive, Code, ExternalLink,
-  Lock, Eye, MessageSquare, MoreVertical, Upload, SortAsc,
+  Lock, Eye, MessageSquare, MoreVertical, SortAsc,
 } from "lucide-react";
-import { logout, disable2faThunk, fetchMeThunk } from "@/store/authSlice";
-import { uploadFileThunk, listFilesThunk, deleteFileThunk, downloadFileThunk, getSignedUrlThunk } from "@/store/filesSlice";
+import { disable2faThunk, fetchMeThunk } from "@/store/authSlice";
+import { listFilesThunk, deleteFileThunk, downloadFileThunk, getSignedUrlThunk } from "@/store/filesSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getDashboardDocuments, type DashboardDocument, type DashboardCollaborator } from "@/store/dashboardApi";
 import { getStarredFileIds, starFile, unstarFile } from "@/store/starredApi";
-import NotificationBell from "@/components/NotificationBell";
 import FileSettingsModal from "@/components/FileSettingsModal";
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
@@ -23,14 +22,13 @@ function formatBytes(b: number) {
   if (b < 1024 ** 3) return `${(b / 1024 ** 2).toFixed(1)} MB`;
   return `${(b / 1024 ** 3).toFixed(2)} GB`;
 }
-function randomId() { return Math.random().toString(36).slice(2); }
 
 type FTI = { icon: React.ReactNode; smallIcon: React.ReactNode; iconBg: string };
 function getFTI(name: string): FTI {
   const ext = name.split(".").pop()?.toLowerCase() ?? "";
-  if (ext === "pdf")           return { icon: <FileText size={32} className="text-[#ba1a1a]" />, smallIcon: <FileText size={18} className="text-[#ba1a1a] shrink-0" />, iconBg: "bg-[#ffdad6]/40" };
-  if (["doc","docx","txt","odt"].includes(ext)) return { icon: <FileText size={32} className="text-[#003c90]" />, smallIcon: <FileText size={18} className="text-[#003c90] shrink-0" />, iconBg: "bg-[#d9e2ff]/60" };
-  if (["zip","rar","7z","tar","gz"].includes(ext)) return { icon: <FileArchive size={32} className="text-[#5c3800]" />, smallIcon: <FileArchive size={18} className="text-[#5c3800] shrink-0" />, iconBg: "bg-[#ffddb8]/40" };
+  if (ext === "pdf")                                   return { icon: <FileText size={32} className="text-[#ba1a1a]" />,  smallIcon: <FileText size={18} className="text-[#ba1a1a] shrink-0" />,  iconBg: "bg-[#ffdad6]/40" };
+  if (["doc","docx","txt","odt"].includes(ext))        return { icon: <FileText size={32} className="text-[#003c90]" />,  smallIcon: <FileText size={18} className="text-[#003c90] shrink-0" />,  iconBg: "bg-[#d9e2ff]/60" };
+  if (["zip","rar","7z","tar","gz"].includes(ext))     return { icon: <FileArchive size={32} className="text-[#5c3800]" />, smallIcon: <FileArchive size={18} className="text-[#5c3800] shrink-0" />, iconBg: "bg-[#ffddb8]/40" };
   if (["json","js","ts","html","css","py","cpp"].includes(ext)) return { icon: <Code size={32} className="text-[#006c49]" />, smallIcon: <Code size={18} className="text-[#006c49] shrink-0" />, iconBg: "bg-[#6cf8bb]/20" };
   if (["png","jpg","jpeg","gif","webp","svg"].includes(ext)) return { icon: <Image size={32} className="text-[#5c3800]" />, smallIcon: <Image size={18} className="text-[#5c3800] shrink-0" />, iconBg: "bg-[#ffddb8]/30" };
   return { icon: <FileText size={32} className="text-[#737784]" />, smallIcon: <FileText size={18} className="text-[#737784] shrink-0" />, iconBg: "bg-[#e5eeff]" };
@@ -62,92 +60,35 @@ function CollaboratorAvatars({ collaborators }: { collaborators: DashboardCollab
   );
 }
 
-interface LocalUpload { localId: string; name: string; size: string; status: "uploading"|"done"|"error" }
-
-/* ─── Profile Dropdown ────────────────────────────────────────────────────── */
-function ProfileDropdown({ name, email, is2fa, onLogout, onTab }: { name: string; email: string; is2fa: boolean; onLogout: () => void; onTab: (t: string) => void }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  useEffect(() => {
-    const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, []);
-  const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-  return (
-    <div ref={ref} className="relative">
-      <button onClick={() => setOpen(o => !o)} className="w-8 h-8 rounded-full overflow-hidden bg-[#e5eeff] hover:ring-2 ring-[#003c90] ring-offset-2 transition-all border-0 cursor-pointer flex items-center justify-center text-sm font-bold text-[#003c90]">
-        {initials}
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-2 w-60 bg-white border border-[#c3c6d5] rounded-xl shadow-xl z-[100] overflow-hidden">
-          <div className="p-4 border-b border-[#e5eeff]">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#003c90] flex items-center justify-center text-white font-bold text-sm">{initials}</div>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-[#0b1c30] truncate">{name}</p>
-                <p className="text-xs text-[#737784] truncate">{email}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-1.5">
-            {[
-              { icon: <User size={15} />,    label: "Dashboard",       action: () => { setOpen(false); onTab("dashboard"); } },
-              { icon: <Folder size={15} />,  label: "My Drive",        action: () => { setOpen(false); onTab("files"); } },
-              { icon: <Share2 size={15} />,  label: "Collaboration",   action: () => { setOpen(false); navigate("/collaboration"); } },
-              { icon: <Users size={15} />,   label: "Manage Sharing",  action: () => { setOpen(false); navigate("/file-sharing"); } },
-              { icon: is2fa ? <ShieldCheck size={15} className="text-[#006c49]" /> : <ShieldAlert size={15} className="text-[#ba1a1a]" />, label: "Two-Factor Auth", action: () => { setOpen(false); onTab("settings"); } },
-              { icon: <KeyRound size={15} />,label: "Change Password", action: () => navigate("/forgot-password") },
-              { icon: <Home size={15} />,    label: "Home Page",       action: () => navigate("/") },
-            ].map(({ icon, label, action }) => (
-              <button key={label} onClick={action} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-[#eff4ff] transition-colors">
-                <span className="text-[#434653]">{icon}</span>
-                <span className="text-sm text-[#0b1c30]">{label}</span>
-              </button>
-            ))}
-          </div>
-          <div className="border-t border-[#e5eeff] p-1.5">
-            <button onClick={() => { setOpen(false); onLogout(); }} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-[#ffdad6]/40 transition-colors">
-              <LogOut size={15} className="text-[#ba1a1a]" />
-              <span className="text-sm text-[#ba1a1a] font-medium">Sign out</span>
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* ─── Main Page ───────────────────────────────────────────────────────────── */
 export default function DashboardPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const [searchParams] = useSearchParams();
   const { user, loading: authLoading, error: authError, token, twoFactorEnabled } = useAppSelector(s => s.auth);
-  const { items: uploadedFilesRaw, uploadProgress } = useAppSelector(s => s.files);
+  const { items: uploadedFilesRaw } = useAppSelector(s => s.files);
   const uploadedFiles = uploadedFilesRaw ?? [];
   const is2fa = twoFactorEnabled || !!user?.twoFactorEnabled;
 
-  const [disableCode, setDisableCode]       = useState("");
+  const searchQuery = searchParams.get("q") ?? "";
+
+  const [disableCode, setDisableCode]         = useState("");
   const [showDisableForm, setShowDisableForm] = useState(false);
-  const [activeTab, setActiveTab]           = useState((location.state as { tab?: string } | null)?.tab ?? "files");
-  const [viewMode, setViewMode]             = useState<"grid"|"list">(() => (localStorage.getItem("drive-view") as "grid"|"list") ?? "list");
-  const [searchQuery, setSearchQuery]       = useState("");
-  const [localUploads, setLocalUploads]     = useState<LocalUpload[]>([]);
-  const fileInputRef                        = useRef<HTMLInputElement>(null);
-  const [activeMenuId, setActiveMenuId]     = useState<string|null>(null);
-  const [menuPos, setMenuPos]               = useState<{x:number;y:number}|null>(null);
-  const [settingsFile, setSettingsFile]     = useState<{id:string;name:string}|null>(null);
-  const [shareUrl, setShareUrl]             = useState<string|null>(null);
-  const [copiedLink, setCopiedLink]         = useState(false);
-  const [allDocs, setAllDocs]               = useState<DashboardDocument[]>([]);
-  const [docsLoading, setDocsLoading]       = useState(false);
-  const [starredIds, setStarredIds]         = useState<Set<string>>(new Set());
-  const [starLoading, setStarLoading]       = useState<string|null>(null);
-  const [chatFileId, setChatFileId]         = useState<string|null>(null);
-  const [chatFileName, setChatFileName]     = useState("");
-  const [chatOpen, setChatOpen]             = useState(false);
+  const [activeTab, setActiveTab]             = useState((location.state as { tab?: string } | null)?.tab ?? "files");
+  const [viewMode, setViewMode]               = useState<"grid"|"list">(() => (localStorage.getItem("drive-view") as "grid"|"list") ?? "list");
+  const [activeMenuId, setActiveMenuId]       = useState<string|null>(null);
+  const [menuPos, setMenuPos]                 = useState<{x:number;y:number}|null>(null);
+  const [settingsFile, setSettingsFile]       = useState<{id:string;name:string}|null>(null);
+  const [shareUrl, setShareUrl]               = useState<string|null>(null);
+  const [copiedLink, setCopiedLink]           = useState(false);
+  const [allDocs, setAllDocs]                 = useState<DashboardDocument[]>([]);
+  const [docsLoading, setDocsLoading]         = useState(false);
+  const [starredIds, setStarredIds]           = useState<Set<string>>(new Set());
+  const [starLoading, setStarLoading]         = useState<string|null>(null);
+  const [chatFileId, setChatFileId]           = useState<string|null>(null);
+  const [chatFileName, setChatFileName]       = useState("");
+  const [chatOpen, setChatOpen]               = useState(false);
 
   const openChat   = useCallback((id: string, name: string) => { setChatFileId(id); setChatFileName(name); setChatOpen(true); }, []);
   const toggleChat = useCallback(() => setChatOpen(o => !o), []);
@@ -168,41 +109,19 @@ export default function DashboardPage() {
   }, [token, uploadedFiles.length]);
 
   useEffect(() => {
-    const h = () => fileInputRef.current?.click();
-    window.addEventListener("open-upload", h);
-    return () => window.removeEventListener("open-upload", h);
-  }, []);
-
-  useEffect(() => {
-    const h = () => { dispatch(logout()); navigate("/signin"); };
-    window.addEventListener("logout", h);
-    return () => window.removeEventListener("logout", h);
-  }, [dispatch, navigate]);
-
-  useEffect(() => {
     const h = () => { setActiveMenuId(null); setMenuPos(null); };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
   function switchView(m: "grid"|"list") { setViewMode(m); localStorage.setItem("drive-view", m); }
-  const handleLogout = () => { dispatch(logout()); navigate("/signin"); };
+
   const handleDisable2fa = async (e: React.FormEvent) => {
     e.preventDefault();
     const r = await dispatch(disable2faThunk({ token: disableCode }));
     if (disable2faThunk.fulfilled.match(r)) { setShowDisableForm(false); setDisableCode(""); dispatch(fetchMeThunk()); }
   };
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files; if (!files) return;
-    Array.from(files).forEach(file => {
-      const localId = randomId();
-      setLocalUploads(p => [...p, { localId, name: file.name, size: formatBytes(file.size), status: "uploading" }]);
-      dispatch(uploadFileThunk({ file, localId })).unwrap()
-        .then(() => { setLocalUploads(p => p.map(x => x.localId === localId ? {...x,status:"done"} : x)); setTimeout(() => setLocalUploads(p => p.filter(x => x.localId !== localId)), 1500); })
-        .catch((msg: string) => setLocalUploads(p => p.map(x => x.localId === localId ? {...x,status:"error",errorMsg:msg} : x)));
-    });
-    e.target.value = "";
-  };
+
   const handleDownload = (id: string, name: string) => { setActiveMenuId(null); dispatch(downloadFileThunk({ fileId: id, fileName: name })); };
   const handleShareLink = async (id: string) => { setActiveMenuId(null); const r = await dispatch(getSignedUrlThunk(id)).unwrap().catch(() => null); if (r) { setShareUrl(r.url); setCopiedLink(false); } };
   const handleDelete = (id: string) => { setActiveMenuId(null); if (confirm("Move this file to trash?")) dispatch(deleteFileThunk(id)); };
@@ -227,11 +146,8 @@ export default function DashboardPage() {
     const fti = getFTI(doc.name);
     const isStarred = starredIds.has(doc.id);
     return (
-      <div
-        className="group bg-white border border-[#c3c6d5] rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer flex flex-col gap-3"
-        onClick={() => navigate(`/files/${doc.id}`)}
-        onContextMenu={e => openMenu(e, doc.id)}
-      >
+      <div className="group bg-white border border-[#c3c6d5] rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer flex flex-col gap-3"
+        onClick={() => navigate(`/files/${doc.id}`)} onContextMenu={e => openMenu(e, doc.id)}>
         <div className="flex justify-between items-start">
           <div className={`w-10 h-10 rounded flex items-center justify-center ${fti.iconBg}`}>{fti.icon}</div>
           <button onClick={e => handleStar(e, doc.id)} className={`border-0 bg-transparent cursor-pointer transition-colors ${isStarred ? "text-amber-500" : "text-[#c3c6d5] hover:text-amber-400 opacity-0 group-hover:opacity-100"}`}>
@@ -255,18 +171,13 @@ export default function DashboardPage() {
     const isStarred = starredIds.has(doc.id);
     const isOwner = doc.ownership === "owned";
     return (
-      <tr
-        className="group hover:bg-[#eff4ff] cursor-pointer transition-colors"
-        onClick={() => navigate(`/files/${doc.id}`)}
-        onContextMenu={e => openMenu(e, doc.id)}
-      >
+      <tr className="group hover:bg-[#eff4ff] cursor-pointer transition-colors"
+        onClick={() => navigate(`/files/${doc.id}`)} onContextMenu={e => openMenu(e, doc.id)}>
         <td className="px-4 py-3">
           <div className="flex items-center gap-3">
             {fti.smallIcon}
             <span className="text-sm font-medium text-[#0b1c30] truncate max-w-xs">{doc.name}</span>
-            {doc.ownership === "shared" && (
-              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#d9e2ff] text-[#003c90]">Shared</span>
-            )}
+            {doc.ownership === "shared" && <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#d9e2ff] text-[#003c90]">Shared</span>}
           </div>
         </td>
         <td className="px-4 py-3 hidden md:table-cell">
@@ -274,9 +185,7 @@ export default function DashboardPage() {
             ? <CollaboratorAvatars collaborators={doc.collaborators} />
             : <span className="text-sm text-[#434653]">{isOwner ? "Me" : (doc.ownerName ?? "—")}</span>}
         </td>
-        <td className="px-4 py-3 text-sm text-[#434653] hidden lg:table-cell">
-          {new Date(doc.createdAt).toLocaleDateString()}
-        </td>
+        <td className="px-4 py-3 text-sm text-[#434653] hidden lg:table-cell">{new Date(doc.createdAt).toLocaleDateString()}</td>
         <td className="px-4 py-3 text-sm text-[#434653] hidden xl:table-cell">{formatBytes(doc.size)}</td>
         <td className="px-4 py-3 hidden lg:table-cell"><SecurityBadge ownership={doc.ownership} /></td>
         <td className="px-4 py-3">
@@ -293,7 +202,7 @@ export default function DashboardPage() {
     );
   }
 
-  /* ── Shared file table render ── */
+  /* ── File table ── */
   function FileTable({ docs, empty }: { docs: DashboardDocument[]; empty: React.ReactNode }) {
     if (docsLoading) return <div className="flex items-center justify-center py-20"><Loader2 size={24} className="animate-spin text-[#003c90]" /></div>;
     if (docs.length === 0) return <>{empty}</>;
@@ -328,7 +237,7 @@ export default function DashboardPage() {
       <div className="w-16 h-16 rounded-2xl bg-[#e5eeff] flex items-center justify-center"><Folder size={28} className="text-[#003c90]" /></div>
       <div>
         <p className="text-base font-semibold text-[#0b1c30] mb-1">{searchQuery ? `No results for "${searchQuery}"` : "My Drive is empty"}</p>
-        <p className="text-sm text-[#737784]">{searchQuery ? "Try different search terms." : "Click New or Upload to add files."}</p>
+        <p className="text-sm text-[#737784]">{searchQuery ? "Try different search terms." : "Click Upload to add files."}</p>
       </div>
     </div>
   );
@@ -336,45 +245,11 @@ export default function DashboardPage() {
   return (
     <>
       <main className="flex-1 flex flex-col min-w-0 bg-[#f8f9ff]">
-
-        {/* ── Top bar (Stitch-style) ── */}
-        <header className="h-16 flex items-center justify-between px-6 border-b border-[#c3c6d5] bg-[#f8f9ff] sticky top-0 z-30">
-          {/* Search */}
-          <div className="flex items-center gap-6 flex-1">
-            <div className="relative w-full max-w-xl">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#737784]" />
-              <input
-                type="text"
-                placeholder="Search in My Drive..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-[#eff4ff] border border-[#c3c6d5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003c90]/10 focus:border-[#003c90] text-sm text-[#0b1c30] placeholder:text-[#737784] transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Right actions */}
-          <div className="flex items-center gap-3 ml-4">
-            <input type="file" ref={fileInputRef} multiple onChange={handleFileChange} className="hidden" />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-5 py-2 bg-[#003c90] text-white text-sm font-semibold rounded hover:opacity-90 border-0 cursor-pointer transition-opacity"
-            >
-              <Upload size={15} />Upload
-            </button>
-            <div className="h-6 w-px bg-[#c3c6d5] mx-1" />
-            <NotificationBell />
-            <ProfileDropdown name={user?.name ?? "User"} email={user?.email ?? ""} is2fa={is2fa} onLogout={handleLogout} onTab={setActiveTab} />
-          </div>
-        </header>
-
-        {/* ── Content ── */}
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
 
           {/* FILES TAB */}
           {activeTab === "files" && (
             <>
-              {/* Suggested */}
               {recentDocs.length > 0 && !searchQuery && (
                 <section>
                   <div className="flex justify-between items-end mb-4">
@@ -408,7 +283,6 @@ export default function DashboardPage() {
                 </section>
               )}
 
-              {/* All Files */}
               <section>
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-[#0b1c30] font-display">
@@ -452,9 +326,9 @@ export default function DashboardPage() {
               <h1 className="text-xl font-semibold text-[#0b1c30] font-display">Welcome back, {user?.name ?? "User"}</h1>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  { label: "Files Stored",   value: allDocs.filter(d=>d.ownership==="owned").length,  sub: "Files you own",          color: "text-[#003c90]" },
-                  { label: "Shared with Me", value: allDocs.filter(d=>d.ownership==="shared").length, sub: "From collaborators",      color: "text-[#006c49]" },
-                  { label: "Starred",        value: starredIds.size,                                  sub: "Marked as important",     color: "text-amber-600" },
+                  { label: "Files Stored",   value: allDocs.filter(d=>d.ownership==="owned").length,  sub: "Files you own",       color: "text-[#003c90]" },
+                  { label: "Shared with Me", value: allDocs.filter(d=>d.ownership==="shared").length, sub: "From collaborators",   color: "text-[#006c49]" },
+                  { label: "Starred",        value: starredIds.size,                                  sub: "Marked as important",  color: "text-amber-600" },
                 ].map(({label,value,sub,color}) => (
                   <div key={label} className="bg-white border border-[#c3c6d5] rounded-xl p-5">
                     <p className="text-xs font-semibold text-[#737784] uppercase tracking-wider mb-2">{label}</p>
@@ -520,41 +394,18 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Upload progress toast */}
-      {localUploads.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-50 w-80 bg-white border border-[#c3c6d5] rounded-xl shadow-xl p-4 space-y-3">
-          <p className="text-sm font-semibold text-[#0b1c30] flex items-center gap-2">
-            <Loader2 size={14} className="animate-spin text-[#003c90]" />Uploading {localUploads.length} file{localUploads.length>1?"s":""}…
-          </p>
-          {localUploads.map(entry => {
-            const progress = uploadProgress[entry.localId] ?? 0;
-            return (
-              <div key={entry.localId} className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#434653] truncate max-w-[200px]">{entry.name}</span>
-                  <span className="text-sm font-semibold text-[#003c90]">{progress}%</span>
-                </div>
-                <div className="h-1.5 rounded-full bg-[#e5eeff] overflow-hidden">
-                  <div className="h-full bg-[#003c90] rounded-full transition-all" style={{ width: `${progress}%` }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
       {/* Context menu */}
       {activeMenuId && menuPos && activeDoc && (
         <div className="fixed z-[200] bg-white border border-[#c3c6d5] rounded-xl shadow-xl py-1 w-48"
           style={{ top: Math.min(menuPos.y, window.innerHeight - 280), left: Math.min(menuPos.x, window.innerWidth - 200) }}
           onClick={e => e.stopPropagation()}>
           {[
-            { icon: <Eye size={14} />,         label: "Open",          action: () => { setActiveMenuId(null); navigate(`/files/${activeDoc.id}`); } },
-            { icon: <Download size={14} />,    label: "Download",      action: () => handleDownload(activeDoc.id, activeDoc.name), hide: !(activeDoc.ownership==="owned"||activeDoc.accessLevel==="editor") },
-            { icon: <Star size={14} />,        label: starredIds.has(activeDoc.id) ? "Remove star" : "Add star", action: (e: React.MouseEvent) => { handleStar(e, activeDoc.id); setActiveMenuId(null); } },
-            { icon: <MessageSquare size={14}/>,label: "Open chat",     action: () => { openChat(activeDoc.id, activeDoc.name); setActiveMenuId(null); } },
-            { icon: <Share2 size={14} />,      label: "Get link",      action: () => handleShareLink(activeDoc.id), hide: activeDoc.ownership!=="owned" },
-            { icon: <Settings size={14} />,    label: "File settings", action: () => { setActiveMenuId(null); setSettingsFile({id:activeDoc.id,name:activeDoc.name}); }, hide: activeDoc.ownership!=="owned" },
+            { icon: <Eye size={14} />,          label: "Open",          action: () => { setActiveMenuId(null); navigate(`/files/${activeDoc.id}`); } },
+            { icon: <Download size={14} />,     label: "Download",      action: () => handleDownload(activeDoc.id, activeDoc.name), hide: !(activeDoc.ownership==="owned"||activeDoc.accessLevel==="editor") },
+            { icon: <Star size={14} />,         label: starredIds.has(activeDoc.id) ? "Remove star" : "Add star", action: (e: React.MouseEvent) => { handleStar(e, activeDoc.id); setActiveMenuId(null); } },
+            { icon: <MessageSquare size={14} />,label: "Open chat",     action: () => { openChat(activeDoc.id, activeDoc.name); setActiveMenuId(null); } },
+            { icon: <Share2 size={14} />,       label: "Get link",      action: () => handleShareLink(activeDoc.id), hide: activeDoc.ownership!=="owned" },
+            { icon: <Settings size={14} />,     label: "File settings", action: () => { setActiveMenuId(null); setSettingsFile({id:activeDoc.id,name:activeDoc.name}); }, hide: activeDoc.ownership!=="owned" },
           ].filter(x => !x.hide).map(({ icon, label, action }) => (
             <button key={label} onClick={action as any}
               className="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#0b1c30] hover:bg-[#eff4ff] border-0 bg-transparent cursor-pointer">

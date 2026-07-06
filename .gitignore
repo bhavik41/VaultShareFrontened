@@ -3,3 +3,8 @@ dist/
 .env
 .env.local
 *.local
+
+# Playwright test outputs
+test-results/
+playwright-report/
+tests/e2e/.auth-*.json

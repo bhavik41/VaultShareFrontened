@@ -34,7 +34,6 @@ export default function FileViewerPage() {
 
   const [activeTab, setActiveTab] = useState("Files")
   const [zoom, setZoom] = useState(100)
-  const [page] = useState(2)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
   const [previewError, setPreviewError] = useState(false)
   const [comments] = useState<Comment[]>(INITIAL_COMMENTS)
@@ -98,7 +97,6 @@ export default function FileViewerPage() {
   // zip, etc.) would trigger a download if placed in an <iframe>, so we show
   // a "preview not available" panel instead.
   const isPreviewable = isImage || isPdf || isText
-  const totalPages = 12
   // Owner (admin) is the file uploader. ownerId comes from the server via the
   // socket, so it is authoritative even for collaborators who don't have the
   // file in their own list.
@@ -163,17 +161,17 @@ export default function FileViewerPage() {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       {/* Top Header */}
-      <header className="shrink-0 border-b border-gray-200 bg-slate-50">
+      <header className="shrink-0 border-b border-[#c3c6d5] bg-white">
         <div className="flex items-center justify-between px-5 py-0">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-1 text-sm text-slate-400 hover:text-slate-900 transition-colors shrink-0"
+              className="flex items-center gap-1 text-sm text-[#737784] hover:text-[#0b1c30] transition-colors shrink-0"
             >
               <ChevronLeft size={15} />
               Back
             </button>
-            <div className="w-px h-5 bg-gray-200 shrink-0" />
+            <div className="w-px h-5 bg-[#c3c6d5] shrink-0" />
             <div className="flex items-center">
               {TABS.map((tab) => (
                 <button
@@ -182,10 +180,10 @@ export default function FileViewerPage() {
                     setActiveTab(tab)
                     if (tab === "Files") navigate("/dashboard")
                   }}
-                  className={`relative px-4 py-4 text-base font-medium transition-colors ${
+                  className={`relative px-4 py-4 text-sm font-medium transition-colors ${
                     activeTab === tab
-                      ? "text-slate-900 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-500"
-                      : "text-slate-600 hover:text-slate-800"
+                      ? "text-[#0b1c30] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#003c90]"
+                      : "text-[#434653] hover:text-[#0b1c30]"
                   }`}
                 >
                   {tab}
@@ -195,9 +193,9 @@ export default function FileViewerPage() {
           </div>
 
           <div className="flex items-center gap-3 py-3">
-            <span className="h-2 w-2 rounded-full bg-yellow-400" />
+            <span className="h-2 w-2 rounded-full bg-[#006c49]" />
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-slate-900"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#003c90] text-sm font-bold text-white"
               title={authUser?.name ?? ""}
             >
               {authUser?.name
@@ -208,15 +206,15 @@ export default function FileViewerPage() {
         </div>
 
         {/* Breadcrumb + badge */}
-        <div className="flex items-center gap-2 border-t border-gray-200 px-5 py-2.5">
-          <button onClick={() => navigate("/dashboard")} className="text-sm text-slate-400 hover:text-slate-900">
+        <div className="flex items-center gap-2 border-t border-[#c3c6d5] px-5 py-2.5">
+          <button onClick={() => navigate("/dashboard")} className="text-sm text-[#737784] hover:text-[#0b1c30]">
             My Files
           </button>
-          <ChevronRight size={12} className="text-slate-600" />
-          <span className="text-sm text-slate-900 font-medium truncate max-w-[320px]">
+          <ChevronRight size={12} className="text-[#737784]" />
+          <span className="text-sm text-[#0b1c30] font-medium truncate max-w-[320px]">
             {effectiveFile?.name ?? "…"}
           </span>
-          <span className="ml-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
+          <span className="ml-2 rounded-md border border-[#003c90]/20 bg-[#d9e2ff] px-2 py-0.5 text-[10px] font-semibold text-[#003c90]">
             AES-256
           </span>
         </div>
@@ -238,47 +236,42 @@ export default function FileViewerPage() {
           <>
             {/* File Viewer */}
             <div className="flex flex-1 flex-col overflow-hidden border-r border-gray-200">
-          {/* Viewer toolbar */}
-          <div className="flex shrink-0 items-center gap-3 border-b border-gray-200 bg-slate-50 px-5 py-2">
-            <span className="text-sm text-slate-400">Page</span>
-            <span className="rounded border border-gray-300 bg-gray-100 px-2 py-0.5 text-sm text-slate-900">
-              {page}
-            </span>
-            <span className="text-sm text-slate-500">of {totalPages}</span>
-
-            <div className="mx-2 h-4 w-px bg-gray-300" />
-
-            <button
-              onClick={() => setZoom((z) => Math.max(25, z - 25))}
-              className="rounded border border-gray-300 bg-gray-100 p-1 text-slate-400 hover:text-slate-900"
-            >
-              <Minus size={12} />
-            </button>
-            <span className="min-w-[42px] text-center text-sm text-slate-900">{zoom}%</span>
-            <button
-              onClick={() => setZoom((z) => Math.min(200, z + 25))}
-              className="rounded border border-gray-300 bg-gray-100 p-1 text-slate-400 hover:text-slate-900"
-            >
-              <Plus size={12} />
-            </button>
-          </div>
+          {/* Viewer toolbar — only for images where zoom is applied via CSS */}
+          {isImage && (
+            <div className="flex shrink-0 items-center gap-3 border-b border-[#c3c6d5] bg-[#f8f9ff] px-5 py-2">
+              <button
+                onClick={() => setZoom((z) => Math.max(25, z - 25))}
+                className="rounded border border-[#c3c6d5] bg-white p-1 text-[#434653] hover:bg-[#eff4ff] hover:text-[#0b1c30] cursor-pointer"
+              >
+                <Minus size={12} />
+              </button>
+              <span className="min-w-[42px] text-center text-sm font-medium text-[#0b1c30]">{zoom}%</span>
+              <button
+                onClick={() => setZoom((z) => Math.min(200, z + 25))}
+                className="rounded border border-[#c3c6d5] bg-white p-1 text-[#434653] hover:bg-[#eff4ff] hover:text-[#0b1c30] cursor-pointer"
+              >
+                <Plus size={12} />
+              </button>
+              <span className="ml-2 text-xs text-[#737784]">Use scroll or pinch to zoom further</span>
+            </div>
+          )}
 
           {/* Document area */}
-          <div className="flex flex-1 overflow-hidden bg-slate-50">
+          <div className="flex flex-1 overflow-hidden bg-[#f8f9ff]">
             {/* Main file viewer */}
             <div className="flex flex-1 overflow-hidden">
               {previewError ? (
                 <div className="flex flex-1 items-center justify-center p-8">
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <Download size={32} className="text-slate-500" />
+                    <Download size={32} className="text-[#737784]" />
                     <div>
-                      <p className="text-base font-semibold text-slate-700">Preview unavailable</p>
-                      <p className="mt-1 text-sm text-slate-500">The file could not be loaded for preview.</p>
+                      <p className="text-base font-semibold text-[#0b1c30]">Preview unavailable</p>
+                      <p className="mt-1 text-sm text-[#737784]">The file could not be loaded for preview.</p>
                     </div>
                     {effectiveFile && id && (
                       <button
                         onClick={() => downloadFile(id, effectiveFile.name)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 transition-colors"
+                        className="inline-flex items-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
                       >
                         <Download size={14} /> Download file
                       </button>
@@ -287,9 +280,9 @@ export default function FileViewerPage() {
                 </div>
               ) : !fileUrl ? (
                 <div className="flex flex-1 items-center justify-center">
-                  <div className="flex flex-col items-center gap-3 text-slate-500">
-                    <Loader2 className="animate-spin" size={24} />
-                    <span className="text-base">Loading file…</span>
+                  <div className="flex flex-col items-center gap-3 text-[#737784]">
+                    <Loader2 className="animate-spin text-[#003c90]" size={24} />
+                    <span className="text-sm">Loading file…</span>
                   </div>
                 </div>
               ) : isImage ? (
@@ -310,17 +303,17 @@ export default function FileViewerPage() {
                 />
               ) : (
                 <div className="flex flex-1 items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4 text-center text-slate-400">
-                    <Download size={32} className="text-slate-500" />
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    <Download size={32} className="text-[#737784]" />
                     <div>
-                      <p className="text-base font-semibold text-slate-700">Preview not available</p>
-                      <p className="mt-1 text-sm text-slate-500">
+                      <p className="text-base font-semibold text-[#0b1c30]">Preview not available</p>
+                      <p className="mt-1 text-sm text-[#737784]">
                         This file type can't be displayed in the browser.
                       </p>
                     </div>
                     <button
                       onClick={() => file && downloadFile(file.id, file.name)}
-                      className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 transition-colors"
+                      className="inline-flex items-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
                     >
                       <Download size={14} /> Download file
                     </button>
@@ -331,10 +324,10 @@ export default function FileViewerPage() {
           </div>
 
           {/* Status bar */}
-          <div className="flex shrink-0 items-center justify-between border-t border-gray-200 bg-slate-50 px-5 py-2">
-            <div className="flex items-center gap-3 text-[11px] text-slate-500">
+          <div className="flex shrink-0 items-center justify-between border-t border-[#c3c6d5] bg-white px-5 py-2">
+            <div className="flex items-center gap-3 text-[11px] text-[#737784]">
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#006c49]" />
                 AES-256 encrypted
               </span>
               <span>·</span>
@@ -342,17 +335,17 @@ export default function FileViewerPage() {
               <span>·</span>
               <span>Last modified 10:42 AM</span>
             </div>
-            <span className="text-[11px] font-medium text-emerald-600">SHA-256 verified ✓</span>
+            <span className="text-[11px] font-medium text-[#006c49]">SHA-256 verified ✓</span>
           </div>
         </div>
 
         {/* Comments & Chat Panel */}
-        <div className="flex w-80 shrink-0 flex-col bg-slate-50">
+        <div className="flex w-80 shrink-0 flex-col bg-white border-l border-[#c3c6d5]">
           {/* Panel header */}
-          <div className="flex shrink-0 flex-col border-b border-gray-200 px-4 py-3 gap-2">
+          <div className="flex shrink-0 flex-col border-b border-[#c3c6d5] px-4 py-3 gap-2">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-slate-900">Comments & Chat</h3>
-              <div className="flex gap-1 text-slate-500">
+              <h3 className="text-sm font-semibold text-[#0b1c30]">Comments & Chat</h3>
+              <div className="flex gap-1 text-[#737784]">
                 <span className="text-sm">· · ·</span>
               </div>
             </div>
@@ -362,20 +355,20 @@ export default function FileViewerPage() {
                 className={`flex items-center justify-between rounded-lg border px-3 py-2 transition-colors duration-200 ${
                   adminOnlyChat
                     ? "border-amber-200 bg-amber-50"
-                    : "border-gray-300 bg-gray-100"
+                    : "border-[#c3c6d5] bg-[#f8f9ff]"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   {adminOnlyChat ? (
                     <Lock size={13} className="text-amber-600" />
                   ) : (
-                    <ShieldCheck size={13} className="text-slate-500" />
+                    <ShieldCheck size={13} className="text-[#737784]" />
                   )}
                   <div className="flex flex-col leading-tight">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${adminOnlyChat ? "text-amber-700" : "text-slate-400"}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${adminOnlyChat ? "text-amber-700" : "text-[#737784]"}`}>
                       Admin Only
                     </span>
-                    <span className={`text-[10px] ${adminOnlyChat ? "text-amber-600/80" : "text-slate-500"}`}>
+                    <span className={`text-[10px] ${adminOnlyChat ? "text-amber-600/80" : "text-[#737784]"}`}>
                       {adminOnlyChat ? "Active · only you can send" : "Off · everyone can chat"}
                     </span>
                   </div>
@@ -385,7 +378,7 @@ export default function FileViewerPage() {
                   role="switch"
                   aria-checked={adminOnlyChat}
                   className={`relative inline-flex h-5 w-10 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                    adminOnlyChat ? "bg-amber-500" : "bg-slate-600"
+                    adminOnlyChat ? "bg-amber-500" : "bg-[#003c90]"
                   }`}
                 >
                   <span
@@ -410,7 +403,7 @@ export default function FileViewerPage() {
             {/* Chat messages */}
             <div className="space-y-3 p-4">
               {chatMessages.length === 0 && (
-                <p className="text-center text-[11px] text-slate-600 py-4">
+                <p className="text-center text-[11px] text-[#737784] py-4">
                   No messages yet. Start the conversation.
                 </p>
               )}
@@ -460,34 +453,34 @@ export default function FileViewerPage() {
                   <div key={msg.id}>
                     {showDateSeparator && (
                       <div className="flex items-center gap-3 my-3">
-                        <div className="flex-1 h-px bg-gray-300" />
-                        <span className="text-[10px] text-slate-500 font-medium">
+                        <div className="flex-1 h-px bg-[#c3c6d5]" />
+                        <span className="text-[10px] text-[#737784] font-medium">
                           {formatDate(msgDate)}
                         </span>
-                        <div className="flex-1 h-px bg-gray-300" />
+                        <div className="flex-1 h-px bg-[#c3c6d5]" />
                       </div>
                     )}
                     <div className={`group flex items-end gap-1 mb-1 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                       {!isMe && (
-                        <div className="h-7 w-7 shrink-0 rounded-full bg-gray-300 flex items-center justify-center text-[10px] font-bold text-slate-900">
+                        <div className="h-7 w-7 shrink-0 rounded-full bg-[#d9e2ff] flex items-center justify-center text-[10px] font-bold text-[#003c90]">
                           {initials}
                         </div>
                       )}
                       <div className={`flex flex-col max-w-[72%] ${isMe ? "items-end" : "items-start"}`}>
                         {!isMe && (
-                          <span className="mb-0.5 text-[10px] font-semibold text-slate-600">
+                          <span className="mb-0.5 text-[10px] font-semibold text-[#434653]">
                             {msg.userName}
                           </span>
                         )}
                         <div
                           className={`rounded-xl px-3 py-2 text-sm leading-relaxed break-words ${
                             isMe
-                              ? "rounded-tr-sm bg-blue-600 text-white"
-                              : "rounded-tl-sm bg-gray-200 text-slate-700"
+                              ? "rounded-tr-sm bg-[#003c90] text-white"
+                              : "rounded-tl-sm bg-[#eff4ff] text-[#0b1c30]"
                           }`}
                         >
                           {replyPreview && (
-                            <div className={`mb-1.5 rounded-lg px-2 py-1 text-[10px] border-l-2 ${isMe ? "border-blue-300 bg-blue-700/50 text-blue-100" : "border-slate-500 bg-gray-300/60 text-slate-400"}`}>
+                            <div className={`mb-1.5 rounded-lg px-2 py-1 text-[10px] border-l-2 ${isMe ? "border-white/30 bg-white/10 text-white/70" : "border-[#003c90]/30 bg-[#d9e2ff]/50 text-[#434653]"}`}>
                               {replyPreview}
                             </div>
                           )}
@@ -500,10 +493,10 @@ export default function FileViewerPage() {
                               <button
                                 key={emoji}
                                 onClick={() => toggleReaction(msg.id, emoji)}
-                                className={`flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] border transition-colors ${
+                                className={`flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] border transition-colors cursor-pointer ${
                                   users.includes(myEmail)
-                                    ? "border-blue-500 bg-blue-100 text-blue-700"
-                                    : "border-slate-600 bg-gray-200 text-slate-600 hover:border-slate-500"
+                                    ? "border-[#003c90]/30 bg-[#d9e2ff] text-[#003c90]"
+                                    : "border-[#c3c6d5] bg-[#f8f9ff] text-[#434653] hover:border-[#003c90]/20"
                                 }`}
                               >
                                 {emoji} <span>{users.length}</span>
@@ -511,14 +504,14 @@ export default function FileViewerPage() {
                             ))}
                           </div>
                         )}
-                        <span className="text-[9px] mt-0.5 text-slate-500">{time}</span>
+                        <span className="text-[9px] mt-0.5 text-[#737784]">{time}</span>
                       </div>
 
                       {/* Hover action buttons */}
                       <div className={`relative flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity mb-5 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                         <button
                           onClick={() => setReplyTo({ id: msg.id, userName: msg.userName, content: mainContent })}
-                          className="rounded p-1 text-slate-500 hover:bg-gray-300 hover:text-slate-700"
+                          className="rounded p-1 text-[#737784] hover:bg-[#eff4ff] hover:text-[#0b1c30] cursor-pointer"
                           title="Reply"
                         >
                           <Reply size={12} />
@@ -526,18 +519,18 @@ export default function FileViewerPage() {
                         <div className="relative">
                           <button
                             onClick={() => setEmojiPickerFor(emojiPickerFor === msg.id ? null : msg.id)}
-                            className="rounded p-1 text-slate-500 hover:bg-gray-300 hover:text-slate-700 text-[11px]"
+                            className="rounded p-1 text-[#737784] hover:bg-[#eff4ff] hover:text-[#0b1c30] text-[11px] cursor-pointer"
                             title="React"
                           >
                             😊
                           </button>
                           {emojiPickerFor === msg.id && (
-                            <div className={`absolute bottom-7 z-20 flex gap-1 rounded-xl border border-slate-600 bg-gray-200 p-1.5 shadow-xl ${isMe ? "right-0" : "left-0"}`}>
+                            <div className={`absolute bottom-7 z-20 flex gap-1 rounded-xl border border-[#c3c6d5] bg-white p-1.5 shadow-xl ${isMe ? "right-0" : "left-0"}`}>
                               {EMOJI_OPTIONS.map((emoji) => (
                                 <button
                                   key={emoji}
                                   onClick={() => toggleReaction(msg.id, emoji)}
-                                  className="rounded-lg p-1 text-base hover:bg-gray-300 transition-colors"
+                                  className="rounded-lg p-1 text-base hover:bg-[#eff4ff] transition-colors cursor-pointer"
                                 >
                                   {emoji}
                                 </button>
@@ -554,20 +547,20 @@ export default function FileViewerPage() {
             </div>
 
             {/* Comment threads */}
-            <div className="border-t border-gray-200 px-3 pb-4 pt-3 space-y-2">
+            <div className="border-t border-[#c3c6d5] px-3 pb-4 pt-3 space-y-2">
               {comments.map((c) => (
-                <div key={c.id} className="rounded-lg border border-gray-200 bg-black/3 p-3">
-                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                <div key={c.id} className="rounded-lg border border-[#c3c6d5] bg-[#f8f9ff] p-3">
+                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#737784]">
                     {c.label}
                   </p>
-                  <p className="mb-0.5 text-sm font-semibold text-slate-600">
+                  <p className="mb-0.5 text-sm font-semibold text-[#434653]">
                     {c.author}{" "}
-                    <span className="font-normal text-slate-500">{c.time}</span>
+                    <span className="font-normal text-[#737784]">{c.time}</span>
                   </p>
-                  <p className="mb-2 text-sm leading-relaxed text-slate-400">{c.text}</p>
+                  <p className="mb-2 text-sm leading-relaxed text-[#737784]">{c.text}</p>
                   <div className="flex gap-2">
-                    <button className="text-[10px] font-medium text-slate-400 hover:text-slate-900">Reply</button>
-                    <button className="text-[10px] font-medium text-blue-600 hover:text-blue-700">Jump to</button>
+                    <button className="text-[10px] font-medium text-[#737784] hover:text-[#0b1c30] cursor-pointer">Reply</button>
+                    <button className="text-[10px] font-medium text-[#003c90] hover:underline cursor-pointer">Jump to</button>
                   </div>
                 </div>
               ))}
@@ -575,16 +568,9 @@ export default function FileViewerPage() {
           </div>
 
           {/* Input */}
-          <div className="shrink-0 border-t border-gray-200 p-3">
-            {/* Admin-only mode status shown right above the message box */}
+          <div className="shrink-0 border-t border-[#c3c6d5] p-3">
             {adminOnlyChat && (
-              <div
-                className={`flex items-center gap-2 mb-2 rounded-lg border px-3 py-1.5 ${
-                  isOwner
-                    ? "border-amber-200 bg-amber-50"
-                    : "border-amber-200 bg-amber-50"
-                }`}
-              >
+              <div className="flex items-center gap-2 mb-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5">
                 <Lock size={12} className="shrink-0 text-amber-600" />
                 <span className="text-[11px] font-medium text-amber-700">
                   {isOwner
@@ -594,14 +580,14 @@ export default function FileViewerPage() {
               </div>
             )}
             {replyTo && (
-              <div className="flex items-center justify-between mb-2 rounded-lg border border-gray-300 bg-gray-200 px-3 py-1.5">
+              <div className="flex items-center justify-between mb-2 rounded-lg border border-[#c3c6d5] bg-[#eff4ff] px-3 py-1.5">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Reply size={11} className="shrink-0 text-blue-600" />
-                  <span className="text-[10px] text-slate-400 truncate">
-                    <span className="font-semibold text-slate-600">{replyTo.userName}</span>: {replyTo.content.slice(0, 50)}{replyTo.content.length > 50 ? "…" : ""}
+                  <Reply size={11} className="shrink-0 text-[#003c90]" />
+                  <span className="text-[10px] text-[#737784] truncate">
+                    <span className="font-semibold text-[#434653]">{replyTo.userName}</span>: {replyTo.content.slice(0, 50)}{replyTo.content.length > 50 ? "…" : ""}
                   </span>
                 </div>
-                <button onClick={() => setReplyTo(null)} className="ml-2 shrink-0 text-slate-600 hover:text-slate-800">
+                <button onClick={() => setReplyTo(null)} className="ml-2 shrink-0 text-[#737784] hover:text-[#0b1c30] cursor-pointer">
                   <X size={12} />
                 </button>
               </div>
@@ -619,15 +605,15 @@ export default function FileViewerPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={!canSendMessage}
-                className="flex-1 rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex-1 rounded-lg border border-[#c3c6d5] bg-[#f8f9ff] px-3 py-2 text-sm text-[#0b1c30] placeholder:text-[#737784] focus:border-[#003c90] focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
               />
-              <button type="button" disabled={!canSendMessage} className="text-slate-600 hover:text-slate-800 disabled:opacity-40">
+              <button type="button" disabled={!canSendMessage} className="text-[#737784] hover:text-[#0b1c30] disabled:opacity-40 cursor-pointer">
                 <AtSign size={15} />
               </button>
               <button
                 type="submit"
                 disabled={!canSendMessage}
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#003c90] text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               >
                 <Send size={12} />
               </button>
