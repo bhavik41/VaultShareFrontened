@@ -75,8 +75,8 @@ function ProfileDropdown({
     },
     {
       icon: is2faEnabled
-        ? <ShieldCheck size={15} className="text-emerald-400" />
-        : <ShieldAlert size={15} className="text-amber-400" />,
+        ? <ShieldCheck size={15} className="text-emerald-600" />
+        : <ShieldAlert size={15} className="text-amber-600" />,
       label: "Two-Factor Auth",
       sub: is2faEnabled ? "Enabled" : "Not enabled",
       action: () => { setOpen(false); navigate("/dashboard", { state: { tab: "settings" } }); },
@@ -99,12 +99,12 @@ function ProfileDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2.5 p-1.5 pr-3 bg-slate-900/60 border border-slate-800 rounded-xl cursor-pointer hover:bg-slate-800/60 transition-all duration-200"
+        className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
       >
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-xs font-bold text-white shadow-md">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-slate-900 shadow-md">
           {initials}
         </div>
-        <span className="text-sm text-slate-200 font-medium max-w-[100px] truncate">{name}</span>
+        <span className="text-base text-slate-700 font-medium max-w-[100px] truncate">{name}</span>
         <ChevronDown
           size={14}
           className={`text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
@@ -112,15 +112,15 @@ function ProfileDropdown({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2.5 w-60 bg-slate-950 border border-slate-800 rounded-xl p-1.5 z-[100] shadow-2xl shadow-black/80">
-          <div className="p-3 border-b border-slate-900 mb-1">
+        <div className="absolute right-0 top-full mt-2.5 w-60 bg-gray-50 border border-gray-200 rounded-xl p-1.5 z-[100] shadow-2xl shadow-black/80">
+          <div className="p-3 border-b border-gray-200 mb-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-white">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-slate-900">
                 {initials}
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-200 truncate">{name}</div>
-                <div className="text-xs text-slate-500 truncate">{email}</div>
+                <div className="text-base font-semibold text-slate-700 truncate">{name}</div>
+                <div className="text-sm text-slate-500 truncate">{email}</div>
               </div>
             </div>
           </div>
@@ -129,23 +129,23 @@ function ProfileDropdown({
             <button
               key={label}
               onClick={action}
-              className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-slate-900/60 transition-colors group"
+              className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-gray-100 transition-colors group"
             >
-              <span className="text-slate-500 group-hover:text-slate-300">{icon}</span>
+              <span className="text-slate-500 group-hover:text-slate-600">{icon}</span>
               <div>
-                <div className="text-xs font-semibold text-slate-200">{label}</div>
+                <div className="text-sm font-semibold text-slate-700">{label}</div>
                 <div className="text-[10px] text-slate-500">{sub}</div>
               </div>
             </button>
           ))}
 
-          <div className="border-t border-slate-900 mt-1.5 pt-1.5">
+          <div className="border-t border-gray-200 mt-1.5 pt-1.5">
             <button
               onClick={() => { setOpen(false); onLogout(); }}
               className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-rose-950/20 transition-colors"
             >
               <LogOut size={15} className="text-rose-500" />
-              <span className="text-xs font-semibold text-rose-500">Sign Out</span>
+              <span className="text-sm font-semibold text-rose-500">Sign Out</span>
             </button>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function PageHeader() {
   }
 
   return (
-    <header className="h-16 shrink-0 border-b border-slate-900 px-6 flex items-center justify-end gap-4 bg-[#06060c] sticky top-0 z-30">
+    <header className="h-16 shrink-0 border-b border-gray-200 px-6 flex items-center justify-end gap-4 bg-slate-50 sticky top-0 z-30">
       <input
         type="file"
         ref={fileInputRef}
@@ -183,7 +183,7 @@ export default function PageHeader() {
       />
       <button
         onClick={() => fileInputRef.current?.click()}
-        className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-95 transition-all duration-150"
+        className="flex items-center gap-2 px-4 py-2 border-0 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-base font-semibold cursor-pointer shadow-lg shadow-violet-600/20 active:scale-95 transition-all duration-150"
       >
         <Plus size={16} strokeWidth={2.5} />
         <span>Upload</span>

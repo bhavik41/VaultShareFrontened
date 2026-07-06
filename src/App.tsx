@@ -85,7 +85,7 @@ export default function App() {
         />
         <Route
           path="/files/:id"
-          element={<ProtectedRoute><AppLayout><FileViewerPage /></AppLayout></ProtectedRoute>}
+          element={<ProtectedRoute><FileViewerPage /></ProtectedRoute>}
         />
         <Route
           path="/activity"

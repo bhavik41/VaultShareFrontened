@@ -82,18 +82,18 @@ export default function FileAuditPage() {
   const isOwner = currentUser?.id === fileOwnerId
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <header className="sticky top-0 z-10 border-b border-white/5 bg-slate-950/95 backdrop-blur">
+    <div className="flex-1 overflow-y-auto bg-[#f8f9ff] text-[#0b1c30]">
+      <header className="sticky top-0 z-10 border-b border-[#c3c6d5] bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate(-1)} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/5 hover:text-white">
+            <button onClick={() => navigate(-1)} className="flex h-8 w-8 items-center justify-center rounded-lg text-[#737784] transition-colors hover:bg-[#eff4ff] hover:text-[#0b1c30]">
               <ChevronLeft size={18} />
             </button>
-            <Link to="/dashboard" className="text-lg font-bold text-white">VaultShare</Link>
+            <Link to="/dashboard" className="text-lg font-bold text-[#003c90]">VaultShare</Link>
           </div>
           <div className="flex items-center gap-3">
             {!loading && !error && logs.length > 0 && <AuditLogExport logs={logs} fileName={`file-${fileId}-audit`} />}
-            <button onClick={load} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-400 transition-colors hover:text-white">
+            <button onClick={load} className="flex items-center gap-2 rounded-lg border border-[#c3c6d5] bg-white px-3 py-1.5 text-sm text-[#434653] transition-colors hover:bg-[#eff4ff] hover:text-[#0b1c30]">
               <RefreshCw size={13} /> Refresh
             </button>
           </div>
@@ -102,12 +102,12 @@ export default function FileAuditPage() {
 
       <main className="mx-auto max-w-5xl px-6 py-8">
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600/20">
-            <ShieldCheck size={20} className="text-violet-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d9e2ff]">
+            <ShieldCheck size={20} className="text-[#003c90]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">File Audit History</h1>
-            <p className="text-sm text-slate-500">Complete access trail for this file</p>
+            <h1 className="text-xl font-bold text-[#0b1c30] font-display">File Audit History</h1>
+            <p className="text-sm text-[#737784]">Complete access trail for this file</p>
           </div>
         </div>
 
@@ -121,15 +121,15 @@ export default function FileAuditPage() {
 
         {loading && (
           <div className="flex items-center justify-center py-24">
-            <div className="flex flex-col items-center gap-3 text-slate-500">
-              <Loader2 size={28} className="animate-spin" />
+            <div className="flex flex-col items-center gap-3 text-[#737784]">
+              <Loader2 size={28} className="animate-spin text-[#003c90]" />
               <span className="text-sm">Loading audit history...</span>
             </div>
           </div>
         )}
 
         {!loading && error && (
-          <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-400">
+          <div className="flex items-center gap-3 rounded-xl border border-[#ba1a1a]/20 bg-[#ffdad6]/40 px-5 py-4 text-sm text-[#ba1a1a]">
             <AlertCircle size={16} />
             {error}
           </div>

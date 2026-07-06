@@ -35,18 +35,18 @@ interface AuditLogViewerProps {
 }
 
 const ACTION_ICONS: Record<string, React.ReactNode> = {
-  upload: <UploadCloud size={16} className="text-blue-400" />,
+  upload: <UploadCloud size={16} className="text-blue-600" />,
   download: <Download size={16} className="text-green-400" />,
   view: <Eye size={16} className="text-purple-400" />,
-  share: <Share2 size={16} className="text-indigo-400" />,
+  share: <Share2 size={16} className="text-indigo-600" />,
   permission_change: <ShieldAlert size={16} className="text-orange-400" />,
-  delete: <Trash2 size={16} className="text-red-400" />,
-  version_upload: <GitBranch size={16} className="text-blue-400" />,
-  version_request: <Clock size={16} className="text-amber-400" />,
-  version_approved: <CheckCircle2 size={16} className="text-emerald-400" />,
-  version_rejected: <XCircle size={16} className="text-rose-400" />,
-  version_activated: <History size={16} className="text-violet-400" />,
-  version_deleted: <Trash2 size={16} className="text-red-400" />,
+  delete: <Trash2 size={16} className="text-red-600" />,
+  version_upload: <GitBranch size={16} className="text-blue-600" />,
+  version_request: <Clock size={16} className="text-amber-600" />,
+  version_approved: <CheckCircle2 size={16} className="text-emerald-600" />,
+  version_rejected: <XCircle size={16} className="text-rose-600" />,
+  version_activated: <History size={16} className="text-violet-600" />,
+  version_deleted: <Trash2 size={16} className="text-red-600" />,
 };
 
 const ACTION_LABELS: Record<string, string> = {
@@ -101,14 +101,14 @@ function pageNumbers(current: number, total: number): (number | "…")[] {
 function UserCell({ log, onEnter, onLeave }: { log: AuditLog; onEnter: (e: React.MouseEvent, log: AuditLog) => void; onLeave: () => void }) {
   return (
     <button
-      className="flex items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-white/10"
+      className="flex items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-slate-50"
       onMouseEnter={(e) => onEnter(e, log)}
       onMouseLeave={onLeave}
     >
       <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-[10px] font-bold text-white">
         {(log.userName || "?").charAt(0).toUpperCase()}
       </div>
-      <span className="text-sm text-slate-200 underline decoration-dotted underline-offset-2">
+      <span className="text-base text-slate-700 underline decoration-dotted underline-offset-2">
         {log.userName || "Unknown"}
       </span>
     </button>
@@ -121,7 +121,7 @@ function OwnerCell({ name }: { name: string }) {
       <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-[10px] font-bold text-white">
         {name.charAt(0).toUpperCase()}
       </div>
-      <span className="text-sm text-slate-300">{name}</span>
+      <span className="text-base text-slate-600">{name}</span>
     </div>
   );
 }
@@ -237,13 +237,13 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
 
   if (error) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-[#0a0a14]">
+      <div className="flex flex-1 items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4 text-slate-400">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 text-red-400">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-700">
             <Lock size={32} />
           </div>
-          <h2 className="text-lg font-semibold text-white">Access Restricted</h2>
-          <p className="text-sm text-slate-500">{error}</p>
+          <h2 className="text-lg font-semibold text-slate-900">Access Restricted</h2>
+          <p className="text-base text-slate-500">{error}</p>
         </div>
       </div>
     );
@@ -254,20 +254,20 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
   const activeCollaborator = popover ? collaboratorMap.get(popover.log.userId) ?? null : null;
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto bg-[#0a0a14] p-8">
-      <div className="mx-auto w-full max-w-4xl flex flex-col gap-5">
+    <div className="flex flex-1 flex-col overflow-y-auto bg-slate-50 p-8">
+      <div className="mx-auto w-full max-w-full flex flex-col gap-5">
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900">
             <History size={20} className="text-blue-500" />
             Audit History
           </h2>
           {fileOwnerName && (
-            <div className="flex items-center gap-2 rounded-lg border border-violet-500/20 bg-violet-500/10 px-3 py-1.5">
-              <User size={13} className="text-violet-400" />
-              <span className="text-xs text-violet-300">
-                Uploaded by <span className="font-semibold text-violet-200">{fileOwnerName}</span>
+            <div className="flex items-center gap-2 rounded-lg border border-violet-200 bg-violet-50 px-3 py-1.5">
+              <User size={13} className="text-violet-600" />
+              <span className="text-sm text-violet-700">
+                Uploaded by <span className="font-semibold text-violet-800">{fileOwnerName}</span>
               </span>
             </div>
           )}
@@ -278,19 +278,19 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value as AuditAction | "all")}
-            className="rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-xs text-slate-300 focus:border-blue-500 focus:outline-none"
+            className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-600 focus:border-blue-500 focus:outline-none"
           >
             {ACTION_FILTER_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
 
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-slate-500">
             <span>Rows per page</span>
             <select
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="rounded-lg border border-white/10 bg-slate-900 px-2 py-1.5 text-xs text-slate-300 focus:border-blue-500 focus:outline-none"
+              className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1.5 text-sm text-slate-600 focus:border-blue-500 focus:outline-none"
             >
               {PAGE_SIZE_OPTIONS.map((n) => (
                 <option key={n} value={n}>{n}</option>
@@ -300,24 +300,24 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         </div>
 
         {/* Table */}
-        <div className="overflow-hidden rounded-xl border border-white/5 bg-[#0d0d1a]">
-          <table className="w-full text-left text-sm text-slate-400">
-            <thead className="border-b border-white/5 bg-white/5 text-xs uppercase tracking-wider text-slate-500">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-slate-50">
+          <table className="w-full min-w-[820px] text-left text-base text-slate-400">
+            <thead className="border-b border-gray-200 bg-black/3 text-sm uppercase tracking-wider text-slate-500">
               <tr>
-                <th className="px-6 py-4 font-medium">Action</th>
+                <th className="px-6 py-4 font-medium w-44">Action</th>
                 <th className="px-6 py-4 font-medium">Details</th>
-                <th className="px-6 py-4 font-medium">User</th>
-                <th className="px-6 py-4 font-medium">File Owner</th>
-                <th className="px-6 py-4 font-medium">Timestamp</th>
+                <th className="px-6 py-4 font-medium w-44">User</th>
+                <th className="px-6 py-4 font-medium w-44">File Owner</th>
+                <th className="px-6 py-4 font-medium w-44 whitespace-nowrap">Timestamp</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-gray-200">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <div className="flex items-center justify-center gap-3 text-slate-500">
                       <Loader2 size={18} className="animate-spin" />
-                      <span className="text-sm">Loading…</span>
+                      <span className="text-base">Loading…</span>
                     </div>
                   </td>
                 </tr>
@@ -326,30 +326,36 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center gap-3 text-slate-500">
                       <History size={28} className="opacity-40" />
-                      <span className="text-sm">No audit logs found.</span>
+                      <span className="text-base">No audit logs found.</span>
                     </div>
                   </td>
                 </tr>
               ) : (
                 logs.map((log) => (
-                  <tr key={log.id} className="transition-colors hover:bg-white/5">
+                  <tr key={log.id} className="transition-colors hover:bg-black/3">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200">
                           {ACTION_ICONS[log.action] || <History size={16} />}
                         </div>
-                        <span className="font-medium text-slate-200">
+                        <span className="font-medium text-slate-700">
                           {ACTION_LABELS[log.action] || log.action}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 max-w-[200px]">
-                      <span
-                        className="text-slate-300 text-xs block truncate"
-                        title={log.details || undefined}
-                      >
-                        {log.details || "—"}
-                      </span>
+                    <td className="px-6 py-4 max-w-[220px]">
+                      {log.details ? (
+                        <div className="group relative">
+                          <span className="text-slate-600 text-sm block truncate cursor-default">
+                            {log.details}
+                          </span>
+                          <div className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-max max-w-xs rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-xl group-hover:block">
+                            {log.details}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-slate-500 text-sm">—</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <UserCell log={log} onEnter={openPopover} onLeave={scheduleHide} />
@@ -357,7 +363,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <OwnerCell name={log.fileOwnerName || fileOwnerName || "Unknown"} />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                       {new Date(log.timestamp).toLocaleString(undefined, {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -373,34 +379,34 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         {/* Pagination */}
         {!loading && total > 0 && (
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500">
-              Showing <span className="font-semibold text-slate-300">{firstEntry}–{lastEntry}</span> of{" "}
-              <span className="font-semibold text-slate-300">{total}</span> entries
+            <p className="text-sm text-slate-500">
+              Showing <span className="font-semibold text-slate-600">{firstEntry}–{lastEntry}</span> of{" "}
+              <span className="font-semibold text-slate-600">{total}</span> entries
             </p>
             <div className="flex items-center gap-1">
-              <button onClick={() => setPage(1)} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-white/3 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage(1)} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronsLeft size={14} />
               </button>
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-white/3 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronLeft size={14} />
               </button>
               {pageNumbers(page, totalPages).map((p, i) =>
                 p === "…" ? (
-                  <span key={`e-${i}`} className="flex h-8 w-8 items-center justify-center text-xs text-slate-600">…</span>
+                  <span key={`e-${i}`} className="flex h-8 w-8 items-center justify-center text-sm text-slate-600">…</span>
                 ) : (
                   <button
                     key={p}
                     onClick={() => setPage(p)}
-                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-lg border px-2 text-xs font-medium transition-colors ${p === page ? "border-blue-500/50 bg-blue-500/20 text-blue-300" : "border-white/5 bg-white/3 text-slate-400 hover:bg-white/10 hover:text-white"}`}
+                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-lg border px-2 text-sm font-medium transition-colors ${p === page ? "border-blue-500/50 bg-blue-100 text-blue-700" : "border-gray-200 bg-black/3 text-slate-400 hover:bg-slate-50 hover:text-slate-900"}`}
                   >
                     {p}
                   </button>
                 )
               )}
-              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-white/3 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronRight size={14} />
               </button>
-              <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-white/3 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronsRight size={14} />
               </button>
             </div>
@@ -413,49 +419,49 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         <div
           ref={popoverRef}
           style={{ position: "fixed", top: popover.top, left: popover.left, zIndex: 50 }}
-          className="w-72 overflow-hidden rounded-xl border border-white/10 bg-[#12121f] shadow-2xl shadow-black/50"
+          className="w-72 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl shadow-gray-300/50"
           onMouseEnter={cancelHide}
           onMouseLeave={scheduleHide}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 border-b border-white/5 p-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-bold text-white">
+          <div className="flex items-center gap-3 border-b border-gray-200 p-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-base font-bold text-white">
               {popover.log.userName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="truncate text-sm font-semibold text-white">{popover.log.userName}</p>
+                <p className="truncate text-base font-semibold text-slate-900">{popover.log.userName}</p>
                 {popover.isOwner && (
-                  <span className="flex items-center gap-1 rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-semibold text-violet-300">
+                  <span className="flex items-center gap-1 rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
                     <Crown size={9} />Owner
                   </span>
                 )}
                 {!popover.isOwner && popover.isSelf && (
-                  <span className="rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-semibold text-slate-300">You</span>
+                  <span className="rounded-full bg-gray-300 px-2 py-0.5 text-[10px] font-semibold text-slate-600">You</span>
                 )}
                 {!popover.isOwner && !popover.isSelf && activeCollaborator && (
-                  <span className="rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-semibold capitalize text-slate-300">
+                  <span className="rounded-full bg-gray-300 px-2 py-0.5 text-[10px] font-semibold capitalize text-slate-600">
                     {activeCollaborator.role}
                   </span>
                 )}
                 {!popover.isOwner && !popover.isSelf && !activeCollaborator && (
-                  <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold text-red-400">No access</span>
+                  <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold text-red-600">No access</span>
                 )}
               </div>
-              <p className="truncate text-xs text-slate-400">{popover.log.userEmail || "—"}</p>
+              <p className="truncate text-sm text-slate-400">{popover.log.userEmail || "—"}</p>
             </div>
           </div>
 
           {/* Body */}
           {popover.isOwner && (
-            <div className="flex items-center gap-2 border-t border-white/5 px-4 py-3">
-              <Crown size={13} className="text-violet-400" />
-              <span className="text-xs text-violet-300 font-medium">File Owner — cannot be managed</span>
+            <div className="flex items-center gap-2 border-t border-gray-200 px-4 py-3">
+              <Crown size={13} className="text-violet-600" />
+              <span className="text-sm text-violet-700 font-medium">File Owner — cannot be managed</span>
             </div>
           )}
 
           {popover.isSelf && !popover.isOwner && (
-            <div className="px-4 py-3 text-xs text-slate-500">You cannot manage your own access.</div>
+            <div className="px-4 py-3 text-sm text-slate-500">You cannot manage your own access.</div>
           )}
 
           {!popover.isOwner && !popover.isSelf && activeCollaborator && (
@@ -465,14 +471,14 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                 <button
                   disabled={actionLoading}
                   onClick={() => handleRoleChange("editor")}
-                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "editor" ? "border-violet-500/50 bg-violet-500/20 text-violet-200" : "border-white/10 bg-white/5 text-slate-300 hover:border-violet-500/30 hover:bg-violet-500/10 hover:text-violet-200"}`}
+                  className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "editor" ? "border-violet-500/50 bg-violet-500/20 text-violet-800" : "border-gray-200 bg-black/3 text-slate-600 hover:border-violet-500/30 hover:bg-violet-500/10 hover:text-violet-800"}`}
                 >
                   Editor
                 </button>
                 <button
                   disabled={actionLoading}
                   onClick={() => handleRoleChange("viewer")}
-                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "viewer" ? "border-blue-500/50 bg-blue-500/20 text-blue-200" : "border-white/10 bg-white/5 text-slate-300 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-200"}`}
+                  className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "viewer" ? "border-blue-500/50 bg-blue-100 text-blue-700" : "border-gray-200 bg-black/3 text-slate-600 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-200"}`}
                 >
                   Viewer
                 </button>
@@ -481,7 +487,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                 <button
                   disabled={actionLoading}
                   onClick={handleRevoke}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-500/20 disabled:opacity-50"
                 >
                   {actionLoading ? <Loader2 size={12} className="animate-spin" /> : <UserMinus size={12} />}
                   Revoke Access
@@ -491,7 +497,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
           )}
 
           {!popover.isOwner && !popover.isSelf && !activeCollaborator && (
-            <div className="px-4 py-3 text-xs text-slate-500">This user no longer has access to the file.</div>
+            <div className="px-4 py-3 text-sm text-slate-500">This user no longer has access to the file.</div>
           )}
         </div>
       )}

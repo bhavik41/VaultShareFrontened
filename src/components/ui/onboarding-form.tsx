@@ -101,10 +101,10 @@ const OnboardingForm = React.forwardRef<HTMLDivElement, OnboardingFormProps>(
                   <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
                 <div className="text-left">
-                  <p className="font-medium text-sm text-foreground">
+                  <p className="font-medium text-base text-foreground">
                     Your avatar
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     PNG or JPG up to 10MB
                   </p>
                 </div>
