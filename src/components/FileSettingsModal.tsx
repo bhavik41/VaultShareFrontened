@@ -1,21 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  MessageSquare, Settings, Shield, UserPlus, Users, X,
+  Copy, Link as LinkIcon, MessageSquare, Settings, Shield, Trash2, UserPlus, Users, X,
 } from "lucide-react";
 import api from "@/store/api";
 import {
+  createShareLink, getShareLinks, revokeShareLink,
   inviteCollaborator, getSharedUsers, removeCollaborator,
-  updateCollaboratorPermission, type SharedRole, type SharedUser,
+  updateCollaboratorPermission,
+  type ShareLink, type ShareLinkPermissionMode, type SharedRole, type SharedUser,
 } from "@/store/collaborationApi";
 import { updateVersionPolicy, type VersionPolicy } from "@/store/versionsApi";
 
 interface FileSettingsModalProps {
   fileId: string;
   fileName: string;
+  initialTab?: Tab;
   onClose: () => void;
 }
 
-type Tab = "sharing" | "versions" | "chat";
+export type Tab = "sharing" | "link" | "versions" | "chat";
+
+function buildPublicShareUrl(token: string) {
+  return `${window.location.origin}/share/${token}`;
+}
+function formatDate(v: string) {
+  return new Date(v).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
 
 const VERSION_POLICIES: { value: VersionPolicy; label: string; desc: string }[] = [
   { value: "admin_only", label: "Admin Only",  desc: "Only you can upload new versions." },
@@ -26,8 +36,8 @@ const VERSION_POLICIES: { value: VersionPolicy; label: string; desc: string }[] 
 const inputCls  = "w-full rounded-lg border border-[#c3c6d5] bg-[#eff4ff] px-3 py-2 text-sm text-[#0b1c30] placeholder:text-[#737784] outline-none focus:border-[#003c90]";
 const selectCls = "rounded-lg border border-[#c3c6d5] bg-[#eff4ff] px-3 py-2 text-sm text-[#0b1c30] outline-none focus:border-[#003c90] cursor-pointer";
 
-export default function FileSettingsModal({ fileId, fileName, onClose }: FileSettingsModalProps) {
-  const [activeTab, setActiveTab] = useState<Tab>("sharing");
+export default function FileSettingsModal({ fileId, fileName, initialTab, onClose }: FileSettingsModalProps) {
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab ?? "sharing");
 
   const [collaborators, setCollaborators]   = useState<SharedUser[]>([]);
   const [inviteEmail, setInviteEmail]       = useState("");
@@ -46,22 +56,34 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
   const [chatLoading, setChatLoading]     = useState(true);
   const [chatSaving, setChatSaving]       = useState(false);
 
+  const [shareLinks, setShareLinks]                 = useState<ShareLink[]>([]);
+  const [linkLoading, setLinkLoading]               = useState(true);
+  const [linkPermissionMode, setLinkPermissionMode] = useState<ShareLinkPermissionMode>("viewer");
+  const [linkExpiresAt, setLinkExpiresAt]           = useState("");
+  const [linkPassword, setLinkPassword]             = useState("");
+  const [linkCreating, setLinkCreating]             = useState(false);
+  const [linkError, setLinkError]                   = useState<string | null>(null);
+  const [linkActionLoading, setLinkActionLoading]   = useState<string | null>(null);
+  const [copiedToken, setCopiedToken]               = useState<string | null>(null);
+
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { loadAll(); }, [fileId]);
 
   async function loadAll() {
-    setSharingLoading(true); setPolicyLoading(true); setChatLoading(true);
+    setSharingLoading(true); setPolicyLoading(true); setChatLoading(true); setLinkLoading(true);
     try {
-      const [users, fileRes] = await Promise.all([
+      const [users, fileRes, links] = await Promise.all([
         getSharedUsers(fileId),
         api.get<{ file: { versionPolicy: VersionPolicy; adminOnlyChat: boolean } }>(`/files/${fileId}/view`),
+        getShareLinks(fileId),
       ]);
       setCollaborators(users);
       setVersionPolicy(fileRes.data.file.versionPolicy ?? "admin_only");
       setAdminOnlyChat(fileRes.data.file.adminOnlyChat ?? false);
+      setShareLinks(links);
     } catch {} finally {
-      setSharingLoading(false); setPolicyLoading(false); setChatLoading(false);
+      setSharingLoading(false); setPolicyLoading(false); setChatLoading(false); setLinkLoading(false);
     }
   }
 
@@ -74,6 +96,33 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
       setCollaborators(await getSharedUsers(fileId));
     } catch (err: any) { setInviteError(err.response?.data?.message ?? "Failed to send invitation."); }
     finally { setInviteLoading(false); }
+  }
+
+  async function handleCreateShareLink(e: React.FormEvent) {
+    e.preventDefault();
+    setLinkCreating(true); setLinkError(null);
+    try {
+      await createShareLink(fileId, {
+        permissionMode: linkPermissionMode,
+        expiresAt: linkExpiresAt || undefined,
+        password: linkPassword || undefined,
+      });
+      setLinkPermissionMode("viewer"); setLinkExpiresAt(""); setLinkPassword("");
+      setShareLinks(await getShareLinks(fileId));
+    } catch (err: any) { setLinkError(err.response?.data?.message ?? "Failed to create link."); }
+    finally { setLinkCreating(false); }
+  }
+
+  async function handleRevokeLink(token: string) {
+    setLinkActionLoading(token);
+    try { await revokeShareLink(token); setShareLinks(await getShareLinks(fileId)); }
+    catch {} finally { setLinkActionLoading(null); }
+  }
+
+  async function handleCopyLink(token: string) {
+    await navigator.clipboard.writeText(buildPublicShareUrl(token));
+    setCopiedToken(token);
+    setTimeout(() => setCopiedToken(null), 2000);
   }
 
   async function handleRoleChange(userId: string, role: SharedRole) {
@@ -103,6 +152,7 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
 
   const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "sharing",   label: "Sharing",   icon: <Users       size={14} /> },
+    { id: "link",      label: "Share Link", icon: <LinkIcon    size={14} /> },
     { id: "versions",  label: "Versions",  icon: <Shield      size={14} /> },
     { id: "chat",      label: "Chat",      icon: <MessageSquare size={14} /> },
   ];
@@ -197,6 +247,71 @@ export default function FileSettingsModal({ fileId, fileName, onClose }: FileSet
                             className="text-[#ba1a1a] hover:text-[#ba1a1a]/80 text-sm font-semibold border-0 bg-transparent cursor-pointer disabled:opacity-50 px-1">
                             Remove
                           </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── SHARE LINK TAB ── */}
+          {activeTab === "link" && (
+            <div className="flex flex-col gap-5">
+              <div>
+                <p className="text-[11px] font-semibold text-[#737784] uppercase tracking-widest mb-3">Create Share Link</p>
+                <form onSubmit={handleCreateShareLink} className="flex flex-col gap-2">
+                  <select value={linkPermissionMode} onChange={(e) => setLinkPermissionMode(e.target.value as ShareLinkPermissionMode)} className={selectCls}>
+                    <option value="viewer">Viewer</option>
+                    <option value="editor">Editor</option>
+                    <option value="download">Download</option>
+                    <option value="admin-download">Admin download</option>
+                  </select>
+                  <input type="datetime-local" value={linkExpiresAt} onChange={(e) => setLinkExpiresAt(e.target.value)}
+                    className={inputCls} />
+                  <input type="password" placeholder="Password (optional)" value={linkPassword}
+                    onChange={(e) => setLinkPassword(e.target.value)} className={inputCls} />
+                  <button type="submit" disabled={linkCreating}
+                    className="flex items-center gap-1.5 justify-center px-4 py-2 bg-[#003c90] hover:opacity-90 disabled:opacity-50 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-opacity">
+                    <LinkIcon size={13} />
+                    {linkCreating ? "Creating…" : "Create Link"}
+                  </button>
+                  {linkError && <p className="text-sm text-[#ba1a1a] font-medium">{linkError}</p>}
+                </form>
+              </div>
+
+              <div>
+                <p className="text-[11px] font-semibold text-[#737784] uppercase tracking-widest mb-3">Active Links</p>
+                {linkLoading ? (
+                  <p className="text-sm text-[#737784]">Loading…</p>
+                ) : shareLinks.length === 0 ? (
+                  <p className="text-sm text-[#737784]">No share links created yet.</p>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {shareLinks.map((sl) => (
+                      <div key={sl.id} className="rounded-lg border border-[#c3c6d5] bg-[#f8f9ff] p-3">
+                        <p className="text-xs font-mono text-[#003c90] truncate">{buildPublicShareUrl(sl.token)}</p>
+                        <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-[#737784]">
+                          Mode: {sl.permissionMode} · Expires {formatDate(sl.expiresAt)}
+                          {sl.revokedAt && <span className="font-medium text-[#ba1a1a]">· Revoked</span>}
+                          {sl.passwordProtected && (
+                            <span className="rounded bg-[#ffddb8]/60 px-1.5 py-0.5 text-[10px] font-semibold text-[#5c3800]">🔒 Password</span>
+                          )}
+                        </p>
+                        <div className="mt-2 flex gap-2">
+                          <button onClick={() => handleCopyLink(sl.token)}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#c3c6d5] bg-white text-[#434653] hover:bg-[#eff4ff] transition-colors cursor-pointer"
+                            title="Copy link">
+                            <Copy size={13} />
+                          </button>
+                          <button onClick={() => handleRevokeLink(sl.token)}
+                            disabled={!!sl.revokedAt || linkActionLoading === sl.token}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#ba1a1a] text-white hover:opacity-80 disabled:opacity-40 transition-opacity cursor-pointer border-0"
+                            title="Revoke link">
+                            <Trash2 size={13} />
+                          </button>
+                          {copiedToken === sl.token && <span className="self-center text-xs font-medium text-[#006c49]">Copied!</span>}
                         </div>
                       </div>
                     ))}
