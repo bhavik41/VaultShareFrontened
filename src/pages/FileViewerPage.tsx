@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { AtSign, ChevronLeft, ChevronRight, Download, Loader2, Lock, Minus, Plus, Reply, Send, ShieldCheck, X } from "lucide-react"
+import { AtSign, ChevronLeft, ChevronRight, Download, Link as LinkIcon, Loader2, Lock, MoreVertical, Minus, Plus, Reply, Send, ShieldCheck, UserPlus, X } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import { getFileSignedUrl, downloadFile } from "@/store/filesApi"
 import api from "@/store/api"
@@ -9,6 +9,7 @@ import { useAppDispatch } from "@/store/hooks"
 import { listFilesThunk } from "@/store/filesSlice"
 import AuditLogViewer from "@/components/ui/AuditLogViewer"
 import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel"
+import FileSettingsModal, { type Tab as SettingsTab } from "@/components/FileSettingsModal"
 
 const TABS = ["Files", "Versions", "Audit Log"]
 
@@ -41,6 +42,8 @@ export default function FileViewerPage() {
   const [replyTo, setReplyTo] = useState<{ id: string; userName: string; content: string } | null>(null)
   const [reactions, setReactions] = useState<Record<string, Record<string, string[]>>>({}) // msgId -> emoji -> userEmails
   const [emojiPickerFor, setEmojiPickerFor] = useState<string | null>(null)
+  const [fileMenuOpen, setFileMenuOpen] = useState(false)
+  const [settingsTab, setSettingsTab] = useState<SettingsTab | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const EMOJI_OPTIONS = ["👍", "❤️", "😂", "😮", "😢", "🔥"]
 
@@ -126,6 +129,13 @@ export default function FileViewerPage() {
   }, [chatMessages])
 
   useEffect(() => {
+    if (!fileMenuOpen) return
+    const close = () => setFileMenuOpen(false)
+    document.addEventListener("click", close)
+    return () => document.removeEventListener("click", close)
+  }, [fileMenuOpen])
+
+  useEffect(() => {
     if (!emojiPickerFor) return
     const close = () => setEmojiPickerFor(null)
     document.addEventListener("click", close)
@@ -159,7 +169,7 @@ export default function FileViewerPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
+    <div className="flex h-screen flex-col overflow-hidden">
       {/* Top Header */}
       <header className="shrink-0 border-b border-[#c3c6d5] bg-white">
         <div className="flex items-center justify-between px-5 py-0">
@@ -194,6 +204,38 @@ export default function FileViewerPage() {
 
           <div className="flex items-center gap-3 py-3">
             <span className="h-2 w-2 rounded-full bg-[#006c49]" />
+            {isOwner && (
+              <div className="relative">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setFileMenuOpen((v) => !v) }}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[#737784] hover:bg-[#eff4ff] hover:text-[#0b1c30] transition-colors cursor-pointer"
+                  title="File options"
+                >
+                  <MoreVertical size={17} />
+                </button>
+                {fileMenuOpen && (
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute right-0 top-10 z-30 w-56 rounded-xl border border-[#c3c6d5] bg-white py-1.5 shadow-[0_8px_30px_rgba(11,28,48,0.12)]"
+                  >
+                    <button
+                      onClick={() => { setSettingsTab("sharing"); setFileMenuOpen(false) }}
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-[#0b1c30] hover:bg-[#eff4ff] transition-colors cursor-pointer"
+                    >
+                      <UserPlus size={15} className="text-[#737784]" />
+                      Invite collaborators
+                    </button>
+                    <button
+                      onClick={() => { setSettingsTab("link"); setFileMenuOpen(false) }}
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-[#0b1c30] hover:bg-[#eff4ff] transition-colors cursor-pointer"
+                    >
+                      <LinkIcon size={15} className="text-[#737784]" />
+                      Get share link
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
             <div
               className="flex h-8 w-8 items-center justify-center rounded-full bg-[#003c90] text-sm font-bold text-white"
               title={authUser?.name ?? ""}
@@ -257,13 +299,15 @@ export default function FileViewerPage() {
           )}
 
           {/* Document area */}
-          <div className="flex flex-1 overflow-hidden bg-[#f8f9ff]">
+          <div className="flex flex-1 overflow-hidden bg-[#eef0f7]">
             {/* Main file viewer */}
             <div className="flex flex-1 overflow-hidden">
               {previewError ? (
                 <div className="flex flex-1 items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <Download size={32} className="text-[#737784]" />
+                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-[#c3c6d5] bg-white p-10 text-center shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f8f9ff] text-[#737784]">
+                      <Download size={24} />
+                    </div>
                     <div>
                       <p className="text-base font-semibold text-[#0b1c30]">Preview unavailable</p>
                       <p className="mt-1 text-sm text-[#737784]">The file could not be loaded for preview.</p>
@@ -280,9 +324,9 @@ export default function FileViewerPage() {
                 </div>
               ) : !fileUrl ? (
                 <div className="flex flex-1 items-center justify-center">
-                  <div className="flex flex-col items-center gap-3 text-[#737784]">
-                    <Loader2 className="animate-spin text-[#003c90]" size={24} />
-                    <span className="text-sm">Loading file…</span>
+                  <div className="flex flex-col items-center gap-3 rounded-2xl bg-white px-12 py-10 text-[#737784] shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
+                    <Loader2 className="animate-spin text-[#003c90]" size={26} />
+                    <span className="text-sm font-medium">Loading file…</span>
                   </div>
                 </div>
               ) : isImage ? (
@@ -291,20 +335,26 @@ export default function FileViewerPage() {
                     src={fileUrl}
                     alt={file?.name}
                     style={{ transform: `scale(${zoom / 100})`, transformOrigin: "top center", maxWidth: "100%" }}
-                    className="rounded-lg shadow-2xl transition-transform duration-200"
+                    className="rounded-xl shadow-[0_8px_30px_rgba(11,28,48,0.15)] ring-1 ring-black/5 transition-transform duration-200"
                   />
                 </div>
               ) : isPreviewable ? (
-                <iframe
-                  src={fileUrl}
-                  title={file?.name ?? "File"}
-                  className="border-0"
-                  style={{ width: "100%", height: "100%", flex: 1 }}
-                />
+                <div className="flex flex-1 overflow-hidden p-6">
+                  <div className="flex flex-1 overflow-hidden rounded-2xl border border-[#c3c6d5] bg-white shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
+                    <iframe
+                      src={fileUrl}
+                      title={file?.name ?? "File"}
+                      className="rounded-2xl border-0"
+                      style={{ width: "100%", height: "100%", flex: 1 }}
+                    />
+                  </div>
+                </div>
               ) : (
                 <div className="flex flex-1 items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <Download size={32} className="text-[#737784]" />
+                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-[#c3c6d5] bg-white p-10 text-center shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f8f9ff] text-[#737784]">
+                      <Download size={24} />
+                    </div>
                     <div>
                       <p className="text-base font-semibold text-[#0b1c30]">Preview not available</p>
                       <p className="mt-1 text-sm text-[#737784]">
@@ -623,6 +673,15 @@ export default function FileViewerPage() {
           </>
         )}
       </div>
+
+      {settingsTab && id && effectiveFile && (
+        <FileSettingsModal
+          fileId={id}
+          fileName={effectiveFile.name}
+          initialTab={settingsTab}
+          onClose={() => setSettingsTab(null)}
+        />
+      )}
     </div>
   )
 }
