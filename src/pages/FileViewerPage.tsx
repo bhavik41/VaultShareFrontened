@@ -14,6 +14,12 @@ import DocumentQA from "@/components/DocumentQA"
 
 const TABS = ["Files", "Versions", "Audit Log"]
 
+interface PptxRun { text: string; bold?: boolean; italic?: boolean; sizePx?: number; color?: string }
+interface PptxPara { runs: PptxRun[] }
+interface PptxShape { id: string; xPx: number; yPx: number; wPx: number; hPx: number; paras: PptxPara[] }
+interface PptxImage { id: string; xPx: number; yPx: number; wPx: number; hPx: number; src: string }
+interface PptxSlideData { index: number; shapes: PptxShape[]; images: PptxImage[]; bgColor: string }
+
 interface Comment {
   id: string
   label: string
@@ -48,7 +54,15 @@ export default function FileViewerPage() {
   const [rightPanel, setRightPanel] = useState<"chat" | "qa">("chat")
   const [docxHtml, setDocxHtml] = useState<string | null>(null)
   const [xlsxHtml, setXlsxHtml] = useState<string | null>(null)
+  const [pptxSlides, setPptxSlides] = useState<PptxSlideData[] | null>(null)
+  const [pptxScale, setPptxScale] = useState(1)
+  const [pptxPdfUrl, setPptxPdfUrl] = useState<string | null>(null)
+  const [panelWidth, setPanelWidth] = useState(320)
+  const isDragging = useRef(false)
+  const dragStartX = useRef(0)
+  const dragStartWidth = useRef(0)
   const docxContainerRef = useRef<HTMLDivElement>(null)
+  const pptxViewportRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const EMOJI_OPTIONS = ["👍", "❤️", "😂", "😮", "😢", "🔥"]
 
@@ -154,8 +168,144 @@ export default function FileViewerPage() {
           setXlsxHtml(html)
         })
         .catch(() => setPreviewError(true))
+    } else if (isPptx) {
+      // Try backend PDF conversion first (requires LibreOffice on server)
+      api.get(`/files/${id}/preview-pdf`, { responseType: "arraybuffer" })
+        .then((res) => {
+          const blob = new Blob([res.data], { type: "application/pdf" })
+          setPptxPdfUrl(URL.createObjectURL(blob))
+        })
+        .catch(() => {
+          // LibreOffice not installed — fall back to client-side renderer
+        })
+
+      fetch(fileUrl)
+        .then((r) => r.arrayBuffer())
+        .then(async (buf) => {
+          const { unzipSync, strFromU8 } = await import("fflate")
+          const files = unzipSync(new Uint8Array(buf))
+
+          const domParse = (data: Uint8Array) => {
+            // Strip namespace prefixes so querySelector works without NS-aware APIs
+            const clean = strFromU8(data)
+              .replace(/ xmlns:\w+="[^"]*"/g, "")
+              .replace(/<(\/?)\w+:/g, "<$1")
+            return new DOMParser().parseFromString(clean, "text/xml")
+          }
+
+          // Actual slide dimensions
+          let EMU_W = 9144000, EMU_H = 5143500
+          if (files["ppt/presentation.xml"]) {
+            const pres = domParse(files["ppt/presentation.xml"])
+            const sz = pres.querySelector("sldSz")
+            if (sz) {
+              EMU_W = parseInt(sz.getAttribute("cx") ?? "9144000")
+              EMU_H = parseInt(sz.getAttribute("cy") ?? "5143500")
+            }
+          }
+          const VW = 960, VH = 540
+          const toX = (v: number) => Math.round(v / EMU_W * VW)
+          const toY = (v: number) => Math.round(v / EMU_H * VH)
+          const szPx = (sz: number) => Math.round(sz / 100 * 96 / 72)
+
+          const slideNames = Object.keys(files)
+            .filter((n) => /^ppt\/slides\/slide\d+\.xml$/.test(n))
+            .sort((a, b) => parseInt(a.match(/(\d+)/)![1]) - parseInt(b.match(/(\d+)/)![1]))
+
+          const parsed: PptxSlideData[] = []
+
+          for (let i = 0; i < slideNames.length; i++) {
+            const name = slideNames[i]
+            const num = name.match(/(\d+)/)![1]
+            const xml = domParse(files[name])
+
+            // Build rId → blob URL map for images on this slide
+            const imgMap: Record<string, string> = {}
+            const relsKey = `ppt/slides/_rels/slide${num}.xml.rels`
+            if (files[relsKey]) {
+              domParse(files[relsKey]).querySelectorAll("Relationship").forEach((rel) => {
+                const type = rel.getAttribute("Type") ?? ""
+                const target = rel.getAttribute("Target") ?? ""
+                const rId = rel.getAttribute("Id") ?? ""
+                if (!type.includes("image")) return
+                const imgPath = target.startsWith("../") ? `ppt/${target.slice(3)}` : `ppt/slides/${target}`
+                const imgData = files[imgPath]
+                if (!imgData) return
+                const ext = imgPath.split(".").pop()?.toLowerCase()
+                const mime = ext === "png" ? "image/png" : ext === "gif" ? "image/gif" : ext === "svg" ? "image/svg+xml" : "image/jpeg"
+                imgMap[rId] = URL.createObjectURL(new Blob([imgData], { type: mime }))
+              })
+            }
+
+            // Background
+            let bgColor = "#ffffff"
+            const bgEl = xml.querySelector("bg solidFill srgbClr")
+            if (bgEl) bgColor = `#${bgEl.getAttribute("val") ?? "ffffff"}`
+
+            // Text shapes
+            const shapes: PptxShape[] = []
+            xml.querySelectorAll("sp").forEach((sp) => {
+              const off = sp.querySelector("spPr xfrm off")
+              const ext = sp.querySelector("spPr xfrm ext")
+              if (!off || !ext) return
+              const xPx = toX(parseInt(off.getAttribute("x") ?? "0"))
+              const yPx = toY(parseInt(off.getAttribute("y") ?? "0"))
+              const wPx = toX(parseInt(ext.getAttribute("cx") ?? "0"))
+              const hPx = toY(parseInt(ext.getAttribute("cy") ?? "0"))
+              const txBody = sp.querySelector("txBody")
+              if (!txBody) return
+              const paras: PptxPara[] = []
+              txBody.querySelectorAll("p").forEach((p) => {
+                const runs: PptxRun[] = []
+                p.querySelectorAll("r").forEach((r) => {
+                  const text = r.querySelector("t")?.textContent ?? ""
+                  if (!text) return
+                  const rPr = r.querySelector("rPr")
+                  const bold = rPr?.getAttribute("b") === "1"
+                  const italic = rPr?.getAttribute("i") === "1"
+                  const szAttr = rPr?.getAttribute("sz")
+                  const sizePx = szAttr ? szPx(parseInt(szAttr)) : undefined
+                  const clr = rPr?.querySelector("solidFill srgbClr")
+                  const color = clr ? `#${clr.getAttribute("val")}` : undefined
+                  runs.push({ text, bold, italic, sizePx, color })
+                })
+                if (runs.length) paras.push({ runs })
+              })
+              if (paras.length) shapes.push({ id: `t${i}-${xPx}-${yPx}`, xPx, yPx, wPx, hPx, paras })
+            })
+
+            // Images (pic elements)
+            const images: PptxImage[] = []
+            xml.querySelectorAll("pic").forEach((pic) => {
+              const rId = pic.querySelector("blipFill blip")?.getAttribute("embed") ?? ""
+              const src = imgMap[rId]
+              if (!src) return
+              const off = pic.querySelector("spPr xfrm off")
+              const ext = pic.querySelector("spPr xfrm ext")
+              if (!off || !ext) return
+              const xPx = toX(parseInt(off.getAttribute("x") ?? "0"))
+              const yPx = toY(parseInt(off.getAttribute("y") ?? "0"))
+              const wPx = toX(parseInt(ext.getAttribute("cx") ?? "0"))
+              const hPx = toY(parseInt(ext.getAttribute("cy") ?? "0"))
+              images.push({ id: `p${i}-${xPx}-${yPx}`, xPx, yPx, wPx, hPx, src })
+            })
+
+            parsed.push({ index: i + 1, shapes, images, bgColor })
+          }
+
+          setPptxSlides(parsed)
+        })
+        .catch(() => setPreviewError(true))
     }
-  }, [fileUrl, isDocx, isXlsx])
+  }, [fileUrl, isDocx, isXlsx, isPptx])
+
+  useEffect(() => {
+    const el = pptxViewportRef.current
+    if (!el || !pptxSlides) return
+    const obs = new ResizeObserver(([entry]) => setPptxScale(entry.contentRect.width / 960))
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [pptxSlides])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -174,6 +324,30 @@ export default function FileViewerPage() {
     document.addEventListener("click", close)
     return () => document.removeEventListener("click", close)
   }, [emojiPickerFor])
+
+  function onDragStart(e: React.MouseEvent) {
+    isDragging.current = true
+    dragStartX.current = e.clientX
+    dragStartWidth.current = panelWidth
+    document.body.style.cursor = "col-resize"
+    document.body.style.userSelect = "none"
+
+    const onMove = (ev: MouseEvent) => {
+      if (!isDragging.current) return
+      const delta = dragStartX.current - ev.clientX
+      const next = Math.min(700, Math.max(280, dragStartWidth.current + delta))
+      setPanelWidth(next)
+    }
+    const onUp = () => {
+      isDragging.current = false
+      document.body.style.cursor = ""
+      document.body.style.userSelect = ""
+      window.removeEventListener("mousemove", onMove)
+      window.removeEventListener("mouseup", onUp)
+    }
+    window.addEventListener("mousemove", onMove)
+    window.addEventListener("mouseup", onUp)
+  }
 
   function sendMessage(e: React.FormEvent) {
     e.preventDefault()
@@ -419,25 +593,84 @@ export default function FileViewerPage() {
                   )}
                 </div>
               ) : isPptx ? (
-                <div className="flex flex-1 items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-[#c3c6d5] bg-white p-10 text-center shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#fff3e0]">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f57c00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                pptxPdfUrl ? (
+                  <div className="flex flex-1 overflow-hidden p-6">
+                    <div className="flex flex-1 overflow-hidden rounded-2xl border border-[#c3c6d5] bg-white shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
+                      <iframe src={pptxPdfUrl} title={effectiveFile?.name} className="rounded-2xl border-0" style={{ width: "100%", height: "100%", flex: 1 }} />
                     </div>
-                    <div>
-                      <p className="text-base font-semibold text-[#0b1c30]">PowerPoint Preview</p>
-                      <p className="mt-1 text-sm text-[#737784]">Browser preview isn't supported for .pptx files.<br/>Download to open in PowerPoint or Google Slides.</p>
-                    </div>
-                    {effectiveFile && id && (
-                      <button
-                        onClick={() => downloadFile(id, effectiveFile.name)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
-                      >
-                        <Download size={14} /> Download file
-                      </button>
-                    )}
                   </div>
+                ) : (
+                <div ref={pptxViewportRef} className="flex flex-1 overflow-auto p-6 bg-[#eef0f7]">
+                  {pptxSlides ? (
+                    <div className="w-full space-y-6">
+                      {pptxSlides.map((slide) => (
+                        <div key={slide.index}>
+                          <div style={{ height: Math.round(540 * pptxScale) }}>
+                            <div style={{
+                              width: 960, height: 540,
+                              transform: `scale(${pptxScale})`,
+                              transformOrigin: "top left",
+                              position: "relative",
+                              background: slide.bgColor,
+                              borderRadius: 12,
+                              boxShadow: "0 4px 20px rgba(11,28,48,0.14)",
+                              overflow: "hidden",
+                              fontFamily: "Calibri, 'Segoe UI', Arial, sans-serif",
+                            }}>
+                              {/* Images first (behind text) */}
+                              {slide.images.map((img) => (
+                                <img key={img.id} src={img.src} alt="" style={{
+                                  position: "absolute",
+                                  left: img.xPx, top: img.yPx,
+                                  width: img.wPx, height: img.hPx,
+                                  objectFit: "contain",
+                                }} />
+                              ))}
+                              {/* Text shapes */}
+                              {slide.shapes.map((shape) => (
+                                <div key={shape.id} style={{
+                                  position: "absolute",
+                                  left: shape.xPx, top: shape.yPx,
+                                  width: shape.wPx, height: shape.hPx,
+                                  overflow: "hidden",
+                                }}>
+                                  {shape.paras.map((para, pi) => (
+                                    <p key={pi} style={{ margin: "1px 0", lineHeight: 1.25 }}>
+                                      {para.runs.map((run, ri) => (
+                                        <span key={ri} style={{
+                                          fontWeight: run.bold ? "bold" : "normal",
+                                          fontStyle: run.italic ? "italic" : "normal",
+                                          fontSize: run.sizePx ?? 14,
+                                          color: run.color ?? "inherit",
+                                        }}>
+                                          {run.text}
+                                        </span>
+                                      ))}
+                                    </p>
+                                  ))}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <p className="mt-2 text-center text-[11px] text-[#737784]">Slide {slide.index}</p>
+                        </div>
+                      ))}
+                      {effectiveFile && id && (
+                        <div className="flex justify-center py-2">
+                          <button onClick={() => downloadFile(id, effectiveFile.name)}
+                            className="inline-flex items-center gap-2 rounded-lg border border-[#c3c6d5] bg-white px-4 py-2 text-sm font-medium text-[#0b1c30] hover:bg-[#eff4ff] transition-colors shadow-sm">
+                            <Download size={14} /> Download original .pptx
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-1 items-center justify-center">
+                      <Loader2 className="animate-spin text-[#003c90]" size={26} />
+                    </div>
+                  )}
                 </div>
+                )
               ) : isPreviewable ? (
                 <div className="flex flex-1 overflow-hidden p-6">
                   <div className="flex flex-1 overflow-hidden rounded-2xl border border-[#c3c6d5] bg-white shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
@@ -489,8 +722,15 @@ export default function FileViewerPage() {
           </div>
         </div>
 
+        {/* Drag handle */}
+        <div
+          onMouseDown={onDragStart}
+          className="w-1 shrink-0 cursor-col-resize bg-[#c3c6d5] hover:bg-[#003c90] transition-colors duration-150 active:bg-[#003c90]"
+          title="Drag to resize"
+        />
+
         {/* Comments & Chat / Ask AI Panel */}
-        <div className="flex w-80 shrink-0 flex-col bg-white border-l border-[#c3c6d5]">
+        <div className="flex shrink-0 flex-col bg-white" style={{ width: panelWidth }}>
           {/* Panel tabs */}
           <div className="flex shrink-0 border-b border-[#c3c6d5]">
             {(["chat", "qa"] as const).map((tab) => (
