@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Bot, Send, Loader2, FileQuestion, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Bot, Send, Loader2, FileQuestion, AlertCircle, ChevronDown, ChevronUp, Copy, Check, Trash2 } from "lucide-react";
 import { askDocumentQuestion } from "@/store/documentQAApi";
 
 interface Message {
@@ -20,6 +20,7 @@ export default function DocumentQA({ fileId, fileName }: DocumentQAProps) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [expandedMeta, setExpandedMeta] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -53,6 +54,12 @@ export default function DocumentQA({ fileId, fileName }: DocumentQAProps) {
     }
   }
 
+  async function handleCopy(msgId: string, text: string) {
+    await navigator.clipboard.writeText(text);
+    setCopiedId(msgId);
+    setTimeout(() => setCopiedId(null), 2000);
+  }
+
   const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
   const supported = ["pdf", "docx", "doc", "txt", "json", "md", "csv"].includes(ext);
 
@@ -64,10 +71,19 @@ export default function DocumentQA({ fileId, fileName }: DocumentQAProps) {
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#003c90]">
             <Bot size={14} className="text-white" />
           </div>
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-semibold text-[#0b1c30]">Ask AI</p>
             <p className="text-[10px] text-[#737784]">Questions answered from document content</p>
           </div>
+          {messages.length > 0 && (
+            <button
+              onClick={() => setMessages([])}
+              title="Clear conversation"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-[#737784] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors cursor-pointer bg-transparent border-0"
+            >
+              <Trash2 size={13} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -95,7 +111,7 @@ export default function DocumentQA({ fileId, fileName }: DocumentQAProps) {
               </p>
             </div>
             <div className="flex flex-col gap-2 w-full">
-              {["Summarize this document", "What are the key findings?", "List the main points"].map((s) => (
+              {["Summarize this document", "What are the key findings?", "List the main points", "What steps or procedures are described?"].map((s) => (
                 <button key={s} onClick={() => setInput(s)}
                   className="text-left text-[11px] text-[#003c90] bg-[#eff4ff] hover:bg-[#d9e2ff] border border-[#c3c6d5] rounded-lg px-3 py-2 transition-colors cursor-pointer border-0 font-medium">
                   {s}
@@ -123,16 +139,30 @@ export default function DocumentQA({ fileId, fileName }: DocumentQAProps) {
                 {msg.content}
               </div>
 
-              {/* Meta (sections scanned) */}
-              {msg.meta && (
-                <button
-                  onClick={() => setExpandedMeta(expandedMeta === msg.id ? null : msg.id)}
-                  className="flex items-center gap-1 mt-1 text-[9px] text-[#737784] hover:text-[#434653] cursor-pointer bg-transparent border-0 p-0"
-                >
-                  {expandedMeta === msg.id ? <ChevronUp size={9} /> : <ChevronDown size={9} />}
-                  Scanned {msg.meta.chunksUsed} of {msg.meta.totalChunks} sections
-                </button>
-              )}
+              <div className="flex items-center gap-2 mt-1">
+                {/* Copy button for AI answers */}
+                {msg.role === "assistant" && !msg.error && (
+                  <button
+                    onClick={() => handleCopy(msg.id, msg.content)}
+                    className="flex items-center gap-1 text-[9px] text-[#737784] hover:text-[#434653] cursor-pointer bg-transparent border-0 p-0"
+                    title="Copy answer"
+                  >
+                    {copiedId === msg.id ? <Check size={9} /> : <Copy size={9} />}
+                    {copiedId === msg.id ? "Copied!" : "Copy"}
+                  </button>
+                )}
+
+                {/* Meta (sections scanned) */}
+                {msg.meta && (
+                  <button
+                    onClick={() => setExpandedMeta(expandedMeta === msg.id ? null : msg.id)}
+                    className="flex items-center gap-1 text-[9px] text-[#737784] hover:text-[#434653] cursor-pointer bg-transparent border-0 p-0"
+                  >
+                    {expandedMeta === msg.id ? <ChevronUp size={9} /> : <ChevronDown size={9} />}
+                    Scanned {msg.meta.chunksUsed} of {msg.meta.totalChunks} sections
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}
