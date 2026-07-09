@@ -10,6 +10,7 @@ import { listFilesThunk } from "@/store/filesSlice"
 import AuditLogViewer from "@/components/ui/AuditLogViewer"
 import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel"
 import FileSettingsModal, { type Tab as SettingsTab } from "@/components/FileSettingsModal"
+import DocumentQA from "@/components/DocumentQA"
 
 const TABS = ["Files", "Versions", "Audit Log"]
 
@@ -44,6 +45,7 @@ export default function FileViewerPage() {
   const [emojiPickerFor, setEmojiPickerFor] = useState<string | null>(null)
   const [fileMenuOpen, setFileMenuOpen] = useState(false)
   const [settingsTab, setSettingsTab] = useState<SettingsTab | null>(null)
+  const [rightPanel, setRightPanel] = useState<"chat" | "qa">("chat")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const EMOJI_OPTIONS = ["👍", "❤️", "😂", "😮", "😢", "🔥"]
 
@@ -389,8 +391,34 @@ export default function FileViewerPage() {
           </div>
         </div>
 
-        {/* Comments & Chat Panel */}
+        {/* Comments & Chat / Ask AI Panel */}
         <div className="flex w-80 shrink-0 flex-col bg-white border-l border-[#c3c6d5]">
+          {/* Panel tabs */}
+          <div className="flex shrink-0 border-b border-[#c3c6d5]">
+            {(["chat", "qa"] as const).map((tab) => (
+              <button key={tab} onClick={() => setRightPanel(tab)}
+                className={`flex-1 py-2.5 text-xs font-semibold border-0 cursor-pointer transition-colors ${
+                  rightPanel === tab
+                    ? "text-[#003c90] border-b-2 border-[#003c90] bg-[#d9e2ff]/30"
+                    : "text-[#434653] hover:bg-[#eff4ff] bg-transparent"
+                }`}>
+                {tab === "chat" ? "Chat" : "Ask AI ✨"}
+              </button>
+            ))}
+          </div>
+
+          {/* Ask AI panel */}
+          {rightPanel === "qa" && effectiveFile && (
+            <DocumentQA fileId={id!} fileName={effectiveFile.name} />
+          )}
+          {rightPanel === "qa" && !effectiveFile && (
+            <div className="flex flex-1 items-center justify-center p-6 text-center">
+              <p className="text-sm text-[#737784]">Loading file info…</p>
+            </div>
+          )}
+
+          {/* Chat panel — only shown when tab is "chat" */}
+          {rightPanel === "chat" && <>
           {/* Panel header */}
           <div className="flex shrink-0 flex-col border-b border-[#c3c6d5] px-4 py-3 gap-2">
             <div className="flex items-center justify-between">
@@ -669,9 +697,8 @@ export default function FileViewerPage() {
               </button>
             </form>
           </div>
+          </>}
         </div>
-          </>
-        )}
       </div>
 
       {settingsTab && id && (
