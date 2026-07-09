@@ -94,14 +94,21 @@ export default function FileViewerPage() {
   const mimeType = effectiveFile?.mimeType ?? ""
   const isImage = mimeType.startsWith("image/")
   const isPdf = mimeType === "application/pdf"
+  const isVideo = mimeType.startsWith("video/")
+  const isAudio = mimeType.startsWith("audio/")
   const isText =
     mimeType.startsWith("text/") ||
     mimeType === "application/json" ||
     mimeType === "application/xml"
-  // Only these render inline in the browser. Everything else (Word, Excel,
-  // zip, etc.) would trigger a download if placed in an <iframe>, so we show
-  // a "preview not available" panel instead.
-  const isPreviewable = isImage || isPdf || isText
+  const isOffice = [
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/vnd.ms-powerpoint",
+  ].includes(mimeType)
+  const isPreviewable = isImage || isPdf || isText || isVideo || isAudio || isOffice
   // Owner (admin) is the file uploader. ownerId comes from the server via the
   // socket, so it is authoritative even for collaborators who don't have the
   // file in their own list.
@@ -340,12 +347,42 @@ export default function FileViewerPage() {
                     className="rounded-xl shadow-[0_8px_30px_rgba(11,28,48,0.15)] ring-1 ring-black/5 transition-transform duration-200"
                   />
                 </div>
+              ) : isVideo ? (
+                <div className="flex flex-1 items-center justify-center bg-black overflow-hidden">
+                  <video
+                    src={fileUrl}
+                    controls
+                    className="max-h-full max-w-full"
+                    style={{ outline: "none" }}
+                  />
+                </div>
+              ) : isAudio ? (
+                <div className="flex flex-1 items-center justify-center p-8">
+                  <div className="flex flex-col items-center gap-6 rounded-2xl border border-[#c3c6d5] bg-white p-10 shadow-[0_8px_30px_rgba(11,28,48,0.08)] w-full max-w-lg">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#d9e2ff]">
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#003c90" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </div>
+                    <p className="text-sm font-semibold text-[#0b1c30]">{effectiveFile?.name}</p>
+                    <audio src={fileUrl} controls className="w-full" />
+                  </div>
+                </div>
+              ) : isOffice ? (
+                <div className="flex flex-1 overflow-hidden p-6">
+                  <div className="flex flex-1 overflow-hidden rounded-2xl border border-[#c3c6d5] bg-white shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
+                    <iframe
+                      src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`}
+                      title={effectiveFile?.name ?? "File"}
+                      className="rounded-2xl border-0"
+                      style={{ width: "100%", height: "100%", flex: 1 }}
+                    />
+                  </div>
+                </div>
               ) : isPreviewable ? (
                 <div className="flex flex-1 overflow-hidden p-6">
                   <div className="flex flex-1 overflow-hidden rounded-2xl border border-[#c3c6d5] bg-white shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
                     <iframe
                       src={fileUrl}
-                      title={file?.name ?? "File"}
+                      title={effectiveFile?.name ?? "File"}
                       className="rounded-2xl border-0"
                       style={{ width: "100%", height: "100%", flex: 1 }}
                     />
@@ -699,6 +736,9 @@ export default function FileViewerPage() {
           </div>
           </>}
         </div>
+          </>
+        )
+        }
       </div>
 
       {settingsTab && id && (
