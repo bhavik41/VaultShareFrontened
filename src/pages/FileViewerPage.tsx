@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { AtSign, ChevronLeft, ChevronRight, Download, Link as LinkIcon, Loader2, Lock, MoreVertical, Minus, Plus, Reply, Send, ShieldCheck, UserPlus, X } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
@@ -46,6 +46,9 @@ export default function FileViewerPage() {
   const [fileMenuOpen, setFileMenuOpen] = useState(false)
   const [settingsTab, setSettingsTab] = useState<SettingsTab | null>(null)
   const [rightPanel, setRightPanel] = useState<"chat" | "qa">("chat")
+  const [docxHtml, setDocxHtml] = useState<string | null>(null)
+  const [xlsxHtml, setXlsxHtml] = useState<string | null>(null)
+  const docxContainerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const EMOJI_OPTIONS = ["👍", "❤️", "😂", "😮", "😢", "🔥"]
 
@@ -100,15 +103,10 @@ export default function FileViewerPage() {
     mimeType.startsWith("text/") ||
     mimeType === "application/json" ||
     mimeType === "application/xml"
-  const isOffice = [
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    "application/vnd.ms-powerpoint",
-  ].includes(mimeType)
-  const isPreviewable = isImage || isPdf || isText || isVideo || isAudio || isOffice
+  const isDocx = mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || mimeType === "application/msword"
+  const isXlsx = mimeType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || mimeType === "application/vnd.ms-excel"
+  const isPptx = mimeType === "application/vnd.openxmlformats-officedocument.presentationml.presentation" || mimeType === "application/vnd.ms-powerpoint"
+  const isPreviewable = isImage || isPdf || isText || isVideo || isAudio || isDocx || isXlsx
   // Owner (admin) is the file uploader. ownerId comes from the server via the
   // socket, so it is authoritative even for collaborators who don't have the
   // file in their own list.
@@ -132,6 +130,32 @@ export default function FileViewerPage() {
       if (objectUrl) window.URL.revokeObjectURL(objectUrl)
     }
   }, [id])
+
+  useEffect(() => {
+    if (!fileUrl) return
+    if (isDocx) {
+      fetch(fileUrl)
+        .then((r) => r.arrayBuffer())
+        .then(async (buf) => {
+          const { renderAsync } = await import("docx-preview")
+          const container = document.createElement("div")
+          await renderAsync(buf, container, undefined, { className: "docx-preview" })
+          setDocxHtml(container.innerHTML)
+        })
+        .catch(() => setPreviewError(true))
+    } else if (isXlsx) {
+      fetch(fileUrl)
+        .then((r) => r.arrayBuffer())
+        .then(async (buf) => {
+          const XLSX = await import("xlsx")
+          const wb = XLSX.read(buf, { type: "array" })
+          const ws = wb.Sheets[wb.SheetNames[0]]
+          const html = XLSX.utils.sheet_to_html(ws, { id: "xlsx-table" })
+          setXlsxHtml(html)
+        })
+        .catch(() => setPreviewError(true))
+    }
+  }, [fileUrl, isDocx, isXlsx])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -366,15 +390,52 @@ export default function FileViewerPage() {
                     <audio src={fileUrl} controls className="w-full" />
                   </div>
                 </div>
-              ) : isOffice ? (
-                <div className="flex flex-1 overflow-hidden p-6">
-                  <div className="flex flex-1 overflow-hidden rounded-2xl border border-[#c3c6d5] bg-white shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
-                    <iframe
-                      src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`}
-                      title={effectiveFile?.name ?? "File"}
-                      className="rounded-2xl border-0"
-                      style={{ width: "100%", height: "100%", flex: 1 }}
+              ) : isDocx ? (
+                <div className="flex flex-1 overflow-auto p-6 bg-[#eef0f7]">
+                  {docxHtml ? (
+                    <div
+                      ref={docxContainerRef}
+                      className="mx-auto bg-white rounded-2xl shadow-[0_8px_30px_rgba(11,28,48,0.08)] p-8 max-w-4xl w-full"
+                      dangerouslySetInnerHTML={{ __html: docxHtml }}
                     />
+                  ) : (
+                    <div className="flex flex-1 items-center justify-center">
+                      <Loader2 className="animate-spin text-[#003c90]" size={26} />
+                    </div>
+                  )}
+                </div>
+              ) : isXlsx ? (
+                <div className="flex flex-1 overflow-auto p-6 bg-[#eef0f7]">
+                  {xlsxHtml ? (
+                    <div
+                      className="mx-auto bg-white rounded-2xl shadow-[0_8px_30px_rgba(11,28,48,0.08)] p-4 w-full overflow-x-auto"
+                      dangerouslySetInnerHTML={{ __html: xlsxHtml }}
+                      style={{ fontSize: 13 }}
+                    />
+                  ) : (
+                    <div className="flex flex-1 items-center justify-center">
+                      <Loader2 className="animate-spin text-[#003c90]" size={26} />
+                    </div>
+                  )}
+                </div>
+              ) : isPptx ? (
+                <div className="flex flex-1 items-center justify-center p-8">
+                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-[#c3c6d5] bg-white p-10 text-center shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#fff3e0]">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f57c00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold text-[#0b1c30]">PowerPoint Preview</p>
+                      <p className="mt-1 text-sm text-[#737784]">Browser preview isn't supported for .pptx files.<br/>Download to open in PowerPoint or Google Slides.</p>
+                    </div>
+                    {effectiveFile && id && (
+                      <button
+                        onClick={() => downloadFile(id, effectiveFile.name)}
+                        className="inline-flex items-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                      >
+                        <Download size={14} /> Download file
+                      </button>
+                    )}
                   </div>
                 </div>
               ) : isPreviewable ? (
