@@ -195,7 +195,7 @@ export default function FileSettingsModal({ fileId, fileName, initialTab, onClos
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-5">
+        <div className="flex-1 min-h-0 overflow-y-auto p-5">
 
           {/* ── SHARING TAB ── */}
           {activeTab === "sharing" && (

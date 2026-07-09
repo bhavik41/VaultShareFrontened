@@ -674,10 +674,10 @@ export default function FileViewerPage() {
         )}
       </div>
 
-      {settingsTab && id && effectiveFile && (
+      {settingsTab && id && (
         <FileSettingsModal
           fileId={id}
-          fileName={effectiveFile.name}
+          fileName={effectiveFile?.name ?? ""}
           initialTab={settingsTab}
           onClose={() => setSettingsTab(null)}
         />

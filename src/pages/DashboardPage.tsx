@@ -398,7 +398,8 @@ export default function DashboardPage() {
       {activeMenuId && menuPos && activeDoc && (
         <div className="fixed z-[200] bg-white border border-[#c3c6d5] rounded-xl shadow-xl py-1 w-48"
           style={{ top: Math.min(menuPos.y, window.innerHeight - 280), left: Math.min(menuPos.x, window.innerWidth - 200) }}
-          onClick={e => e.stopPropagation()}>
+          onClick={e => e.stopPropagation()}
+          onMouseDown={e => e.stopPropagation()}>
           {[
             { icon: <Eye size={14} />,          label: "Open",          action: () => { setActiveMenuId(null); navigate(`/files/${activeDoc.id}`); } },
             { icon: <Download size={14} />,     label: "Download",      action: () => handleDownload(activeDoc.id, activeDoc.name), hide: !(activeDoc.ownership==="owned"||activeDoc.accessLevel==="editor") },
