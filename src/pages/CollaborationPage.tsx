@@ -1,235 +1,130 @@
-﻿import { useEffect, useState } from "react"
-import { Link as RouterLink, useNavigate } from "react-router-dom"
-import {
-  Check,
-  Download,
-  Eye,
-  FileText,
-  Loader2,
-  Mail,
-  RefreshCw,
-  X,
-} from "lucide-react"
-import type {
-  CollaborationInvitation,
-  SharedFile,
-} from "@/store/collaborationApi"
-import {
-  getFilesSharedWithMe,
-  getMyInvitations,
-  respondToInvitation,
-} from "@/store/collaborationApi"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Check, Download, Eye, FileText, Loader2, Mail, RefreshCw, X } from "lucide-react"
+import type { CollaborationInvitation, SharedFile } from "@/store/collaborationApi"
+import { getFilesSharedWithMe, getMyInvitations, respondToInvitation } from "@/store/collaborationApi"
 import { downloadFile } from "@/store/filesApi"
 
 function formatDate(value: string) {
-  return new Date(value).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  })
+  return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
 }
 
-function getStatusClass(status: CollaborationInvitation["status"]) {
-  if (status === "accepted") {
-    return "bg-emerald-500/15 text-emerald-200"
-  }
-
-  if (status === "rejected") {
-    return "bg-red-500/15 text-red-200"
-  }
-
-  return "bg-amber-500/15 text-amber-200"
+function StatusBadge({ status }: { status: CollaborationInvitation["status"] }) {
+  const cls =
+    status === "accepted" ? "bg-[#6cf8bb]/20 text-[#006c49] border border-[#006c49]/20" :
+    status === "rejected" ? "bg-[#ffdad6]/50 text-[#ba1a1a] border border-[#ba1a1a]/20" :
+                            "bg-[#ffddb8]/40 text-[#5c3800] border border-[#5c3800]/20"
+  return <span className={`rounded-md px-2 py-1 text-xs font-semibold ${cls}`}>{status}</span>
 }
+
+const cardCls = "rounded-xl border border-[#c3c6d5] bg-white p-5 shadow-sm"
+const rowCls  = "rounded-lg border border-[#e5eeff] bg-[#f8f9ff] p-3"
 
 export default function CollaborationPage() {
   const navigate = useNavigate()
-  const [invitations, setInvitations] = useState<CollaborationInvitation[]>([])
-  const [sharedFiles, setSharedFiles] = useState<SharedFile[]>([])
-  const [loading, setLoading] = useState(true)
+  const [invitations, setInvitations]   = useState<CollaborationInvitation[]>([])
+  const [sharedFiles, setSharedFiles]   = useState<SharedFile[]>([])
+  const [loading, setLoading]           = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const [error, setError]               = useState("")
+  const [success, setSuccess]           = useState("")
 
-  async function loadCollaborationData() {
+  async function loadData() {
     try {
-      setLoading(true)
-      setError("")
-      const [invitationList, sharedFileList] = await Promise.all([
-        getMyInvitations(),
-        getFilesSharedWithMe(),
-      ])
-      setInvitations(invitationList)
-      setSharedFiles(sharedFileList)
-    } catch {
-      setError("Unable to load collaboration data.")
-    } finally {
-      setLoading(false)
-    }
+      setLoading(true); setError("")
+      const [invs, files] = await Promise.all([getMyInvitations(), getFilesSharedWithMe()])
+      setInvitations(invs); setSharedFiles(files)
+    } catch { setError("Unable to load collaboration data.") }
+    finally { setLoading(false) }
   }
 
-  useEffect(() => {
-    loadCollaborationData()
-  }, [])
+  useEffect(() => { loadData() }, [])
 
-  async function handleInvitationResponse(
-    invitationId: string,
-    status: "accepted" | "rejected",
-  ) {
+  async function handleResponse(id: string, status: "accepted" | "rejected") {
     try {
-      setActionLoading(invitationId)
-      setError("")
-      setSuccess("")
-      await respondToInvitation(invitationId, status)
+      setActionLoading(id); setError(""); setSuccess("")
+      await respondToInvitation(id, status)
       setSuccess(`Invitation ${status}.`)
-      await loadCollaborationData()
-    } catch {
-      setError(`Unable to ${status} invitation.`)
-    } finally {
-      setActionLoading(null)
-    }
+      await loadData()
+    } catch { setError(`Unable to ${status} invitation.`) }
+    finally { setActionLoading(null) }
   }
 
-  async function handleDownloadFile(file: SharedFile) {
-    try {
-      setActionLoading(file.id)
-      setError("")
-      await downloadFile(file.id, file.name)
-    } catch {
-      setError("Unable to download this file.")
-    } finally {
-      setActionLoading(null)
-    }
+  async function handleDownload(file: SharedFile) {
+    try { setActionLoading(file.id); setError(""); await downloadFile(file.id, file.name) }
+    catch { setError("Unable to download this file.") }
+    finally { setActionLoading(null) }
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-white/10 bg-slate-950/95">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <RouterLink to="/dashboard" className="text-lg font-semibold text-white">
-            VaultShare
-          </RouterLink>
-
-          <div className="flex gap-2">
-            <RouterLink
-              to="/file-sharing"
-              className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white hover:bg-white/10"
-            >
-              Manage Sharing
-            </RouterLink>
-
-            <button
-              type="button"
-              onClick={loadCollaborationData}
-              className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white hover:bg-white/10"
-            >
-              <RefreshCw size={16} />
-              Refresh
-            </button>
-          </div>
-        </div>
-      </header>
-
+    <div className="flex-1 overflow-y-auto bg-[#f8f9ff]">
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Collaboration</h1>
-          <p className="mt-2 text-sm text-slate-400">
-            Manage invitations, accepted access, and files shared with you.
-          </p>
+
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-[#0b1c30] font-display">Collaboration</h1>
+            <p className="mt-1 text-sm text-[#434653]">Manage invitations and files shared with you.</p>
+          </div>
+          <button type="button" onClick={loadData}
+            className="inline-flex items-center gap-2 rounded-lg border border-[#c3c6d5] bg-white px-4 py-2 text-sm font-medium text-[#434653] hover:bg-[#eff4ff] transition-colors cursor-pointer">
+            <RefreshCw size={15} />Refresh
+          </button>
         </div>
 
         {error && (
-          <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-            {error}
-          </div>
+          <div className="mb-4 rounded-lg border border-[#ba1a1a]/20 bg-[#ffdad6]/40 px-4 py-3 text-sm font-medium text-[#ba1a1a]">{error}</div>
         )}
-
         {success && (
-          <div className="mb-4 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-            {success}
-          </div>
+          <div className="mb-4 rounded-lg border border-[#006c49]/20 bg-[#6cf8bb]/20 px-4 py-3 text-sm font-medium text-[#006c49]">{success}</div>
         )}
 
         {loading ? (
-          <div className="flex items-center gap-2 text-slate-300">
-            <Loader2 className="animate-spin" size={18} />
-            Loading collaboration data...
+          <div className="flex items-center gap-2 text-sm text-[#434653]">
+            <Loader2 className="animate-spin text-[#003c90]" size={18} />Loading…
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
-            <section className="rounded-lg border border-white/10 bg-white/3 p-5">
-              <div className="mb-4 flex items-center gap-2">
-                <Mail size={18} className="text-violet-300" />
-                <h2 className="text-lg font-semibold">Invitation History</h2>
-              </div>
 
+            {/* Invitations */}
+            <section className={cardCls}>
+              <div className="mb-4 flex items-center gap-2">
+                <Mail size={17} className="text-[#003c90]" />
+                <h2 className="text-base font-semibold text-[#0b1c30]">Invitation History</h2>
+              </div>
               {invitations.length === 0 ? (
-                <p className="text-sm text-slate-400">
-                  You do not have any invitations.
-                </p>
+                <p className="text-sm text-[#737784]">You have no invitations.</p>
               ) : (
                 <div className="space-y-3">
-                  {invitations.map((invitation) => (
-                    <div
-                      key={invitation.id}
-                      className="rounded-md border border-white/10 bg-slate-900 p-4"
-                    >
+                  {invitations.map(inv => (
+                    <div key={inv.id} className={rowCls}>
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <p className="font-medium">
-                            {invitation.fileName ?? "Shared file"}
+                          <p className="text-sm font-semibold text-[#0b1c30]">{inv.fileName ?? "Shared file"}</p>
+                          <p className="mt-0.5 text-xs text-[#434653]">
+                            Invited by <span className="font-medium">{inv.inviterName}</span> as{" "}
+                            <span className="font-semibold text-[#003c90]">{inv.role}</span>
                           </p>
-                          <p className="mt-1 text-sm text-slate-400">
-                            Invited by {invitation.inviterName} as{" "}
-                            <span className="text-violet-200">
-                              {invitation.role}
-                            </span>
-                          </p>
-                          <p className="mt-1 text-xs text-slate-500">
-                            Created {formatDate(invitation.createdAt)}
-                            {invitation.respondedAt
-                              ? ` • Responded ${formatDate(invitation.respondedAt)}`
-                              : ""}
+                          <p className="mt-0.5 text-xs text-[#737784]">
+                            Created {formatDate(inv.createdAt)}
+                            {inv.respondedAt ? ` · Responded ${formatDate(inv.respondedAt)}` : ""}
                           </p>
                         </div>
-
                         <div className="flex shrink-0 items-center gap-2">
-                          <span
-                            className={`rounded-md px-2 py-1 text-xs font-medium ${getStatusClass(
-                              invitation.status,
-                            )}`}
-                          >
-                            {invitation.status}
-                          </span>
-
-                          {invitation.status === "pending" && (
+                          <StatusBadge status={inv.status} />
+                          {inv.status === "pending" && (
                             <>
-                              <button
-                                type="button"
-                                disabled={actionLoading === invitation.id}
-                                onClick={() =>
-                                  handleInvitationResponse(
-                                    invitation.id,
-                                    "accepted",
-                                  )
-                                }
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-60"
-                                title="Accept invitation"
-                              >
-                                <Check size={16} />
+                              <button type="button" disabled={actionLoading === inv.id}
+                                onClick={() => handleResponse(inv.id, "accepted")}
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#006c49] text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
+                                title="Accept">
+                                <Check size={15} />
                               </button>
-                              <button
-                                type="button"
-                                disabled={actionLoading === invitation.id}
-                                onClick={() =>
-                                  handleInvitationResponse(
-                                    invitation.id,
-                                    "rejected",
-                                  )
-                                }
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white hover:bg-red-500 disabled:opacity-60"
-                                title="Reject invitation"
-                              >
-                                <X size={16} />
+                              <button type="button" disabled={actionLoading === inv.id}
+                                onClick={() => handleResponse(inv.id, "rejected")}
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#ba1a1a] text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
+                                title="Reject">
+                                <X size={15} />
                               </button>
                             </>
                           )}
@@ -241,56 +136,35 @@ export default function CollaborationPage() {
               )}
             </section>
 
-            <section className="rounded-lg border border-white/10 bg-white/3 p-5">
+            {/* Shared with me */}
+            <section className={cardCls}>
               <div className="mb-4 flex items-center gap-2">
-                <FileText size={18} className="text-violet-300" />
-                <h2 className="text-lg font-semibold">Shared With Me</h2>
+                <FileText size={17} className="text-[#003c90]" />
+                <h2 className="text-base font-semibold text-[#0b1c30]">Shared With Me</h2>
               </div>
-
               {sharedFiles.length === 0 ? (
-                <p className="text-sm text-slate-400">
-                  No files have been shared with you yet.
-                </p>
+                <p className="text-sm text-[#737784]">No files have been shared with you yet.</p>
               ) : (
                 <div className="space-y-3">
-                  {sharedFiles.map((file) => (
-                    <div
-                      key={file.id}
-                      className="rounded-md border border-white/10 bg-slate-900 p-4"
-                    >
+                  {sharedFiles.map(file => (
+                    <div key={file.id} className={rowCls}>
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <p className="font-medium">{file.name}</p>
-                          <p className="mt-1 text-sm text-slate-400">
-                            Owner: {file.ownerName}
-                          </p>
-                          <p className="mt-1 text-xs text-slate-500">
-                            Shared {formatDate(file.sharedAt)}
-                          </p>
+                          <p className="text-sm font-semibold text-[#0b1c30]">{file.name}</p>
+                          <p className="mt-0.5 text-xs text-[#434653]">Owner: <span className="font-medium">{file.ownerName}</span></p>
+                          <p className="mt-0.5 text-xs text-[#737784]">Shared {formatDate(file.sharedAt)}</p>
                         </div>
-
                         <div className="flex items-center gap-2">
-                          <span className="rounded-md bg-violet-500/15 px-2 py-1 text-xs font-medium text-violet-200">
-                            {file.role}
-                          </span>
-
-                          <button
-                            type="button"
-                            onClick={() => navigate(`/files/${file.id}`)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/5 text-white hover:bg-white/10"
-                            title="Open file"
-                          >
-                            <Eye size={16} />
+                          <span className="rounded-md px-2 py-1 text-xs font-semibold bg-[#d9e2ff] text-[#003c90]">{file.role}</span>
+                          <button type="button" onClick={() => navigate(`/files/${file.id}`)}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#c3c6d5] bg-white text-[#434653] hover:bg-[#eff4ff] cursor-pointer"
+                            title="Open file">
+                            <Eye size={15} />
                           </button>
-
-                          <button
-                            type="button"
-                            disabled={actionLoading === file.id}
-                            onClick={() => handleDownloadFile(file)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-60"
-                            title="Download file"
-                          >
-                            <Download size={16} />
+                          <button type="button" disabled={actionLoading === file.id} onClick={() => handleDownload(file)}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#003c90] text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
+                            title="Download">
+                            <Download size={15} />
                           </button>
                         </div>
                       </div>
@@ -299,10 +173,10 @@ export default function CollaborationPage() {
                 </div>
               )}
             </section>
+
           </div>
         )}
       </main>
     </div>
   )
 }
-
