@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { verifySigninOtpThunk, clearOtpState } from "@/store/authSlice"
+import { verifySigninOtpThunk, verifySignupEmailOtpThunk, clearOtpState } from "@/store/authSlice"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { Mail, Loader2 } from "lucide-react"
 
 export default function EmailOtpPrompt() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { loading, error, token } = useAppSelector((s) => s.auth)
+  const { loading, error, token, otpType } = useAppSelector((s) => s.auth)
   const [code, setCode] = useState("")
 
   useEffect(() => {
@@ -16,7 +16,11 @@ export default function EmailOtpPrompt() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await dispatch(verifySigninOtpThunk({ otp: code }))
+    if (otpType === 'signup') {
+      await dispatch(verifySignupEmailOtpThunk({ otp: code }))
+    } else {
+      await dispatch(verifySigninOtpThunk({ otp: code }))
+    }
   }
 
   return (
@@ -69,10 +73,10 @@ export default function EmailOtpPrompt() {
           <div className="mt-4 text-center">
             <button
               type="button"
-              onClick={() => { dispatch(clearOtpState()); navigate("/signin") }}
+              onClick={() => { dispatch(clearOtpState()); navigate(otpType === 'signup' ? "/signup" : "/signin") }}
               className="text-violet-600 hover:text-violet-700 text-base transition-colors border-0 bg-transparent cursor-pointer"
             >
-              ← Return to sign in
+              ← Return to {otpType === 'signup' ? 'sign up' : 'sign in'}
             </button>
           </div>
         </div>
