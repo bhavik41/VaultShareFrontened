@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import {
-  Copy, Link, Loader2, Mail, RefreshCw, Share2,
+  Copy, Link, Loader2, Lock, Mail, RefreshCw, Share2,
   ShieldCheck, Trash2, UserPlus, Users,
 } from "lucide-react"
 import type { UploadedFile } from "@/store/filesApi"
@@ -170,7 +170,17 @@ export default function FileSharingPage() {
                         ? "border-[#003c90]/30 bg-[#d9e2ff] border-l-4 border-l-[#003c90]"
                         : "border-[#c3c6d5] bg-[#f8f9ff] hover:bg-[#eff4ff]"
                     }`}>
-                    <p className="truncate text-sm font-semibold text-[#0b1c30]">{file.name}</p>
+                    <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-[#0b1c30]">
+                      <span className="truncate">{file.name}</span>
+                      {file.isEncrypted && (
+                        <span
+                          title="End-to-end encrypted"
+                          className="inline-flex shrink-0 items-center gap-0.5 rounded bg-[#6cf8bb]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#006c49]"
+                        >
+                          <Lock size={9} />Encrypted
+                        </span>
+                      )}
+                    </p>
                     <p className="mt-0.5 text-xs text-[#737784]">{formatSize(file.size)} · {formatDate(file.createdAt)}</p>
                   </button>
                 ))}
@@ -183,7 +193,17 @@ export default function FileSharingPage() {
               {selectedFile && (
                 <div className={cardCls}>
                   <p className="text-xs text-[#737784] font-medium uppercase tracking-wider mb-1">Selected file</p>
-                  <h2 className="text-lg font-bold text-[#0b1c30] font-display truncate">{selectedFile.name}</h2>
+                  <h2 className="flex items-center gap-2 text-lg font-bold text-[#0b1c30] font-display truncate">
+                    <span className="truncate">{selectedFile.name}</span>
+                    {selectedFile.isEncrypted && (
+                      <span
+                        title="End-to-end encrypted"
+                        className="inline-flex shrink-0 items-center gap-1 rounded bg-[#6cf8bb]/20 px-2 py-0.5 text-xs font-semibold text-[#006c49]"
+                      >
+                        <Lock size={11} />Encrypted
+                      </span>
+                    )}
+                  </h2>
                   <p className="text-sm text-[#434653] mt-0.5">{selectedFile.mimeType} · {formatSize(selectedFile.size)}</p>
                 </div>
               )}
