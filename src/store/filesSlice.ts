@@ -2,7 +2,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import api from "./api";
-import { decryptBuffer, loadKey } from "@/utils/crypto";
+import { decryptBuffer, loadKey, KEY_NOT_FOUND_MESSAGE } from "@/utils/crypto";
+
+export { KEY_NOT_FOUND_MESSAGE };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -115,6 +117,17 @@ export const listFilesThunk = createAsyncThunk<
   }
 });
 
+function triggerBlobDownload(blob: Blob, fileName: string) {
+  const objectUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = fileName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+}
+
 /**
  * downloadFileThunk
  * GET /api/files/:id/download
@@ -138,20 +151,46 @@ export const downloadFileThunk = createAsyncThunk<
     if (isEncrypted) {
       const keyBase64url = loadKey(fileId);
       if (!keyBase64url) {
-        return rejectWithValue("Encryption key not found. Cannot decrypt this file.");
+        return rejectWithValue(KEY_NOT_FOUND_MESSAGE);
       }
       const encBuffer = await blob.arrayBuffer();
       blob = await decryptBuffer(encBuffer, keyBase64url, mimeType ?? "application/octet-stream");
     }
 
-    const objectUrl = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = objectUrl;
-    anchor.download = fileName;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+    triggerBlobDownload(blob, fileName);
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.message ?? err.message ?? "Download failed.");
+  }
+});
+
+/**
+ * downloadFileWithKeyThunk
+ * Retries a failed encrypted download using a manually-provided key (the
+ * "Key not found" recovery flow). On success the key is persisted via
+ * storeKey so future downloads of this file don't need it re-entered.
+ */
+export const downloadFileWithKeyThunk = createAsyncThunk<
+  void,
+  { fileId: string; fileName: string; keyBase64url: string; mimeType?: string },
+  { rejectValue: string }
+>("files/downloadWithKey", async ({ fileId, fileName, keyBase64url, mimeType }, { rejectWithValue }) => {
+  try {
+    const response = await api.get(`/files/${fileId}/download`, {
+      responseType: "blob",
+    });
+    const encBuffer = await (response.data as Blob).arrayBuffer();
+
+    let blob: Blob;
+    try {
+      blob = await decryptBuffer(encBuffer, keyBase64url, mimeType ?? "application/octet-stream");
+    } catch {
+      return rejectWithValue("This key couldn't decrypt the file. Check that you pasted it correctly.");
+    }
+
+    const { storeKey } = await import("@/utils/crypto");
+    storeKey(fileId, keyBase64url);
+
+    triggerBlobDownload(blob, fileName);
   } catch (err: any) {
     return rejectWithValue(err.response?.data?.message ?? err.message ?? "Download failed.");
   }
@@ -266,6 +305,22 @@ const filesSlice = createSlice({
           (id) => id !== a.meta.arg.fileId,
         );
         s.error = a.payload ?? "Download failed.";
+      });
+
+    // ── download with manually-provided key (recovery flow) ───────────────────
+    builder
+      .addCase(downloadFileWithKeyThunk.pending, (s, a) => {
+        s.downloadingIds.push(a.meta.arg.fileId);
+      })
+      .addCase(downloadFileWithKeyThunk.fulfilled, (s, a) => {
+        s.downloadingIds = s.downloadingIds.filter(
+          (id) => id !== a.meta.arg.fileId,
+        );
+      })
+      .addCase(downloadFileWithKeyThunk.rejected, (s, a) => {
+        s.downloadingIds = s.downloadingIds.filter(
+          (id) => id !== a.meta.arg.fileId,
+        );
       });
 
     // ── signed URL ─────────────────────────────────────────────────────────────

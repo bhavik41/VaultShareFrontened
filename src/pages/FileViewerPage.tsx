@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { AtSign, ChevronLeft, ChevronRight, Download, Link as LinkIcon, Loader2, Lock, MoreVertical, Minus, Plus, Reply, Send, ShieldCheck, UserPlus, X } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
-import { getFileSignedUrl, downloadFile } from "@/store/filesApi"
+import { getFileSignedUrl, downloadFile, downloadFileWithKey, KEY_NOT_FOUND_MESSAGE } from "@/store/filesApi"
+import KeyRecoveryModal from "@/components/KeyRecoveryModal"
 import api from "@/store/api"
 import { useChat } from "@/hooks/useChat"
 import { useAppDispatch } from "@/store/hooks"
@@ -58,6 +59,9 @@ export default function FileViewerPage() {
   const [pptxScale, setPptxScale] = useState(1)
   const [pptxPdfUrl, setPptxPdfUrl] = useState<string | null>(null)
   const [panelWidth, setPanelWidth] = useState(320)
+  const [keyRecovery, setKeyRecovery] = useState<{ fileId: string; fileName: string } | null>(null)
+  const [recoverySubmitting, setRecoverySubmitting] = useState(false)
+  const [recoveryError, setRecoveryError] = useState("")
   const isDragging = useRef(false)
   const dragStartX = useRef(0)
   const dragStartWidth = useRef(0)
@@ -121,6 +125,33 @@ export default function FileViewerPage() {
   const isXlsx = mimeType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || mimeType === "application/vnd.ms-excel"
   const isPptx = mimeType === "application/vnd.openxmlformats-officedocument.presentationml.presentation" || mimeType === "application/vnd.ms-powerpoint"
   const isPreviewable = isImage || isPdf || isText || isVideo || isAudio || isDocx || isXlsx
+  const isEncrypted = file?.isEncrypted ?? false
+
+  // Decrypts in-browser when the file is encrypted; routes to the key
+  // recovery modal instead of silently saving raw ciphertext if the local
+  // decryption key is missing.
+  function handleDownloadClick(fileId: string, fileName: string) {
+    downloadFile(fileId, fileName, { isEncrypted, mimeType }).catch((err: Error) => {
+      if (err.message === KEY_NOT_FOUND_MESSAGE) {
+        setRecoveryError("")
+        setKeyRecovery({ fileId, fileName })
+      }
+    })
+  }
+
+  async function handleRecoverySubmit(key: string) {
+    if (!keyRecovery) return
+    setRecoverySubmitting(true)
+    setRecoveryError("")
+    try {
+      await downloadFileWithKey(keyRecovery.fileId, keyRecovery.fileName, key, mimeType)
+      setKeyRecovery(null)
+    } catch (err: any) {
+      setRecoveryError(err?.message ?? "Failed to decrypt with this key.")
+    } finally {
+      setRecoverySubmitting(false)
+    }
+  }
   // Owner (admin) is the file uploader. ownerId comes from the server via the
   // socket, so it is authoritative even for collaborators who don't have the
   // file in their own list.
@@ -521,7 +552,7 @@ export default function FileViewerPage() {
                     </div>
                     {effectiveFile && id && (
                       <button
-                        onClick={() => downloadFile(id, effectiveFile.name)}
+                        onClick={() => handleDownloadClick(id, effectiveFile.name)}
                         className="inline-flex items-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
                       >
                         <Download size={14} /> Download file
@@ -657,7 +688,7 @@ export default function FileViewerPage() {
                       ))}
                       {effectiveFile && id && (
                         <div className="flex justify-center py-2">
-                          <button onClick={() => downloadFile(id, effectiveFile.name)}
+                          <button onClick={() => handleDownloadClick(id, effectiveFile.name)}
                             className="inline-flex items-center gap-2 rounded-lg border border-[#c3c6d5] bg-white px-4 py-2 text-sm font-medium text-[#0b1c30] hover:bg-[#eff4ff] transition-colors shadow-sm">
                             <Download size={14} /> Download original .pptx
                           </button>
@@ -695,7 +726,7 @@ export default function FileViewerPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() => file && downloadFile(file.id, file.name)}
+                      onClick={() => file && handleDownloadClick(file.id, file.name)}
                       className="inline-flex items-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
                     >
                       <Download size={14} /> Download file
@@ -1048,6 +1079,16 @@ export default function FileViewerPage() {
           fileName={effectiveFile?.name ?? ""}
           initialTab={settingsTab}
           onClose={() => setSettingsTab(null)}
+        />
+      )}
+
+      {keyRecovery && (
+        <KeyRecoveryModal
+          fileName={keyRecovery.fileName}
+          submitting={recoverySubmitting}
+          error={recoveryError}
+          onCancel={() => setKeyRecovery(null)}
+          onSubmit={handleRecoverySubmit}
         />
       )}
     </div>

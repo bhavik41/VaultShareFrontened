@@ -6,9 +6,13 @@ import {
   listFilesThunk,
   deleteFileThunk,
   downloadFileThunk,
+  downloadFileWithKeyThunk,
   getSignedUrlThunk,
+  KEY_NOT_FOUND_MESSAGE,
   type UploadedFile,
 } from "@/store/filesSlice";
+import KeyRecoveryModal from "@/components/KeyRecoveryModal";
+import KeyBackupModal from "@/components/KeyBackupModal";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -631,6 +635,10 @@ export default function UploadPage() {
   const [dragging, setDragging] = useState(false);
   const [modalUrl, setModalUrl] = useState<string | null>(null);
   const [encryptUploads, setEncryptUploads] = useState(false);
+  const [keyRecovery, setKeyRecovery] = useState<{ fileId: string; fileName: string; mimeType: string } | null>(null);
+  const [recoverySubmitting, setRecoverySubmitting] = useState(false);
+  const [recoveryError, setRecoveryError] = useState("");
+  const [showKeyBackup, setShowKeyBackup] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const colorIdx = useRef(0);
 
@@ -739,7 +747,35 @@ export default function UploadPage() {
 
   // ── Download — decrypts in-browser when isEncrypted ───────────────────────
   const handleDownload = (fileId: string, fileName: string, isEncrypted: boolean, mimeType: string) => {
-    dispatch(downloadFileThunk({ fileId, fileName, isEncrypted, mimeType }));
+    dispatch(downloadFileThunk({ fileId, fileName, isEncrypted, mimeType }))
+      .unwrap()
+      .catch((msg: string) => {
+        if (msg === KEY_NOT_FOUND_MESSAGE) {
+          setRecoveryError("");
+          setKeyRecovery({ fileId, fileName, mimeType });
+        }
+      });
+  };
+
+  const handleRecoverySubmit = async (key: string) => {
+    if (!keyRecovery) return;
+    setRecoverySubmitting(true);
+    setRecoveryError("");
+    try {
+      await dispatch(
+        downloadFileWithKeyThunk({
+          fileId: keyRecovery.fileId,
+          fileName: keyRecovery.fileName,
+          mimeType: keyRecovery.mimeType,
+          keyBase64url: key,
+        }),
+      ).unwrap();
+      setKeyRecovery(null);
+    } catch (msg: any) {
+      setRecoveryError(typeof msg === "string" ? msg : "Failed to decrypt with this key.");
+    } finally {
+      setRecoverySubmitting(false);
+    }
   };
 
   // ── Preview — fetch a temporary object URL for this browser session ────────
@@ -775,6 +811,20 @@ export default function UploadPage() {
 
       {modalUrl && (
         <UrlModal url={modalUrl} onClose={() => setModalUrl(null)} />
+      )}
+
+      {showKeyBackup && (
+        <KeyBackupModal onClose={() => setShowKeyBackup(false)} />
+      )}
+
+      {keyRecovery && (
+        <KeyRecoveryModal
+          fileName={keyRecovery.fileName}
+          submitting={recoverySubmitting}
+          error={recoveryError}
+          onCancel={() => setKeyRecovery(null)}
+          onSubmit={handleRecoverySubmit}
+        />
       )}
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "40px 24px" }}>
@@ -974,6 +1024,27 @@ export default function UploadPage() {
             </p>
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); setShowKeyBackup(true); }}
+          style={{
+            marginTop: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 14px",
+            borderRadius: 10,
+            background: "transparent",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "rgba(255,255,255,0.55)",
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          🔑 Manage encryption keys
+        </button>
 
         {/* Active upload rows */}
         {localUploads.length > 0 && (
