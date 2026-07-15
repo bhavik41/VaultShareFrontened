@@ -77,6 +77,8 @@ export async function decryptBuffer(
   return new Blob([plaintext], { type: mimeType });
 }
 
+export const KEY_NOT_FOUND_MESSAGE = "Encryption key not found. Cannot decrypt this file.";
+
 export const ENC_KEY_PREFIX = "encKey:";
 
 export function storeKey(fileId: string, keyBase64url: string): void {
@@ -89,4 +91,103 @@ export function loadKey(fileId: string): string | null {
 
 export function deleteStoredKey(fileId: string): void {
   localStorage.removeItem(`${ENC_KEY_PREFIX}${fileId}`);
+}
+
+export function getAllStoredKeys(): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const storageKey = localStorage.key(i);
+    if (storageKey && storageKey.startsWith(ENC_KEY_PREFIX)) {
+      out[storageKey.slice(ENC_KEY_PREFIX.length)] = localStorage.getItem(storageKey)!;
+    }
+  }
+  return out;
+}
+
+/** Returns true if the pasted string imports as a valid AES-256 key. */
+export async function isValidStoredKey(base64url: string): Promise<boolean> {
+  try {
+    await importKey(base64url.trim());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// ─── Password-protected key backup (export/import) ─────────────────────────
+
+const PBKDF2_ITERATIONS = 250_000;
+const SALT_BYTES = 16;
+
+export interface KeyBundle {
+  version: 1;
+  kdf: "PBKDF2";
+  iterations: number;
+  salt: string;
+  iv: string;
+  ciphertext: string;
+}
+
+async function deriveWrappingKey(password: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
+  const baseKey = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    "PBKDF2",
+    false,
+    ["deriveKey"],
+  );
+  return crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: toArrayBuffer(salt), iterations, hash: "SHA-256" },
+    baseKey,
+    ALG,
+    false,
+    ["encrypt", "decrypt"],
+  );
+}
+
+/** Encrypts every locally-stored decryption key into a password-protected JSON bundle. */
+export async function exportKeysBundle(password: string): Promise<KeyBundle> {
+  const keys = getAllStoredKeys();
+  const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+  const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
+  const wrappingKey = await deriveWrappingKey(password, salt, PBKDF2_ITERATIONS);
+  const plaintext = new TextEncoder().encode(JSON.stringify(keys));
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: toArrayBuffer(iv) },
+    wrappingKey,
+    plaintext,
+  );
+
+  return {
+    version: 1,
+    kdf: "PBKDF2",
+    iterations: PBKDF2_ITERATIONS,
+    salt: toBase64url(toArrayBuffer(salt)),
+    iv: toBase64url(toArrayBuffer(iv)),
+    ciphertext: toBase64url(ciphertext),
+  };
+}
+
+/** Decrypts a key bundle and stores every key it contains. Returns the number imported. */
+export async function importKeysBundle(bundle: KeyBundle, password: string): Promise<number> {
+  const salt = fromBase64url(bundle.salt);
+  const iv = fromBase64url(bundle.iv);
+  const wrappingKey = await deriveWrappingKey(password, salt, bundle.iterations);
+
+  let plaintext: ArrayBuffer;
+  try {
+    plaintext = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: toArrayBuffer(iv) },
+      wrappingKey,
+      toArrayBuffer(fromBase64url(bundle.ciphertext)),
+    );
+  } catch {
+    throw new Error("Incorrect password or corrupted backup file.");
+  }
+
+  const keys: Record<string, string> = JSON.parse(new TextDecoder().decode(plaintext));
+  for (const [fileId, keyBase64url] of Object.entries(keys)) {
+    storeKey(fileId, keyBase64url);
+  }
+  return Object.keys(keys).length;
 }
