@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Activity, Clock, Folder, HardDrive, History,
+  Activity, Folder, HardDrive, History,
   Share2, Star, Settings, UsersRound, Users, Trash2, LogOut, User,
 } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
