@@ -26,8 +26,9 @@ interface AuthState {
   tempToken: string | null
   twoFactorEnabled: boolean
   qrCode: string | null
-  // Email OTP on signin
+  // Email OTP on signin or signup
   requiresOtp: boolean
+  otpType: 'signup' | 'signin' | null
   // Password reset
   resetEmailSent: boolean
   resetSuccess: boolean
@@ -46,6 +47,7 @@ const initialState: AuthState = {
   twoFactorEnabled: false,
   qrCode: null,
   requiresOtp: !!sessionStorage.getItem("tempToken"),
+  otpType: null,
   resetEmailSent: false,
   resetSuccess: false,
 }
@@ -89,6 +91,25 @@ export const signupThunk = createAsyncThunk<
     return result
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) return rejectWithValue(err.response?.data?.message ?? "Signup failed.")
+    return rejectWithValue("Network error.")
+  }
+})
+
+// Verify email OTP after signup
+export const verifySignupEmailOtpThunk = createAsyncThunk<
+  { token: string; refreshToken: string; user: User },
+  { otp: string },
+  { rejectValue: string }
+>("auth/signup/verifyOtp", async (data, { getState, rejectWithValue }) => {
+  const { auth } = getState() as { auth: AuthState }
+  const tempToken = auth.tempToken ?? sessionStorage.getItem("tempToken")
+  try {
+    return await apiPost<{ token: string; refreshToken: string; user: User }>(
+      `${BASE_URL}/verify-email-otp`,
+      { tempToken, otp: data.otp },
+    )
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) return rejectWithValue(err.response?.data?.message ?? "Verification failed.")
     return rejectWithValue("Network error.")
   }
 })
@@ -320,8 +341,26 @@ const authSlice = createSlice({
         s.tempToken = a.payload.tempToken
         sessionStorage.setItem("tempToken", a.payload.tempToken)
         s.requiresOtp = true
+        s.otpType = 'signup'
       })
       .addCase(signupThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Signup failed." })
+
+    // ── verify signup email OTP ────────────────────────────────────────────────
+    builder
+      .addCase(verifySignupEmailOtpThunk.pending, (s) => { s.loading = true; s.error = null })
+      .addCase(verifySignupEmailOtpThunk.fulfilled, (s, a) => {
+        s.loading = false
+        s.token = a.payload.token
+        s.refreshToken = a.payload.refreshToken
+        s.user = a.payload.user
+        s.requiresOtp = false
+        s.otpType = null
+        s.tempToken = null
+        sessionStorage.removeItem("tempToken")
+        saveTokens(a.payload.token, a.payload.refreshToken)
+        saveUserEmail(a.payload.user.email)
+      })
+      .addCase(verifySignupEmailOtpThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Verification failed." })
 
     // ── signin ─────────────────────────────────────────────────────────────────
     builder
@@ -333,9 +372,11 @@ const authSlice = createSlice({
         if ("requires2fa" in a.payload) {
           s.requires2fa = true
           s.requiresOtp = false
+          s.otpType = null
         } else {
           s.requiresOtp = true
           s.requires2fa = false
+          s.otpType = 'signin'
         }
       })
       .addCase(signinThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Sign in failed." })
@@ -349,6 +390,7 @@ const authSlice = createSlice({
         s.refreshToken = a.payload.refreshToken
         s.user = a.payload.user
         s.requiresOtp = false
+        s.otpType = null
         s.tempToken = null
         sessionStorage.removeItem("tempToken")
         saveTokens(a.payload.token, a.payload.refreshToken)

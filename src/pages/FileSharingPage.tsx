@@ -304,7 +304,7 @@ export default function FileSharingPage() {
                   <Link size={17} className="text-[#003c90]" />
                   <h2 className="text-base font-semibold text-[#0b1c30]">Share Links</h2>
                 </div>
-                <form onSubmit={handleCreateShareLink} className="mb-5 grid gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
+                <form onSubmit={handleCreateShareLink} className="mb-5 flex flex-col gap-3 lg:grid lg:grid-cols-[1fr_1fr_1fr_auto]">
                   <select value={linkPermissionMode} onChange={e => setLinkPermissionMode(e.target.value as ShareLinkPermissionMode)} className={selectCls}>
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
@@ -312,11 +312,11 @@ export default function FileSharingPage() {
                     <option value="admin-download">Admin download</option>
                   </select>
                   <input type="datetime-local" value={linkExpiresAt} onChange={e => setLinkExpiresAt(e.target.value)}
-                    className={`${inputCls} w-auto`} />
+                    className={`${inputCls} w-full`} />
                   <input type="password" placeholder="Password (optional)" value={linkPassword} onChange={e => setLinkPassword(e.target.value)}
                     className={inputCls} />
                   <button type="submit" disabled={actionLoading}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 cursor-pointer border-0 whitespace-nowrap">
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 cursor-pointer border-0 whitespace-nowrap lg:w-auto">
                     <Link size={14} />Create Link
                   </button>
                 </form>

@@ -14,6 +14,7 @@ import {
 import type { ShareLink, ShareLinkFile } from "@/store/collaborationApi"
 import { unlockShareLink, validateShareLink } from "@/store/collaborationApi"
 import { decryptBuffer, loadKey } from "@/utils/crypto"
+import { getShareLinkErrorMessage } from "@/utils/shareLinkErrors"
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString(undefined, {
@@ -64,8 +65,8 @@ export default function ShareLinkPage() {
         const result = await validateShareLink(token)
         setShareLink(result.shareLink)
         setFile(result.file as ShareLinkFile & { isEncrypted?: boolean })
-      } catch {
-        setError("This share link is invalid, expired, or revoked.")
+      } catch (err) {
+        setError(getShareLinkErrorMessage(err))
       } finally {
         setLoading(false)
       }
