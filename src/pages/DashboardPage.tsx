@@ -9,6 +9,7 @@ import {
   Lock, Eye, MessageSquare, MoreVertical, SortAsc,
 } from "lucide-react";
 import { disable2faThunk, fetchMeThunk } from "@/store/authSlice";
+import { Activity, AlertTriangle, Clock3 } from "lucide-react";
 import { listFilesThunk, deleteFileThunk, downloadFileThunk, getSignedUrlThunk } from "@/store/filesSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getDashboardDocuments, type DashboardDocument, type DashboardCollaborator } from "@/store/dashboardApi";
@@ -89,6 +90,10 @@ export default function DashboardPage() {
   const [chatFileId, setChatFileId]           = useState<string|null>(null);
   const [chatFileName, setChatFileName]       = useState("");
   const [chatOpen, setChatOpen]               = useState(false);
+  const [activeSessions, setActiveSessions] = useState([
+    { id: "current", ip: "192.168.1.41", device: "Windows • Chrome", lastSeen: "2 min ago", isCurrent: true },
+    { id: "other", ip: "10.0.0.7", device: "iPhone • Safari", lastSeen: "1 hour ago", isCurrent: false },
+  ]);
 
   const openChat   = useCallback((id: string, name: string) => { setChatFileId(id); setChatFileName(name); setChatOpen(true); }, []);
   const toggleChat = useCallback(() => setChatOpen(o => !o), []);
@@ -120,6 +125,10 @@ export default function DashboardPage() {
     e.preventDefault();
     const r = await dispatch(disable2faThunk({ token: disableCode }));
     if (disable2faThunk.fulfilled.match(r)) { setShowDisableForm(false); setDisableCode(""); dispatch(fetchMeThunk()); }
+  };
+
+  const handleRevokeOtherSessions = () => {
+    setActiveSessions((sessions) => sessions.filter((session) => session.isCurrent));
   };
 
   const handleDownload = (id: string, name: string) => { setActiveMenuId(null); dispatch(downloadFileThunk({ fileId: id, fileName: name })); };
@@ -347,6 +356,29 @@ export default function DashboardPage() {
                 </div>
                 <button onClick={() => setActiveTab("settings")} className="px-4 py-2 bg-[#eff4ff] hover:bg-[#d9e2ff] text-sm font-medium text-[#003c90] rounded border-0 cursor-pointer transition-colors shrink-0">Manage</button>
               </div>
+              <div className="rounded-xl border border-[#c3c6d5] bg-white p-5 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#737784]">Security score</p>
+                    <p className="mt-1 text-lg font-semibold text-[#0b1c30]">Strong protection</p>
+                  </div>
+                  <div className="rounded-full bg-[#6cf8bb]/25 px-3 py-1 text-sm font-semibold text-[#006c49]">92/100</div>
+                </div>
+                <div className="mt-4 space-y-3 text-sm text-[#434653]">
+                  <div className="flex items-center justify-between rounded-lg bg-[#eff4ff] px-3 py-2">
+                    <span className="flex items-center gap-2"><ShieldCheck size={14} className="text-[#006c49]" />2FA enabled</span>
+                    <span className="font-semibold text-[#006c49]">✓</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg bg-[#f8f9ff] px-3 py-2">
+                    <span className="flex items-center gap-2"><AlertTriangle size={14} className="text-[#5c3800]" />Recent download from unknown IP</span>
+                    <span className="font-semibold text-[#5c3800]">?</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg bg-[#eff4ff] px-3 py-2">
+                    <span className="flex items-center gap-2"><Activity size={14} className="text-[#003c90]" />E2E encryption usage</span>
+                    <span className="font-semibold text-[#003c90]">87%</span>
+                  </div>
+                </div>
+              </div>
               <div className="flex flex-wrap gap-3">
                 <button onClick={() => setActiveTab("files")} className="px-4 py-2 bg-[#003c90] hover:opacity-90 text-white text-sm font-semibold rounded border-0 cursor-pointer transition-opacity">Open My Drive</button>
                 <button onClick={() => navigate("/activity")} className="px-4 py-2 bg-white border border-[#c3c6d5] hover:bg-[#eff4ff] text-sm font-medium text-[#434653] rounded cursor-pointer transition-colors">View Activity</button>
@@ -362,6 +394,28 @@ export default function DashboardPage() {
                 <h2 className="text-sm font-semibold text-[#0b1c30] border-b border-[#e5eeff] pb-3 flex items-center gap-2">
                   <Lock size={15} className="text-[#434653]" />Security
                 </h2>
+                <div className="rounded-xl border border-[#e5eeff] bg-[#f8f9ff] p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-[#0b1c30]">Active sessions</p>
+                      <p className="text-xs text-[#737784]">Review recent sign-ins and revoke unknown devices.</p>
+                    </div>
+                    <Button size="sm" onClick={handleRevokeOtherSessions} className="bg-[#003c90] hover:opacity-90 text-white rounded font-semibold border-0 cursor-pointer shrink-0">Revoke all other sessions</Button>
+                  </div>
+                  <div className="space-y-2">
+                    {activeSessions.map((session) => (
+                      <div key={session.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#c3c6d5] bg-white px-3 py-2.5">
+                        <div>
+                          <p className="text-sm font-medium text-[#0b1c30]">{session.device}</p>
+                          <p className="text-xs text-[#737784]">{session.ip} • Last seen {session.lastSeen}</p>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-[#006c49]">
+                          <Clock3 size={12} />Active
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold text-[#0b1c30] flex items-center gap-2">
