@@ -13,8 +13,9 @@ import {
 } from "lucide-react"
 import type { ShareLink, ShareLinkFile } from "@/store/collaborationApi"
 import { unlockShareLink, validateShareLink } from "@/store/collaborationApi"
-import { decryptBuffer, loadKey } from "@/utils/crypto"
+import { decryptBuffer, loadKey, storeKey } from "@/utils/crypto"
 import { getShareLinkErrorMessage } from "@/utils/shareLinkErrors"
+import KeyRecoveryModal from "@/components/KeyRecoveryModal"
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString(undefined, {
@@ -36,6 +37,10 @@ function getEncKeyFromFragment(): string | null {
   return match ? match[1] : null
 }
 
+function unlockStorageKey(token: string) {
+  return `shareLinkUnlock:${token}`
+}
+
 export default function ShareLinkPage() {
   const { token } = useParams()
 
@@ -44,15 +49,22 @@ export default function ShareLinkPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-  // Password gate
+  // Password gate — the unlock token is mirrored into sessionStorage (keyed by
+  // share token) so a page refresh within the server-side unlock window
+  // doesn't force the user to re-enter the password.
   const [passwordInput, setPasswordInput] = useState("")
-  const [unlockToken, setUnlockToken] = useState<string | null>(null)
+  const [unlockToken, setUnlockToken] = useState<string | null>(() =>
+    token ? sessionStorage.getItem(unlockStorageKey(token)) : null,
+  )
   const [unlockLoading, setUnlockLoading] = useState(false)
   const [unlockError, setUnlockError] = useState("")
 
   // Download
   const [downloading, setDownloading] = useState(false)
   const [downloadError, setDownloadError] = useState("")
+  const [showKeyRecovery, setShowKeyRecovery] = useState(false)
+  const [recoverySubmitting, setRecoverySubmitting] = useState(false)
+  const [recoveryError, setRecoveryError] = useState("")
 
   useEffect(() => {
     async function load() {
@@ -82,6 +94,7 @@ export default function ShareLinkPage() {
     try {
       const tok = await unlockShareLink(token, passwordInput)
       setUnlockToken(tok)
+      sessionStorage.setItem(unlockStorageKey(token), tok)
       setPasswordInput("")
     } catch (err: any) {
       setUnlockError(err?.response?.data?.message ?? err?.message ?? "Incorrect password.")
@@ -90,7 +103,7 @@ export default function ShareLinkPage() {
     }
   }
 
-  async function handleDownload() {
+  async function handleDownload(manualKey?: string) {
     if (!token || !file) return
     setDownloadError("")
     setDownloading(true)
@@ -103,21 +116,38 @@ export default function ShareLinkPage() {
 
       const response = await fetch(url, { headers })
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          // Stored unlock token is invalid or has expired server-side —
+          // clear it and force the password gate to reappear.
+          setUnlockToken(null)
+          sessionStorage.removeItem(unlockStorageKey(token))
+        }
         const json = await response.json().catch(() => null)
         throw new Error(json?.message ?? "Unable to download file.")
       }
 
       let blob = await response.blob()
 
-      // E2E decryption: key may come from URL fragment or (owner) localStorage
+      // E2E decryption: key may come from URL fragment, a manually pasted
+      // key (recovery flow), or (owner) localStorage.
       if (file.isEncrypted) {
-        const keyBase64url = getEncKeyFromFragment() ?? loadKey(file.id)
-        if (keyBase64url) {
-          const encBuffer = await blob.arrayBuffer()
+        const keyBase64url = manualKey ?? getEncKeyFromFragment() ?? loadKey(file.id)
+        if (!keyBase64url) {
+          setShowKeyRecovery(true)
+          setDownloading(false)
+          return
+        }
+        const encBuffer = await blob.arrayBuffer()
+        try {
           blob = await decryptBuffer(encBuffer, keyBase64url, file.mimeType)
-        } else {
+        } catch {
+          if (manualKey) {
+            setRecoveryError("This key couldn't decrypt the file. Check that you pasted it correctly.")
+            return
+          }
           throw new Error("Encrypted file — decryption key not found in link. Ask the owner to reshare with the key.")
         }
+        if (manualKey) storeKey(file.id, manualKey)
       }
 
       const disposition = response.headers.get("content-disposition") ?? ""
@@ -131,11 +161,23 @@ export default function ShareLinkPage() {
       anchor.click()
       anchor.remove()
       URL.revokeObjectURL(downloadUrl)
+      setShowKeyRecovery(false)
     } catch (err: any) {
-      setDownloadError(err?.message ?? "Unable to download file.")
+      if (manualKey) {
+        setRecoveryError(err?.message ?? "Unable to download file.")
+      } else {
+        setDownloadError(err?.message ?? "Unable to download file.")
+      }
     } finally {
       setDownloading(false)
     }
+  }
+
+  async function handleRecoverySubmit(key: string) {
+    setRecoverySubmitting(true)
+    setRecoveryError("")
+    await handleDownload(key)
+    setRecoverySubmitting(false)
   }
 
   const needsPassword = shareLink?.passwordProtected && !unlockToken
@@ -268,7 +310,7 @@ export default function ShareLinkPage() {
               <div className="space-y-3">
                 <button
                   type="button"
-                  onClick={handleDownload}
+                  onClick={() => handleDownload()}
                   disabled={downloading}
                   className="inline-flex items-center justify-center gap-2 rounded-md bg-violet-600 px-4 py-2 text-base font-medium text-slate-900 hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-60"
                 >
@@ -290,6 +332,16 @@ export default function ShareLinkPage() {
           </div>
         ) : null}
       </main>
+
+      {showKeyRecovery && file && (
+        <KeyRecoveryModal
+          fileName={file.name}
+          submitting={recoverySubmitting}
+          error={recoveryError}
+          onCancel={() => setShowKeyRecovery(false)}
+          onSubmit={handleRecoverySubmit}
+        />
+      )}
     </div>
   )
 }
