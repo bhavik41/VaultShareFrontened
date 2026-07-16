@@ -32,6 +32,10 @@ interface AuthState {
   // Password reset
   resetEmailSent: boolean
   resetSuccess: boolean
+  // Idle-timeout session lock
+  locked: boolean
+  reauthError: string | null
+  reauthLoading: boolean
 }
 
 // ─── Initial State ────────────────────────────────────────────────────────────
@@ -50,6 +54,9 @@ const initialState: AuthState = {
   otpType: null,
   resetEmailSent: false,
   resetSuccess: false,
+  locked: false,
+  reauthError: null,
+  reauthLoading: false,
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -295,6 +302,46 @@ export const disable2faThunk = createAsyncThunk<
   }
 })
 
+// Idle-timeout re-auth: request a fresh unlock code by email
+export const requestReauthOtpThunk = createAsyncThunk<
+  { message: string },
+  void,
+  { rejectValue: string }
+>("auth/reauth/requestOtp", async (_, { getState, rejectWithValue }) => {
+  const { auth } = getState() as { auth: AuthState }
+  try {
+    const res = await axios.post<{ message: string }>(
+      `${BASE_URL}/reauth/request-otp`,
+      {},
+      { headers: { Authorization: `Bearer ${auth.token}` } },
+    )
+    return res.data
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) return rejectWithValue(err.response?.data?.message ?? "Failed to send code.")
+    return rejectWithValue("Network error.")
+  }
+})
+
+// Idle-timeout re-auth: verify the unlock code and clear the lock
+export const verifyReauthOtpThunk = createAsyncThunk<
+  { message: string },
+  { otp: string },
+  { rejectValue: string }
+>("auth/reauth/verifyOtp", async (data, { getState, rejectWithValue }) => {
+  const { auth } = getState() as { auth: AuthState }
+  try {
+    const res = await axios.post<{ message: string }>(
+      `${BASE_URL}/reauth/verify-otp`,
+      data,
+      { headers: { Authorization: `Bearer ${auth.token}` } },
+    )
+    return res.data
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) return rejectWithValue(err.response?.data?.message ?? "Verification failed.")
+    return rejectWithValue("Network error.")
+  }
+})
+
 // ─── Slice ────────────────────────────────────────────────────────────────────
 
 const authSlice = createSlice({
@@ -311,6 +358,7 @@ const authSlice = createSlice({
       state.tempToken = null
       state.twoFactorEnabled = false
       state.qrCode = null
+      state.locked = false
       clearTokens()
     },
     clearError: (state) => { state.error = null },
@@ -329,6 +377,10 @@ const authSlice = createSlice({
       state.resetEmailSent = false
       state.resetSuccess = false
       state.error = null
+    },
+    lockSession: (state) => {
+      state.locked = true
+      state.reauthError = null
     },
   },
   extraReducers: (builder) => {
@@ -465,8 +517,17 @@ const authSlice = createSlice({
       .addCase(disable2faThunk.pending, (s) => { s.loading = true; s.error = null })
       .addCase(disable2faThunk.fulfilled, (s) => { s.loading = false; s.twoFactorEnabled = false })
       .addCase(disable2faThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Disable failed." })
+
+    // ── idle-timeout reauth ────────────────────────────────────────────────────
+    builder
+      .addCase(requestReauthOtpThunk.pending, (s) => { s.reauthLoading = true; s.reauthError = null })
+      .addCase(requestReauthOtpThunk.fulfilled, (s) => { s.reauthLoading = false })
+      .addCase(requestReauthOtpThunk.rejected, (s, a) => { s.reauthLoading = false; s.reauthError = a.payload ?? "Failed to send code." })
+      .addCase(verifyReauthOtpThunk.pending, (s) => { s.reauthLoading = true; s.reauthError = null })
+      .addCase(verifyReauthOtpThunk.fulfilled, (s) => { s.reauthLoading = false; s.locked = false; s.reauthError = null })
+      .addCase(verifyReauthOtpThunk.rejected, (s, a) => { s.reauthLoading = false; s.reauthError = a.payload ?? "Verification failed." })
   },
 })
 
-export const { logout, clearError, setToken, clearResetState, clearOtpState } = authSlice.actions
+export const { logout, clearError, setToken, clearResetState, clearOtpState, lockSession } = authSlice.actions
 export default authSlice.reducer

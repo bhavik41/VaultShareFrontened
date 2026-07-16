@@ -1,7 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { fetchMeThunk } from "@/store/authSlice";
+import { fetchMeThunk, lockSession, requestReauthOtpThunk } from "@/store/authSlice";
+import { useIdleTimer } from "@/hooks/useIdleTimer";
+import SessionLockOverlay from "@/components/SessionLockOverlay";
+
+const IDLE_TIMEOUT_MS = 2 * 60 * 1000;
 import SignupPage from "@/pages/SignupPage";
 import SigninPage from "@/pages/SigninPage";
 import DashboardPage from "@/pages/DashboardPage";
@@ -27,8 +31,26 @@ import VersionRequestsPage from "@/pages/VersionRequestsPage";
 import AppLayout from "@/components/AppLayout";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.auth.token);
-  return token ? <>{children}</> : <Navigate to="/signin" replace />;
+  const locked = useAppSelector((state) => state.auth.locked);
+
+  useIdleTimer(
+    IDLE_TIMEOUT_MS,
+    () => {
+      dispatch(lockSession());
+      dispatch(requestReauthOtpThunk());
+    },
+    !!token && !locked,
+  );
+
+  if (!token) return <Navigate to="/signin" replace />;
+  return (
+    <>
+      {children}
+      {locked && <SessionLockOverlay />}
+    </>
+  );
 }
 
 function RootRoute() {
