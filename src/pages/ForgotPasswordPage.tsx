@@ -16,19 +16,19 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-slate-950 p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-violet-50 p-4">
       <div className="w-full max-w-md">
         {/* Card */}
-        <div className="bg-black/3 border border-gray-200 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
           {/* Icon */}
           <div className="flex justify-center mb-6">
-            <div className="h-14 w-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
+            <div className="h-14 w-14 rounded-2xl bg-violet-50 border border-violet-200 flex items-center justify-center">
               <Mail className="h-7 w-7 text-violet-600" />
             </div>
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">Forgot your password?</h1>
-          <p className="text-slate-900/50 text-base text-center mb-8">
+          <p className="text-slate-500 text-base text-center mb-8">
             Enter your email and we'll send you a one-time reset code.
           </p>
 
@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
             <div className="flex flex-col items-center gap-4">
               <CheckCircle2 className="h-12 w-12 text-emerald-600" />
               <p className="text-slate-900 text-center font-medium">Check your inbox!</p>
-              <p className="text-slate-900/50 text-base text-center">
+              <p className="text-slate-500 text-base text-center">
                 We sent a 6-digit OTP to <span className="text-violet-600">{email}</span>.
               </p>
               <Link
@@ -50,19 +50,19 @@ export default function ForgotPasswordPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-base text-slate-900/70 mb-1.5">Email address</label>
+                <label className="block text-base text-slate-600 mb-1.5">Email address</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full bg-black/5 border border-gray-300 rounded-xl px-4 py-3 text-slate-900 placeholder:text-slate-900/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition"
                 />
               </div>
 
               {error && (
-                <p className="text-rose-600 text-base bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+                <p className="text-rose-600 text-base bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
                   {error}
                 </p>
               )}
@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/signin" className="text-slate-900/40 hover:text-slate-900/70 text-base flex items-center justify-center gap-1 transition-colors">
+            <Link to="/signin" className="text-slate-400 hover:text-slate-600 text-base flex items-center justify-center gap-1 transition-colors">
               <ArrowLeft className="h-3.5 w-3.5" /> Back to sign in
             </Link>
           </div>
