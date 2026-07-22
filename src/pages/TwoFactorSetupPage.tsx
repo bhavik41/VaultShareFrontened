@@ -40,8 +40,23 @@ export default function TwoFactorSetupPage() {
       <div className="w-full max-w-md">
         <div className="bg-black/3 border border-gray-200 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
 
-          {/* ── Disable flow (2FA already on) ── */}
-          {isEnabled ? (
+          {/* ── Just finished setup/verify this session — always show the success screen,
+              even though `isEnabled` has already flipped true by now ── */}
+          {step === "done" ? (
+            <div className="flex flex-col items-center gap-5 text-center">
+              <CheckCircle2 className="h-16 w-16 text-emerald-600" />
+              <h1 className="text-2xl font-bold text-slate-900">2FA Enabled!</h1>
+              <p className="text-slate-900/50 text-base">
+                Your account is now protected with two-factor authentication. You'll be asked for a code on every sign in.
+              </p>
+              <button
+                onClick={() => navigate("/")}
+                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-semibold transition-colors"
+              >
+                Back to Dashboard
+              </button>
+            </div>
+          ) : isEnabled ? (
             disableDone ? (
               <div className="flex flex-col items-center gap-5 text-center">
                 <CheckCircle2 className="h-16 w-16 text-emerald-600" />
@@ -190,33 +205,14 @@ export default function TwoFactorSetupPage() {
                 </div>
               )}
 
-              {/* ── Step 3: Done ── */}
-              {step === "done" && (
-                <div className="flex flex-col items-center gap-5 text-center">
-                  <CheckCircle2 className="h-16 w-16 text-emerald-600" />
-                  <h1 className="text-2xl font-bold text-slate-900">2FA Enabled!</h1>
-                  <p className="text-slate-900/50 text-base">
-                    Your account is now protected with two-factor authentication. You'll be asked for a code on every sign in.
-                  </p>
-                  <button
-                    onClick={() => navigate("/")}
-                    className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-semibold transition-colors"
-                  >
-                    Back to Dashboard
-                  </button>
-                </div>
-              )}
-
-              {step !== "done" && (
-                <div className="mt-6 text-center">
-                  <button
-                    onClick={() => navigate("/")}
-                    className="text-slate-900/40 hover:text-slate-900/70 text-base flex items-center justify-center gap-1 transition-colors w-full"
-                  >
-                    <ArrowLeft className="h-3.5 w-3.5" /> Cancel
-                  </button>
-                </div>
-              )}
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => navigate("/")}
+                  className="text-slate-900/40 hover:text-slate-900/70 text-base flex items-center justify-center gap-1 transition-colors w-full"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" /> Cancel
+                </button>
+              </div>
             </>
           )}
         </div>
