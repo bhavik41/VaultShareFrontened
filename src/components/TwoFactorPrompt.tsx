@@ -1,12 +1,18 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { validate2faThunk } from "@/store/authSlice"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { ShieldCheck, Loader2 } from "lucide-react"
 
 export default function TwoFactorPrompt() {
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector((s) => s.auth)
+  const { loading, error, token } = useAppSelector((s) => s.auth)
   const [code, setCode] = useState("")
+
+  useEffect(() => {
+    if (token) navigate("/dashboard", { replace: true })
+  }, [token, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
