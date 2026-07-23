@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import * as pdfjsLib from "pdfjs-dist"
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`
@@ -8,7 +8,6 @@ const API = import.meta.env.VITE_API_URL
 const cache = new Map<string, string>()
 
 export default function FileThumbnail({ fileId, mimeType, fallback }: { fileId: string; mimeType: string; fallback: React.ReactNode }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [dataUrl, setDataUrl] = useState<string | null>(cache.get(fileId) ?? null)
   const [failed, setFailed] = useState(false)
 
@@ -55,7 +54,7 @@ export default function FileThumbnail({ fileId, mimeType, fallback }: { fileId: 
         canvas.width = scaled.width
         canvas.height = scaled.height
         const ctx = canvas.getContext("2d")!
-        return page.render({ canvasContext: ctx, viewport: scaled }).promise.then(() => {
+        return page.render({ canvasContext: ctx, viewport: scaled, canvas }).promise.then(() => {
           const result = canvas.toDataURL("image/jpeg", 0.7)
           if (!cancelled) {
             cache.set(fileId, result)
