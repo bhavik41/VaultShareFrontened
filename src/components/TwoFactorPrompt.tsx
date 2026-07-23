@@ -22,7 +22,7 @@ export default function TwoFactorPrompt() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-slate-950 p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-black/3 border border-gray-200 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
+        <div className="bg-black/3 border border-vs-border rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
           {/* Icon */}
           <div className="flex justify-center mb-6">
             <div className="h-14 w-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
@@ -30,8 +30,8 @@ export default function TwoFactorPrompt() {
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">Two-Factor Auth</h1>
-          <p className="text-slate-900/50 text-base text-center mb-8">
+          <h1 className="text-2xl font-bold text-vs-heading text-center mb-2">Two-Factor Auth</h1>
+          <p className="text-vs-heading/50 text-base text-center mb-8">
             Enter the 6-digit code from your authenticator app.
           </p>
 
@@ -44,7 +44,7 @@ export default function TwoFactorPrompt() {
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
               placeholder="000 000"
-              className="w-full bg-black/5 border border-gray-300 rounded-xl px-4 py-4 text-slate-900 text-center text-2xl tracking-[0.6em] placeholder:text-slate-900/20 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+              className="w-full bg-black/5 border border-vs-border rounded-xl px-4 py-4 text-vs-heading text-center text-2xl tracking-[0.6em] placeholder:text-vs-heading/20 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
             />
 
             {error && (
@@ -63,7 +63,7 @@ export default function TwoFactorPrompt() {
             </button>
           </form>
 
-          <p className="text-slate-900/30 text-sm text-center mt-6">
+          <p className="text-vs-heading/30 text-sm text-center mt-6">
             Lost access to your authenticator? Contact support.
           </p>
         </div>

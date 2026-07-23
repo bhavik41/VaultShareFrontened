@@ -17,17 +17,17 @@ export default function SessionLockOverlay() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-vs-heading/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
+        <div className="bg-vs-card border border-vs-border rounded-2xl p-8 shadow-xl">
           <div className="flex justify-center mb-6">
             <div className="h-14 w-14 rounded-2xl bg-violet-50 border border-violet-200 flex items-center justify-center">
               <ShieldAlert className="h-7 w-7 text-violet-600" />
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">Session Locked</h1>
-          <p className="text-slate-500 text-base text-center mb-8">
+          <h1 className="text-2xl font-bold text-vs-heading text-center mb-2">Session Locked</h1>
+          <p className="text-vs-muted text-base text-center mb-8">
             You've been inactive for a while. We sent a 6-digit code to your email — enter it below to keep going.
           </p>
 
@@ -40,7 +40,7 @@ export default function SessionLockOverlay() {
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
               placeholder="000 000"
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-4 text-slate-900 text-center text-2xl tracking-[0.6em] placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition"
+              className="w-full bg-vs-bg border border-vs-border rounded-xl px-4 py-4 text-vs-heading text-center text-2xl tracking-[0.6em] placeholder:text-vs-muted focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition"
             />
 
             {reauthError && (

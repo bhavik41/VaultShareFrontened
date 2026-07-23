@@ -351,7 +351,11 @@ export default function FileViewerPage() {
 
   useEffect(() => {
     if (!emojiPickerFor) return
-    const close = () => setEmojiPickerFor(null)
+    const close = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (target.closest("[data-emoji-picker]")) return
+      setEmojiPickerFor(null)
+    }
     document.addEventListener("click", close)
     return () => document.removeEventListener("click", close)
   }, [emojiPickerFor])
@@ -409,17 +413,17 @@ export default function FileViewerPage() {
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       {/* Top Header */}
-      <header className="shrink-0 border-b border-[#c3c6d5] bg-white">
+      <header className="shrink-0 border-b border-vs-border bg-vs-card">
         <div className="flex items-center justify-between px-5 py-0">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-1 text-sm text-[#737784] hover:text-[#0b1c30] transition-colors shrink-0"
+              className="flex items-center gap-1 text-sm text-vs-muted hover:text-vs-heading transition-colors shrink-0"
             >
               <ChevronLeft size={15} />
               Back
             </button>
-            <div className="w-px h-5 bg-[#c3c6d5] shrink-0" />
+            <div className="w-px h-5 bg-vs-border shrink-0" />
             <div className="flex items-center">
               {TABS.map((tab) => (
                 <button
@@ -430,8 +434,8 @@ export default function FileViewerPage() {
                   }}
                   className={`relative px-4 py-4 text-sm font-medium transition-colors ${
                     activeTab === tab
-                      ? "text-[#0b1c30] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#003c90]"
-                      : "text-[#434653] hover:text-[#0b1c30]"
+                      ? "text-vs-heading after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-vs-brand"
+                      : "text-vs-body hover:text-vs-heading"
                   }`}
                 >
                   {tab}
@@ -441,12 +445,12 @@ export default function FileViewerPage() {
           </div>
 
           <div className="flex items-center gap-3 py-3">
-            <span className="h-2 w-2 rounded-full bg-[#006c49]" />
+            <span className="h-2 w-2 rounded-full bg-vs-success" />
             {isOwner && (
               <div className="relative">
                 <button
                   onClick={(e) => { e.stopPropagation(); setFileMenuOpen((v) => !v) }}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[#737784] hover:bg-[#eff4ff] hover:text-[#0b1c30] transition-colors cursor-pointer"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-vs-muted hover:bg-vs-hover hover:text-vs-heading transition-colors cursor-pointer"
                   title="File options"
                 >
                   <MoreVertical size={17} />
@@ -454,20 +458,20 @@ export default function FileViewerPage() {
                 {fileMenuOpen && (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className="absolute right-0 top-10 z-30 w-56 rounded-xl border border-[#c3c6d5] bg-white py-1.5 shadow-[0_8px_30px_rgba(11,28,48,0.12)]"
+                    className="absolute right-0 top-10 z-30 w-56 rounded-xl border border-vs-border bg-vs-card py-1.5 shadow-[0_8px_30px_rgba(11,28,48,0.12)]"
                   >
                     <button
                       onClick={() => { setSettingsTab("sharing"); setFileMenuOpen(false) }}
-                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-[#0b1c30] hover:bg-[#eff4ff] transition-colors cursor-pointer"
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-vs-heading hover:bg-vs-hover transition-colors cursor-pointer"
                     >
-                      <UserPlus size={15} className="text-[#737784]" />
+                      <UserPlus size={15} className="text-vs-muted" />
                       Invite collaborators
                     </button>
                     <button
                       onClick={() => { setSettingsTab("link"); setFileMenuOpen(false) }}
-                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-[#0b1c30] hover:bg-[#eff4ff] transition-colors cursor-pointer"
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-vs-heading hover:bg-vs-hover transition-colors cursor-pointer"
                     >
-                      <LinkIcon size={15} className="text-[#737784]" />
+                      <LinkIcon size={15} className="text-vs-muted" />
                       Get share link
                     </button>
                   </div>
@@ -475,26 +479,26 @@ export default function FileViewerPage() {
               </div>
             )}
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#003c90] text-sm font-bold text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-vs-brand text-sm font-bold text-white"
               title={authUser?.name ?? ""}
             >
               {authUser?.name
-                ? authUser.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+                ? (authUser.name || "").split(" ").filter(Boolean).map((n) => n[0] ?? "").join("").toUpperCase().slice(0, 2) || "?"
                 : "?"}
             </div>
           </div>
         </div>
 
         {/* Breadcrumb + badge */}
-        <div className="flex items-center gap-2 border-t border-[#c3c6d5] px-5 py-2.5">
-          <button onClick={() => navigate("/dashboard")} className="text-sm text-[#737784] hover:text-[#0b1c30]">
+        <div className="flex items-center gap-2 border-t border-vs-border px-5 py-2.5">
+          <button onClick={() => navigate("/dashboard")} className="text-sm text-vs-muted hover:text-vs-heading">
             My Files
           </button>
-          <ChevronRight size={12} className="text-[#737784]" />
-          <span className="text-sm text-[#0b1c30] font-medium truncate max-w-[320px]">
+          <ChevronRight size={12} className="text-vs-muted" />
+          <span className="text-sm text-vs-heading font-medium truncate max-w-[320px]">
             {effectiveFile?.name ?? "…"}
           </span>
-          <span className="ml-2 rounded-md border border-[#003c90]/20 bg-[#d9e2ff] px-2 py-0.5 text-[10px] font-semibold text-[#003c90]">
+          <span className="ml-2 rounded-md border border-vs-brand/20 bg-vs-active px-2 py-0.5 text-[10px] font-semibold text-vs-brand">
             AES-256
           </span>
         </div>
@@ -515,45 +519,45 @@ export default function FileViewerPage() {
         ) : (
           <>
             {/* File Viewer */}
-            <div className="flex flex-1 flex-col overflow-hidden border-r border-gray-200">
+            <div className="flex flex-1 flex-col overflow-hidden border-r border-vs-border">
           {/* Viewer toolbar — only for images where zoom is applied via CSS */}
           {isImage && (
-            <div className="flex shrink-0 items-center gap-3 border-b border-[#c3c6d5] bg-[#f8f9ff] px-5 py-2">
+            <div className="flex shrink-0 items-center gap-3 border-b border-vs-border bg-vs-bg px-5 py-2">
               <button
                 onClick={() => setZoom((z) => Math.max(25, z - 25))}
-                className="rounded border border-[#c3c6d5] bg-white p-1 text-[#434653] hover:bg-[#eff4ff] hover:text-[#0b1c30] cursor-pointer"
+                className="rounded border border-vs-border bg-vs-card p-1 text-vs-body hover:bg-vs-hover hover:text-vs-heading cursor-pointer"
               >
                 <Minus size={12} />
               </button>
-              <span className="min-w-[42px] text-center text-sm font-medium text-[#0b1c30]">{zoom}%</span>
+              <span className="min-w-[42px] text-center text-sm font-medium text-vs-heading">{zoom}%</span>
               <button
                 onClick={() => setZoom((z) => Math.min(200, z + 25))}
-                className="rounded border border-[#c3c6d5] bg-white p-1 text-[#434653] hover:bg-[#eff4ff] hover:text-[#0b1c30] cursor-pointer"
+                className="rounded border border-vs-border bg-vs-card p-1 text-vs-body hover:bg-vs-hover hover:text-vs-heading cursor-pointer"
               >
                 <Plus size={12} />
               </button>
-              <span className="ml-2 text-xs text-[#737784]">Use scroll or pinch to zoom further</span>
+              <span className="ml-2 text-xs text-vs-muted">Use scroll or pinch to zoom further</span>
             </div>
           )}
 
           {/* Document area */}
-          <div className="flex flex-1 overflow-hidden bg-[#eef0f7]">
+          <div className="flex flex-1 overflow-hidden bg-vs-hover">
             {/* Main file viewer */}
             <div className="flex flex-1 overflow-hidden">
               {previewError ? (
                 <div className="flex flex-1 items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-[#c3c6d5] bg-white p-10 text-center shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f8f9ff] text-[#737784]">
+                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-vs-border bg-vs-card p-10 text-center shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-vs-bg text-vs-muted">
                       <Download size={24} />
                     </div>
                     <div>
-                      <p className="text-base font-semibold text-[#0b1c30]">Preview unavailable</p>
-                      <p className="mt-1 text-sm text-[#737784]">The file could not be loaded for preview.</p>
+                      <p className="text-base font-semibold text-vs-heading">Preview unavailable</p>
+                      <p className="mt-1 text-sm text-vs-muted">The file could not be loaded for preview.</p>
                     </div>
                     {effectiveFile && id && (
                       <button
                         onClick={() => handleDownloadClick(id, effectiveFile.name)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                        className="inline-flex items-center gap-2 rounded-lg bg-vs-brand px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
                       >
                         <Download size={14} /> Download file
                       </button>
@@ -562,8 +566,8 @@ export default function FileViewerPage() {
                 </div>
               ) : !fileUrl ? (
                 <div className="flex flex-1 items-center justify-center">
-                  <div className="flex flex-col items-center gap-3 rounded-2xl bg-white px-12 py-10 text-[#737784] shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
-                    <Loader2 className="animate-spin text-[#003c90]" size={26} />
+                  <div className="flex flex-col items-center gap-3 rounded-2xl bg-vs-card px-12 py-10 text-vs-muted shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
+                    <Loader2 className="animate-spin text-vs-brand" size={26} />
                     <span className="text-sm font-medium">Loading file…</span>
                   </div>
                 </div>
@@ -587,51 +591,51 @@ export default function FileViewerPage() {
                 </div>
               ) : isAudio ? (
                 <div className="flex flex-1 items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-6 rounded-2xl border border-[#c3c6d5] bg-white p-10 shadow-[0_8px_30px_rgba(11,28,48,0.08)] w-full max-w-lg">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#d9e2ff]">
+                  <div className="flex flex-col items-center gap-6 rounded-2xl border border-vs-border bg-vs-card p-10 shadow-[0_8px_30px_rgba(11,28,48,0.08)] w-full max-w-lg">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-vs-active">
                       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#003c90" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                     </div>
-                    <p className="text-sm font-semibold text-[#0b1c30]">{effectiveFile?.name}</p>
+                    <p className="text-sm font-semibold text-vs-heading">{effectiveFile?.name}</p>
                     <audio src={fileUrl} controls className="w-full" />
                   </div>
                 </div>
               ) : isDocx ? (
-                <div className="flex flex-1 overflow-auto p-6 bg-[#eef0f7]">
+                <div className="flex flex-1 overflow-auto p-6 bg-vs-hover">
                   {docxHtml ? (
                     <div
                       ref={docxContainerRef}
-                      className="mx-auto bg-white rounded-2xl shadow-[0_8px_30px_rgba(11,28,48,0.08)] p-8 max-w-4xl w-full"
+                      className="mx-auto bg-vs-card rounded-2xl shadow-[0_8px_30px_rgba(11,28,48,0.08)] p-8 max-w-4xl w-full"
                       dangerouslySetInnerHTML={{ __html: docxHtml }}
                     />
                   ) : (
                     <div className="flex flex-1 items-center justify-center">
-                      <Loader2 className="animate-spin text-[#003c90]" size={26} />
+                      <Loader2 className="animate-spin text-vs-brand" size={26} />
                     </div>
                   )}
                 </div>
               ) : isXlsx ? (
-                <div className="flex flex-1 overflow-auto p-6 bg-[#eef0f7]">
+                <div className="flex flex-1 overflow-auto p-6 bg-vs-hover">
                   {xlsxHtml ? (
                     <div
-                      className="mx-auto bg-white rounded-2xl shadow-[0_8px_30px_rgba(11,28,48,0.08)] p-4 w-full overflow-x-auto"
+                      className="mx-auto bg-vs-card rounded-2xl shadow-[0_8px_30px_rgba(11,28,48,0.08)] p-4 w-full overflow-x-auto"
                       dangerouslySetInnerHTML={{ __html: xlsxHtml }}
                       style={{ fontSize: 13 }}
                     />
                   ) : (
                     <div className="flex flex-1 items-center justify-center">
-                      <Loader2 className="animate-spin text-[#003c90]" size={26} />
+                      <Loader2 className="animate-spin text-vs-brand" size={26} />
                     </div>
                   )}
                 </div>
               ) : isPptx ? (
                 pptxPdfUrl ? (
                   <div className="flex flex-1 overflow-hidden p-6">
-                    <div className="flex flex-1 overflow-hidden rounded-2xl border border-[#c3c6d5] bg-white shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
+                    <div className="flex flex-1 overflow-hidden rounded-2xl border border-vs-border bg-vs-card shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
                       <iframe src={pptxPdfUrl} title={effectiveFile?.name} className="rounded-2xl border-0" style={{ width: "100%", height: "100%", flex: 1 }} />
                     </div>
                   </div>
                 ) : (
-                <div ref={pptxViewportRef} className="flex flex-1 overflow-auto p-6 bg-[#eef0f7]">
+                <div ref={pptxViewportRef} className="flex flex-1 overflow-auto p-6 bg-vs-hover">
                   {pptxSlides ? (
                     <div className="w-full space-y-6">
                       {pptxSlides.map((slide) => (
@@ -683,13 +687,13 @@ export default function FileViewerPage() {
                               ))}
                             </div>
                           </div>
-                          <p className="mt-2 text-center text-[11px] text-[#737784]">Slide {slide.index}</p>
+                          <p className="mt-2 text-center text-[11px] text-vs-muted">Slide {slide.index}</p>
                         </div>
                       ))}
                       {effectiveFile && id && (
                         <div className="flex justify-center py-2">
                           <button onClick={() => handleDownloadClick(id, effectiveFile.name)}
-                            className="inline-flex items-center gap-2 rounded-lg border border-[#c3c6d5] bg-white px-4 py-2 text-sm font-medium text-[#0b1c30] hover:bg-[#eff4ff] transition-colors shadow-sm">
+                            className="inline-flex items-center gap-2 rounded-lg border border-vs-border bg-vs-card px-4 py-2 text-sm font-medium text-vs-heading hover:bg-vs-hover transition-colors shadow-sm">
                             <Download size={14} /> Download original .pptx
                           </button>
                         </div>
@@ -697,14 +701,14 @@ export default function FileViewerPage() {
                     </div>
                   ) : (
                     <div className="flex flex-1 items-center justify-center">
-                      <Loader2 className="animate-spin text-[#003c90]" size={26} />
+                      <Loader2 className="animate-spin text-vs-brand" size={26} />
                     </div>
                   )}
                 </div>
                 )
               ) : isPreviewable ? (
                 <div className="flex flex-1 overflow-hidden p-6">
-                  <div className="flex flex-1 overflow-hidden rounded-2xl border border-[#c3c6d5] bg-white shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
+                  <div className="flex flex-1 overflow-hidden rounded-2xl border border-vs-border bg-vs-card shadow-[0_8px_30px_rgba(11,28,48,0.08)]">
                     <iframe
                       src={fileUrl}
                       title={effectiveFile?.name ?? "File"}
@@ -715,19 +719,19 @@ export default function FileViewerPage() {
                 </div>
               ) : (
                 <div className="flex flex-1 items-center justify-center p-8">
-                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-[#c3c6d5] bg-white p-10 text-center shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f8f9ff] text-[#737784]">
+                  <div className="flex flex-col items-center gap-4 rounded-2xl border border-vs-border bg-vs-card p-10 text-center shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-vs-bg text-vs-muted">
                       <Download size={24} />
                     </div>
                     <div>
-                      <p className="text-base font-semibold text-[#0b1c30]">Preview not available</p>
-                      <p className="mt-1 text-sm text-[#737784]">
+                      <p className="text-base font-semibold text-vs-heading">Preview not available</p>
+                      <p className="mt-1 text-sm text-vs-muted">
                         This file type can't be displayed in the browser.
                       </p>
                     </div>
                     <button
                       onClick={() => file && handleDownloadClick(file.id, file.name)}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                      className="inline-flex items-center gap-2 rounded-lg bg-vs-brand px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
                     >
                       <Download size={14} /> Download file
                     </button>
@@ -738,10 +742,10 @@ export default function FileViewerPage() {
           </div>
 
           {/* Status bar */}
-          <div className="flex shrink-0 items-center justify-between border-t border-[#c3c6d5] bg-white px-5 py-2">
-            <div className="flex items-center gap-3 text-[11px] text-[#737784]">
+          <div className="flex shrink-0 items-center justify-between border-t border-vs-border bg-vs-card px-5 py-2">
+            <div className="flex items-center gap-3 text-[11px] text-vs-muted">
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#006c49]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-vs-success" />
                 AES-256 encrypted
               </span>
               <span>·</span>
@@ -749,27 +753,27 @@ export default function FileViewerPage() {
               <span>·</span>
               <span>Last modified 10:42 AM</span>
             </div>
-            <span className="text-[11px] font-medium text-[#006c49]">SHA-256 verified ✓</span>
+            <span className="text-[11px] font-medium text-vs-success">SHA-256 verified ✓</span>
           </div>
         </div>
 
         {/* Drag handle */}
         <div
           onMouseDown={onDragStart}
-          className="w-1 shrink-0 cursor-col-resize bg-[#c3c6d5] hover:bg-[#003c90] transition-colors duration-150 active:bg-[#003c90]"
+          className="w-1 shrink-0 cursor-col-resize bg-vs-border hover:bg-vs-brand transition-colors duration-150 active:bg-vs-brand"
           title="Drag to resize"
         />
 
         {/* Comments & Chat / Ask AI Panel */}
-        <div className="flex shrink-0 flex-col bg-white" style={{ width: panelWidth }}>
+        <div className="flex shrink-0 flex-col bg-vs-card" style={{ width: panelWidth }}>
           {/* Panel tabs */}
-          <div className="flex shrink-0 border-b border-[#c3c6d5]">
+          <div className="flex shrink-0 border-b border-vs-border">
             {(["chat", "qa"] as const).map((tab) => (
               <button key={tab} onClick={() => setRightPanel(tab)}
                 className={`flex-1 py-2.5 text-xs font-semibold border-0 cursor-pointer transition-colors ${
                   rightPanel === tab
-                    ? "text-[#003c90] border-b-2 border-[#003c90] bg-[#d9e2ff]/30"
-                    : "text-[#434653] hover:bg-[#eff4ff] bg-transparent"
+                    ? "text-vs-brand border-b-2 border-vs-brand bg-vs-active/30"
+                    : "text-vs-body hover:bg-vs-hover bg-transparent"
                 }`}>
                 {tab === "chat" ? "Chat" : "Ask AI ✨"}
               </button>
@@ -782,17 +786,17 @@ export default function FileViewerPage() {
           )}
           {rightPanel === "qa" && !effectiveFile && (
             <div className="flex flex-1 items-center justify-center p-6 text-center">
-              <p className="text-sm text-[#737784]">Loading file info…</p>
+              <p className="text-sm text-vs-muted">Loading file info…</p>
             </div>
           )}
 
           {/* Chat panel — only shown when tab is "chat" */}
           {rightPanel === "chat" && <>
           {/* Panel header */}
-          <div className="flex shrink-0 flex-col border-b border-[#c3c6d5] px-4 py-3 gap-2">
+          <div className="flex shrink-0 flex-col border-b border-vs-border px-4 py-3 gap-2">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-[#0b1c30]">Comments & Chat</h3>
-              <div className="flex gap-1 text-[#737784]">
+              <h3 className="text-sm font-semibold text-vs-heading">Comments & Chat</h3>
+              <div className="flex gap-1 text-vs-muted">
                 <span className="text-sm">· · ·</span>
               </div>
             </div>
@@ -802,20 +806,20 @@ export default function FileViewerPage() {
                 className={`flex items-center justify-between rounded-lg border px-3 py-2 transition-colors duration-200 ${
                   adminOnlyChat
                     ? "border-amber-200 bg-amber-50"
-                    : "border-[#c3c6d5] bg-[#f8f9ff]"
+                    : "border-vs-border bg-vs-bg"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   {adminOnlyChat ? (
                     <Lock size={13} className="text-amber-600" />
                   ) : (
-                    <ShieldCheck size={13} className="text-[#737784]" />
+                    <ShieldCheck size={13} className="text-vs-muted" />
                   )}
                   <div className="flex flex-col leading-tight">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${adminOnlyChat ? "text-amber-700" : "text-[#737784]"}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${adminOnlyChat ? "text-amber-700" : "text-vs-muted"}`}>
                       Admin Only
                     </span>
-                    <span className={`text-[10px] ${adminOnlyChat ? "text-amber-600/80" : "text-[#737784]"}`}>
+                    <span className={`text-[10px] ${adminOnlyChat ? "text-amber-600/80" : "text-vs-muted"}`}>
                       {adminOnlyChat ? "Active · only you can send" : "Off · everyone can chat"}
                     </span>
                   </div>
@@ -825,11 +829,11 @@ export default function FileViewerPage() {
                   role="switch"
                   aria-checked={adminOnlyChat}
                   className={`relative inline-flex h-5 w-10 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                    adminOnlyChat ? "bg-amber-500" : "bg-[#003c90]"
+                    adminOnlyChat ? "bg-amber-500" : "bg-vs-brand"
                   }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                    className={`inline-block h-4 w-4 transform rounded-full bg-vs-card shadow-sm transition-transform duration-200 ${
                       adminOnlyChat ? "translate-x-[22px]" : "translate-x-0.5"
                     }`}
                   />
@@ -850,18 +854,19 @@ export default function FileViewerPage() {
             {/* Chat messages */}
             <div className="space-y-3 p-4">
               {chatMessages.length === 0 && (
-                <p className="text-center text-[11px] text-[#737784] py-4">
+                <p className="text-center text-[11px] text-vs-muted py-4">
                   No messages yet. Start the conversation.
                 </p>
               )}
               {chatMessages.map((msg, idx) => {
                 const isMe = !!myEmail && !!msg.userEmail && msg.userEmail === myEmail
-                const initials = (msg.userName || "?")
+                const initials = (msg.userName || "")
                   .split(" ")
-                  .map((n) => n[0])
+                  .filter(Boolean)
+                  .map((n) => n[0] ?? "")
                   .join("")
                   .toUpperCase()
-                  .slice(0, 2)
+                  .slice(0, 2) || "?"
                 const msgDate = new Date(msg.timestamp)
                 const time = msgDate.toLocaleTimeString([], {
                   hour: "2-digit",
@@ -900,34 +905,34 @@ export default function FileViewerPage() {
                   <div key={msg.id}>
                     {showDateSeparator && (
                       <div className="flex items-center gap-3 my-3">
-                        <div className="flex-1 h-px bg-[#c3c6d5]" />
-                        <span className="text-[10px] text-[#737784] font-medium">
+                        <div className="flex-1 h-px bg-vs-border" />
+                        <span className="text-[10px] text-vs-muted font-medium">
                           {formatDate(msgDate)}
                         </span>
-                        <div className="flex-1 h-px bg-[#c3c6d5]" />
+                        <div className="flex-1 h-px bg-vs-border" />
                       </div>
                     )}
                     <div className={`group flex items-end gap-1 mb-1 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                       {!isMe && (
-                        <div className="h-7 w-7 shrink-0 rounded-full bg-[#d9e2ff] flex items-center justify-center text-[10px] font-bold text-[#003c90]">
+                        <div className="h-7 w-7 shrink-0 rounded-full bg-vs-active flex items-center justify-center text-[10px] font-bold text-vs-brand">
                           {initials}
                         </div>
                       )}
                       <div className={`flex flex-col max-w-[72%] ${isMe ? "items-end" : "items-start"}`}>
                         {!isMe && (
-                          <span className="mb-0.5 text-[10px] font-semibold text-[#434653]">
+                          <span className="mb-0.5 text-[10px] font-semibold text-vs-body">
                             {msg.userName}
                           </span>
                         )}
                         <div
                           className={`rounded-xl px-3 py-2 text-sm leading-relaxed break-words ${
                             isMe
-                              ? "rounded-tr-sm bg-[#003c90] text-white"
-                              : "rounded-tl-sm bg-[#eff4ff] text-[#0b1c30]"
+                              ? "rounded-tr-sm bg-vs-brand text-white"
+                              : "rounded-tl-sm bg-vs-hover text-vs-heading"
                           }`}
                         >
                           {replyPreview && (
-                            <div className={`mb-1.5 rounded-lg px-2 py-1 text-[10px] border-l-2 ${isMe ? "border-white/30 bg-white/10 text-white/70" : "border-[#003c90]/30 bg-[#d9e2ff]/50 text-[#434653]"}`}>
+                            <div className={`mb-1.5 rounded-lg px-2 py-1 text-[10px] border-l-2 ${isMe ? "border-white/30 bg-vs-card/10 text-white/70" : "border-vs-brand/30 bg-vs-active/50 text-vs-body"}`}>
                               {replyPreview}
                             </div>
                           )}
@@ -942,8 +947,8 @@ export default function FileViewerPage() {
                                 onClick={() => toggleReaction(msg.id, emoji)}
                                 className={`flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] border transition-colors cursor-pointer ${
                                   users.includes(myEmail)
-                                    ? "border-[#003c90]/30 bg-[#d9e2ff] text-[#003c90]"
-                                    : "border-[#c3c6d5] bg-[#f8f9ff] text-[#434653] hover:border-[#003c90]/20"
+                                    ? "border-vs-brand/30 bg-vs-active text-vs-brand"
+                                    : "border-vs-border bg-vs-bg text-vs-body hover:border-vs-brand/20"
                                 }`}
                               >
                                 {emoji} <span>{users.length}</span>
@@ -951,33 +956,33 @@ export default function FileViewerPage() {
                             ))}
                           </div>
                         )}
-                        <span className="text-[9px] mt-0.5 text-[#737784]">{time}</span>
+                        <span className="text-[9px] mt-0.5 text-vs-muted">{time}</span>
                       </div>
 
                       {/* Hover action buttons */}
                       <div className={`relative flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity mb-5 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                         <button
                           onClick={() => setReplyTo({ id: msg.id, userName: msg.userName, content: mainContent })}
-                          className="rounded p-1 text-[#737784] hover:bg-[#eff4ff] hover:text-[#0b1c30] cursor-pointer"
+                          className="rounded p-1 text-vs-muted hover:bg-vs-hover hover:text-vs-heading cursor-pointer"
                           title="Reply"
                         >
                           <Reply size={12} />
                         </button>
-                        <div className="relative">
+                        <div className="relative" data-emoji-picker>
                           <button
-                            onClick={() => setEmojiPickerFor(emojiPickerFor === msg.id ? null : msg.id)}
-                            className="rounded p-1 text-[#737784] hover:bg-[#eff4ff] hover:text-[#0b1c30] text-[11px] cursor-pointer"
+                            onClick={(e) => { e.stopPropagation(); setEmojiPickerFor(emojiPickerFor === msg.id ? null : msg.id) }}
+                            className="rounded p-1 text-vs-muted hover:bg-vs-hover hover:text-vs-heading text-[11px] cursor-pointer"
                             title="React"
                           >
                             😊
                           </button>
                           {emojiPickerFor === msg.id && (
-                            <div className={`absolute bottom-7 z-20 flex gap-1 rounded-xl border border-[#c3c6d5] bg-white p-1.5 shadow-xl ${isMe ? "right-0" : "left-0"}`}>
+                            <div className={`absolute bottom-7 z-20 flex gap-1 rounded-xl border border-vs-border bg-vs-card p-1.5 shadow-xl ${isMe ? "right-0" : "left-0"}`} data-emoji-picker>
                               {EMOJI_OPTIONS.map((emoji) => (
                                 <button
                                   key={emoji}
-                                  onClick={() => toggleReaction(msg.id, emoji)}
-                                  className="rounded-lg p-1 text-base hover:bg-[#eff4ff] transition-colors cursor-pointer"
+                                  onClick={(e) => { e.stopPropagation(); toggleReaction(msg.id, emoji) }}
+                                  className="rounded-lg p-1 text-base hover:bg-vs-hover transition-colors cursor-pointer"
                                 >
                                   {emoji}
                                 </button>
@@ -994,20 +999,20 @@ export default function FileViewerPage() {
             </div>
 
             {/* Comment threads */}
-            <div className="border-t border-[#c3c6d5] px-3 pb-4 pt-3 space-y-2">
+            <div className="border-t border-vs-border px-3 pb-4 pt-3 space-y-2">
               {comments.map((c) => (
-                <div key={c.id} className="rounded-lg border border-[#c3c6d5] bg-[#f8f9ff] p-3">
-                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#737784]">
+                <div key={c.id} className="rounded-lg border border-vs-border bg-vs-bg p-3">
+                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-vs-muted">
                     {c.label}
                   </p>
-                  <p className="mb-0.5 text-sm font-semibold text-[#434653]">
+                  <p className="mb-0.5 text-sm font-semibold text-vs-body">
                     {c.author}{" "}
-                    <span className="font-normal text-[#737784]">{c.time}</span>
+                    <span className="font-normal text-vs-muted">{c.time}</span>
                   </p>
-                  <p className="mb-2 text-sm leading-relaxed text-[#737784]">{c.text}</p>
+                  <p className="mb-2 text-sm leading-relaxed text-vs-muted">{c.text}</p>
                   <div className="flex gap-2">
-                    <button className="text-[10px] font-medium text-[#737784] hover:text-[#0b1c30] cursor-pointer">Reply</button>
-                    <button className="text-[10px] font-medium text-[#003c90] hover:underline cursor-pointer">Jump to</button>
+                    <button className="text-[10px] font-medium text-vs-muted hover:text-vs-heading cursor-pointer">Reply</button>
+                    <button className="text-[10px] font-medium text-vs-brand hover:underline cursor-pointer">Jump to</button>
                   </div>
                 </div>
               ))}
@@ -1015,7 +1020,7 @@ export default function FileViewerPage() {
           </div>
 
           {/* Input */}
-          <div className="shrink-0 border-t border-[#c3c6d5] p-3">
+          <div className="shrink-0 border-t border-vs-border p-3">
             {adminOnlyChat && (
               <div className="flex items-center gap-2 mb-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5">
                 <Lock size={12} className="shrink-0 text-amber-600" />
@@ -1027,14 +1032,14 @@ export default function FileViewerPage() {
               </div>
             )}
             {replyTo && (
-              <div className="flex items-center justify-between mb-2 rounded-lg border border-[#c3c6d5] bg-[#eff4ff] px-3 py-1.5">
+              <div className="flex items-center justify-between mb-2 rounded-lg border border-vs-border bg-vs-hover px-3 py-1.5">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Reply size={11} className="shrink-0 text-[#003c90]" />
-                  <span className="text-[10px] text-[#737784] truncate">
-                    <span className="font-semibold text-[#434653]">{replyTo.userName}</span>: {replyTo.content.slice(0, 50)}{replyTo.content.length > 50 ? "…" : ""}
+                  <Reply size={11} className="shrink-0 text-vs-brand" />
+                  <span className="text-[10px] text-vs-muted truncate">
+                    <span className="font-semibold text-vs-body">{replyTo.userName}</span>: {replyTo.content.slice(0, 50)}{replyTo.content.length > 50 ? "…" : ""}
                   </span>
                 </div>
-                <button onClick={() => setReplyTo(null)} className="ml-2 shrink-0 text-[#737784] hover:text-[#0b1c30] cursor-pointer">
+                <button onClick={() => setReplyTo(null)} className="ml-2 shrink-0 text-vs-muted hover:text-vs-heading cursor-pointer">
                   <X size={12} />
                 </button>
               </div>
@@ -1052,15 +1057,15 @@ export default function FileViewerPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={!canSendMessage}
-                className="flex-1 rounded-lg border border-[#c3c6d5] bg-[#f8f9ff] px-3 py-2 text-sm text-[#0b1c30] placeholder:text-[#737784] focus:border-[#003c90] focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex-1 rounded-lg border border-vs-border bg-vs-bg px-3 py-2 text-sm text-vs-heading placeholder:text-vs-muted focus:border-vs-brand focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
               />
-              <button type="button" disabled={!canSendMessage} className="text-[#737784] hover:text-[#0b1c30] disabled:opacity-40 cursor-pointer">
+              <button type="button" disabled={!canSendMessage} className="text-vs-muted hover:text-vs-heading disabled:opacity-40 cursor-pointer">
                 <AtSign size={15} />
               </button>
               <button
                 type="submit"
                 disabled={!canSendMessage}
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#003c90] text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-vs-brand text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               >
                 <Send size={12} />
               </button>

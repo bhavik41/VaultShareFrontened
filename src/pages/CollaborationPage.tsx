@@ -11,14 +11,14 @@ function formatDate(value: string) {
 
 function StatusBadge({ status }: { status: CollaborationInvitation["status"] }) {
   const cls =
-    status === "accepted" ? "bg-[#6cf8bb]/20 text-[#006c49] border border-[#006c49]/20" :
-    status === "rejected" ? "bg-[#ffdad6]/50 text-[#ba1a1a] border border-[#ba1a1a]/20" :
-                            "bg-[#ffddb8]/40 text-[#5c3800] border border-[#5c3800]/20"
+    status === "accepted" ? "bg-vs-success-surface/20 text-vs-success border border-vs-success/20" :
+    status === "rejected" ? "bg-vs-error-surface/50 text-vs-error border border-vs-error/20" :
+                            "bg-vs-warn-surface/40 text-vs-warn border border-vs-warn/20"
   return <span className={`rounded-md px-2 py-1 text-xs font-semibold ${cls}`}>{status}</span>
 }
 
-const cardCls = "rounded-xl border border-[#c3c6d5] bg-white p-5 shadow-sm"
-const rowCls  = "rounded-lg border border-[#e5eeff] bg-[#f8f9ff] p-3"
+const cardCls = "rounded-xl border border-vs-border bg-vs-card p-5 shadow-sm"
+const rowCls  = "rounded-lg border border-vs-border-subtle bg-vs-bg p-3"
 
 export default function CollaborationPage() {
   const navigate = useNavigate()
@@ -57,31 +57,31 @@ export default function CollaborationPage() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#f8f9ff]">
+    <div className="flex-1 overflow-y-auto bg-vs-bg">
       <main className="mx-auto max-w-6xl px-6 py-8">
 
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[#0b1c30] font-display">Collaboration</h1>
-            <p className="mt-1 text-sm text-[#434653]">Manage invitations and files shared with you.</p>
+            <h1 className="text-2xl font-bold text-vs-heading font-display">Collaboration</h1>
+            <p className="mt-1 text-sm text-vs-body">Manage invitations and files shared with you.</p>
           </div>
           <button type="button" onClick={loadData}
-            className="inline-flex items-center gap-2 rounded-lg border border-[#c3c6d5] bg-white px-4 py-2 text-sm font-medium text-[#434653] hover:bg-[#eff4ff] transition-colors cursor-pointer">
+            className="inline-flex items-center gap-2 rounded-lg border border-vs-border bg-vs-card px-4 py-2 text-sm font-medium text-vs-body hover:bg-vs-hover transition-colors cursor-pointer">
             <RefreshCw size={15} />Refresh
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg border border-[#ba1a1a]/20 bg-[#ffdad6]/40 px-4 py-3 text-sm font-medium text-[#ba1a1a]">{error}</div>
+          <div className="mb-4 rounded-lg border border-vs-error/20 bg-vs-error-surface/40 px-4 py-3 text-sm font-medium text-vs-error">{error}</div>
         )}
         {success && (
-          <div className="mb-4 rounded-lg border border-[#006c49]/20 bg-[#6cf8bb]/20 px-4 py-3 text-sm font-medium text-[#006c49]">{success}</div>
+          <div className="mb-4 rounded-lg border border-vs-success/20 bg-vs-success-surface/20 px-4 py-3 text-sm font-medium text-vs-success">{success}</div>
         )}
 
         {loading ? (
-          <div className="flex items-center gap-2 text-sm text-[#434653]">
-            <Loader2 className="animate-spin text-[#003c90]" size={18} />Loading…
+          <div className="flex items-center gap-2 text-sm text-vs-body">
+            <Loader2 className="animate-spin text-vs-brand" size={18} />Loading…
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
@@ -89,23 +89,23 @@ export default function CollaborationPage() {
             {/* Invitations */}
             <section className={cardCls}>
               <div className="mb-4 flex items-center gap-2">
-                <Mail size={17} className="text-[#003c90]" />
-                <h2 className="text-base font-semibold text-[#0b1c30]">Invitation History</h2>
+                <Mail size={17} className="text-vs-brand" />
+                <h2 className="text-base font-semibold text-vs-heading">Invitation History</h2>
               </div>
               {invitations.length === 0 ? (
-                <p className="text-sm text-[#737784]">You have no invitations.</p>
+                <p className="text-sm text-vs-muted">You have no invitations.</p>
               ) : (
                 <div className="space-y-3">
                   {invitations.map(inv => (
                     <div key={inv.id} className={rowCls}>
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <p className="text-sm font-semibold text-[#0b1c30]">{inv.fileName ?? "Shared file"}</p>
-                          <p className="mt-0.5 text-xs text-[#434653]">
+                          <p className="text-sm font-semibold text-vs-heading">{inv.fileName ?? "Shared file"}</p>
+                          <p className="mt-0.5 text-xs text-vs-body">
                             Invited by <span className="font-medium">{inv.inviterName}</span> as{" "}
-                            <span className="font-semibold text-[#003c90]">{inv.role}</span>
+                            <span className="font-semibold text-vs-brand">{inv.role}</span>
                           </p>
-                          <p className="mt-0.5 text-xs text-[#737784]">
+                          <p className="mt-0.5 text-xs text-vs-muted">
                             Created {formatDate(inv.createdAt)}
                             {inv.respondedAt ? ` · Responded ${formatDate(inv.respondedAt)}` : ""}
                           </p>
@@ -116,13 +116,13 @@ export default function CollaborationPage() {
                             <>
                               <button type="button" disabled={actionLoading === inv.id}
                                 onClick={() => handleResponse(inv.id, "accepted")}
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#006c49] text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-vs-success text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
                                 title="Accept">
                                 <Check size={15} />
                               </button>
                               <button type="button" disabled={actionLoading === inv.id}
                                 onClick={() => handleResponse(inv.id, "rejected")}
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#ba1a1a] text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-vs-error text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
                                 title="Reject">
                                 <X size={15} />
                               </button>
@@ -139,30 +139,30 @@ export default function CollaborationPage() {
             {/* Shared with me */}
             <section className={cardCls}>
               <div className="mb-4 flex items-center gap-2">
-                <FileText size={17} className="text-[#003c90]" />
-                <h2 className="text-base font-semibold text-[#0b1c30]">Shared With Me</h2>
+                <FileText size={17} className="text-vs-brand" />
+                <h2 className="text-base font-semibold text-vs-heading">Shared With Me</h2>
               </div>
               {sharedFiles.length === 0 ? (
-                <p className="text-sm text-[#737784]">No files have been shared with you yet.</p>
+                <p className="text-sm text-vs-muted">No files have been shared with you yet.</p>
               ) : (
                 <div className="space-y-3">
                   {sharedFiles.map(file => (
                     <div key={file.id} className={rowCls}>
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <p className="text-sm font-semibold text-[#0b1c30]">{file.name}</p>
-                          <p className="mt-0.5 text-xs text-[#434653]">Owner: <span className="font-medium">{file.ownerName}</span></p>
-                          <p className="mt-0.5 text-xs text-[#737784]">Shared {formatDate(file.sharedAt)}</p>
+                          <p className="text-sm font-semibold text-vs-heading">{file.name}</p>
+                          <p className="mt-0.5 text-xs text-vs-body">Owner: <span className="font-medium">{file.ownerName}</span></p>
+                          <p className="mt-0.5 text-xs text-vs-muted">Shared {formatDate(file.sharedAt)}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="rounded-md px-2 py-1 text-xs font-semibold bg-[#d9e2ff] text-[#003c90]">{file.role}</span>
+                          <span className="rounded-md px-2 py-1 text-xs font-semibold bg-vs-active text-vs-brand">{file.role}</span>
                           <button type="button" onClick={() => navigate(`/files/${file.id}`)}
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#c3c6d5] bg-white text-[#434653] hover:bg-[#eff4ff] cursor-pointer"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-vs-border bg-vs-card text-vs-body hover:bg-vs-hover cursor-pointer"
                             title="Open file">
                             <Eye size={15} />
                           </button>
                           <button type="button" disabled={actionLoading === file.id} onClick={() => handleDownload(file)}
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#003c90] text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-vs-brand text-white hover:opacity-80 disabled:opacity-50 cursor-pointer border-0"
                             title="Download">
                             <Download size={15} />
                           </button>

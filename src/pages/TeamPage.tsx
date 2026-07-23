@@ -29,7 +29,7 @@ const INVITE_LINK = "vaultshare.io/invite/team-xK9mP2-rnd7abc"
 function roleBadge(role: Role) {
   if (role === "owner") return { label: "Owner", className: "bg-yellow-500/15 text-yellow-300 border border-yellow-500/20" }
   if (role === "editor") return { label: "Can edit", className: "bg-emerald-500/15 text-emerald-700 border border-emerald-500/20" }
-  return { label: "Can view", className: "bg-gray-300 text-slate-600 border border-slate-600" }
+  return { label: "Can view", className: "bg-vs-border text-vs-body border border-vs-border" }
 }
 
 export default function TeamPage() {
@@ -59,30 +59,30 @@ export default function TeamPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080810] text-slate-900">
+    <div className="min-h-screen bg-vs-bg text-vs-heading">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-gray-200 bg-[#080810]/90 backdrop-blur">
+      <nav className="sticky top-0 z-50 border-b border-vs-border bg-vs-bg/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-base font-extrabold text-slate-900">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-base font-extrabold text-vs-heading">
               V
             </div>
-            <span className="text-base font-bold text-slate-900">VaultShare</span>
+            <span className="text-base font-bold text-vs-heading">VaultShare</span>
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
             {NAV_LINKS.map((link) => (
-              <a key={link} href="#" className="text-base text-slate-400 transition-colors hover:text-slate-900">
+              <a key={link} href="#" className="text-base text-vs-muted transition-colors hover:text-vs-heading">
                 {link}
               </a>
             ))}
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/signin" className="rounded-lg border border-gray-200 px-4 py-1.5 text-base text-slate-600 hover:bg-black/3">
+            <Link to="/signin" className="rounded-lg border border-vs-border px-4 py-1.5 text-base text-vs-body hover:bg-vs-hover">
               Sign In
             </Link>
-            <Link to="/signup" className="rounded-lg bg-blue-600 px-4 py-1.5 text-base font-semibold text-slate-900 hover:bg-blue-500">
+            <Link to="/signup" className="rounded-lg bg-blue-600 px-4 py-1.5 text-base font-semibold text-vs-heading hover:bg-blue-500">
               Get Started
             </Link>
           </div>
@@ -94,17 +94,17 @@ export default function TeamPage() {
         <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-cyan-400">
           Team Management
         </p>
-        <h1 className="mb-1 text-4xl font-extrabold text-slate-900">Invite Team Members</h1>
-        <p className="mb-8 text-slate-400">
+        <h1 className="mb-1 text-4xl font-extrabold text-vs-heading">Invite Team Members</h1>
+        <p className="mb-8 text-vs-muted">
           Add collaborators with role-based access. Invites sent via encrypted email.
         </p>
 
         {/* Invite Form */}
         <div
-          className="mb-8 rounded-xl border border-gray-200 bg-[#0f1020] p-6"
+          className="mb-8 rounded-xl border border-vs-border bg-vs-card p-6"
           style={{ borderLeft: "3px solid #22d3ee" }}
         >
-          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-slate-400">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-vs-muted">
             Email Address
           </p>
           <form onSubmit={handleInvite} className="flex gap-3">
@@ -114,19 +114,19 @@ export default function TeamPage() {
               placeholder="colleague@company.com"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
-              className="flex-1 rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+              className="flex-1 rounded-lg border border-vs-border bg-vs-hover px-4 py-2.5 text-base text-vs-heading placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             />
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value as "editor" | "viewer")}
-              className="rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="rounded-lg border border-vs-border bg-vs-hover px-3 py-2.5 text-base text-vs-heading focus:border-blue-500 focus:outline-none"
             >
               <option value="viewer">Can view</option>
               <option value="editor">Can edit</option>
             </select>
             <button
               type="submit"
-              className="rounded-lg bg-blue-600 px-5 py-2.5 text-base font-semibold text-slate-900 transition-colors hover:bg-blue-500"
+              className="rounded-lg bg-blue-600 px-5 py-2.5 text-base font-semibold text-vs-heading transition-colors hover:bg-blue-500"
             >
               Send Invite
             </button>
@@ -141,9 +141,9 @@ export default function TeamPage() {
 
         {/* Members List */}
         <div className="mb-8">
-          <h2 className="mb-4 text-base font-bold text-slate-900">
+          <h2 className="mb-4 text-base font-bold text-vs-heading">
             Team Members{" "}
-            <span className="ml-1 text-slate-400">({members.length})</span>
+            <span className="ml-1 text-vs-muted">({members.length})</span>
           </h2>
 
           <div className="space-y-2">
@@ -152,7 +152,7 @@ export default function TeamPage() {
               return (
                 <div
                   key={m.id}
-                  className="flex items-center justify-between rounded-xl border border-gray-200 bg-[#0f1020] px-5 py-4"
+                  className="flex items-center justify-between rounded-xl border border-vs-border bg-vs-card px-5 py-4"
                   style={{ borderLeft: `3px solid ${m.borderColor}` }}
                 >
                   <div className="flex items-center gap-3">
@@ -163,8 +163,8 @@ export default function TeamPage() {
                       {m.initials}
                     </div>
                     <div>
-                      <p className="text-base font-semibold text-slate-900">{m.name}</p>
-                      <p className="text-sm text-slate-500">{m.email}</p>
+                      <p className="text-base font-semibold text-vs-heading">{m.name}</p>
+                      <p className="text-sm text-vs-muted">{m.email}</p>
                     </div>
                   </div>
 
@@ -189,16 +189,16 @@ export default function TeamPage() {
 
         {/* Invite Link */}
         <div
-          className="rounded-xl border border-gray-200 bg-[#0f1020] p-6"
+          className="rounded-xl border border-vs-border bg-vs-card p-6"
           style={{ borderLeft: "3px solid #22d3ee" }}
         >
-          <h3 className="mb-1 text-base font-bold text-slate-900">Team Invite Link</h3>
-          <p className="mb-4 text-sm text-slate-400">
+          <h3 className="mb-1 text-base font-bold text-vs-heading">Team Invite Link</h3>
+          <p className="mb-4 text-sm text-vs-muted">
             Anyone with this link can join your workspace as a viewer.
           </p>
 
           <div className="flex items-center justify-between gap-4">
-            <span className={`text-sm font-mono ${linkRevoked ? "text-slate-600 line-through" : "text-cyan-400"}`}>
+            <span className={`text-sm font-mono ${linkRevoked ? "text-vs-body line-through" : "text-cyan-400"}`}>
               {INVITE_LINK}
             </span>
 
@@ -206,7 +206,7 @@ export default function TeamPage() {
               <button
                 onClick={handleCopy}
                 disabled={linkRevoked}
-                className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-gray-200 px-4 py-2 text-sm font-semibold text-slate-900 transition-colors hover:bg-gray-300 disabled:opacity-40"
+                className="flex items-center gap-1.5 rounded-lg border border-vs-border bg-vs-surface px-4 py-2 text-sm font-semibold text-vs-heading transition-colors hover:bg-vs-border disabled:opacity-40"
               >
                 <Copy size={13} />
                 {copied ? "Copied!" : "Copy"}
@@ -214,7 +214,7 @@ export default function TeamPage() {
               <button
                 onClick={() => setLinkRevoked(true)}
                 disabled={linkRevoked}
-                className="rounded-lg bg-rose-700 px-4 py-2 text-sm font-semibold text-slate-900 transition-colors hover:bg-rose-600 disabled:opacity-40"
+                className="rounded-lg bg-rose-700 px-4 py-2 text-sm font-semibold text-vs-heading transition-colors hover:bg-rose-600 disabled:opacity-40"
               >
                 {linkRevoked ? "Revoked" : "Revoke"}
               </button>

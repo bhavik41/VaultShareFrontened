@@ -38,20 +38,20 @@ export default function TwoFactorSetupPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-slate-950 p-4">
       <div className="w-full max-w-md">
-        <div className="bg-black/3 border border-gray-200 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
+        <div className="bg-black/3 border border-vs-border rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
 
           {/* ── Just finished setup/verify this session — always show the success screen,
               even though `isEnabled` has already flipped true by now ── */}
           {step === "done" ? (
             <div className="flex flex-col items-center gap-5 text-center">
               <CheckCircle2 className="h-16 w-16 text-emerald-600" />
-              <h1 className="text-2xl font-bold text-slate-900">2FA Enabled!</h1>
-              <p className="text-slate-900/50 text-base">
+              <h1 className="text-2xl font-bold text-vs-heading">2FA Enabled!</h1>
+              <p className="text-vs-heading/50 text-base">
                 Your account is now protected with two-factor authentication. You'll be asked for a code on every sign in.
               </p>
               <button
                 onClick={() => navigate("/")}
-                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-semibold transition-colors"
+                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-vs-heading font-semibold transition-colors"
               >
                 Back to Dashboard
               </button>
@@ -60,13 +60,13 @@ export default function TwoFactorSetupPage() {
             disableDone ? (
               <div className="flex flex-col items-center gap-5 text-center">
                 <CheckCircle2 className="h-16 w-16 text-emerald-600" />
-                <h1 className="text-2xl font-bold text-slate-900">2FA Disabled</h1>
-                <p className="text-slate-900/50 text-base">
+                <h1 className="text-2xl font-bold text-vs-heading">2FA Disabled</h1>
+                <p className="text-vs-heading/50 text-base">
                   Two-factor authentication has been removed from your account.
                 </p>
                 <button
                   onClick={() => navigate("/")}
-                  className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-semibold transition-colors"
+                  className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-vs-heading font-semibold transition-colors"
                 >
                   Back to Dashboard
                 </button>
@@ -76,13 +76,13 @@ export default function TwoFactorSetupPage() {
                 <div className="h-14 w-14 rounded-2xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center">
                   <ShieldOff className="h-7 w-7 text-rose-600" />
                 </div>
-                <h1 className="text-2xl font-bold text-slate-900">Disable 2FA</h1>
-                <p className="text-slate-900/50 text-base">
+                <h1 className="text-2xl font-bold text-vs-heading">Disable 2FA</h1>
+                <p className="text-vs-heading/50 text-base">
                   Enter a code from your authenticator app to confirm you want to disable two-factor authentication.
                 </p>
                 <form onSubmit={handleDisable} className="w-full space-y-4 text-left">
                   <div>
-                    <label className="block text-base text-slate-900/70 mb-1.5 text-center">
+                    <label className="block text-base text-vs-heading/70 mb-1.5 text-center">
                       6-digit authenticator code
                     </label>
                     <input
@@ -93,7 +93,7 @@ export default function TwoFactorSetupPage() {
                       value={disableCode}
                       onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, ""))}
                       placeholder="000000"
-                      className="w-full bg-black/5 border border-gray-300 rounded-xl px-4 py-3 text-slate-900 text-center text-xl tracking-[0.5em] placeholder:text-slate-900/30 focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+                      className="w-full bg-black/5 border border-vs-border rounded-xl px-4 py-3 text-vs-heading text-center text-xl tracking-[0.5em] placeholder:text-vs-heading/30 focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
                     />
                   </div>
                   {error && (
@@ -104,7 +104,7 @@ export default function TwoFactorSetupPage() {
                   <button
                     type="submit"
                     disabled={loading || disableCode.length < 6}
-                    className="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-slate-900 font-semibold flex items-center justify-center gap-2 transition-colors"
+                    className="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-vs-heading font-semibold flex items-center justify-center gap-2 transition-colors"
                   >
                     {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                     Disable 2FA
@@ -112,7 +112,7 @@ export default function TwoFactorSetupPage() {
                 </form>
                 <button
                   onClick={() => navigate("/")}
-                  className="text-slate-900/40 hover:text-slate-900/70 text-base flex items-center justify-center gap-1 transition-colors w-full"
+                  className="text-vs-heading/40 hover:text-vs-heading/70 text-base flex items-center justify-center gap-1 transition-colors w-full"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" /> Cancel
                 </button>
@@ -125,12 +125,12 @@ export default function TwoFactorSetupPage() {
                 {(["setup", "verify", "done"] as Step[]).map((s, i) => (
                   <div key={s} className="flex items-center gap-2">
                     <div className={`h-7 w-7 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                      step === s ? "bg-violet-600 text-slate-900" :
-                      (["setup", "verify", "done"].indexOf(step) > i) ? "bg-emerald-500 text-slate-900" : "bg-black/5 text-slate-900/40"
+                      step === s ? "bg-violet-600 text-vs-heading" :
+                      (["setup", "verify", "done"].indexOf(step) > i) ? "bg-emerald-500 text-vs-heading" : "bg-black/5 text-vs-heading/40"
                     }`}>
                       {["setup", "verify", "done"].indexOf(step) > i ? "✓" : i + 1}
                     </div>
-                    {i < 2 && <div className="w-8 h-px bg-white/20" />}
+                    {i < 2 && <div className="w-8 h-px bg-vs-card/20" />}
                   </div>
                 ))}
               </div>
@@ -141,8 +141,8 @@ export default function TwoFactorSetupPage() {
                   <div className="h-14 w-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
                     <ShieldCheck className="h-7 w-7 text-violet-600" />
                   </div>
-                  <h1 className="text-2xl font-bold text-slate-900">Enable 2FA</h1>
-                  <p className="text-slate-900/50 text-base">
+                  <h1 className="text-2xl font-bold text-vs-heading">Enable 2FA</h1>
+                  <p className="text-vs-heading/50 text-base">
                     Protect your account with a time-based one-time password (TOTP). Works with Google Authenticator, Authy, and 1Password.
                   </p>
                   {error && (
@@ -164,18 +164,18 @@ export default function TwoFactorSetupPage() {
               {/* ── Step 2: Scan QR & Verify ── */}
               {step === "verify" && (
                 <div className="flex flex-col items-center gap-5">
-                  <h1 className="text-xl font-bold text-slate-900 text-center">Scan QR Code</h1>
-                  <p className="text-slate-900/50 text-base text-center">
+                  <h1 className="text-xl font-bold text-vs-heading text-center">Scan QR Code</h1>
+                  <p className="text-vs-heading/50 text-base text-center">
                     Open your authenticator app and scan the code below.
                   </p>
                   {qrCode && (
-                    <div className="p-3 bg-white rounded-2xl shadow-lg">
+                    <div className="p-3 bg-vs-card rounded-2xl shadow-lg">
                       <img src={qrCode} alt="2FA QR Code" className="h-48 w-48" />
                     </div>
                   )}
                   <form onSubmit={handleVerify} className="w-full space-y-4">
                     <div>
-                      <label className="block text-base text-slate-900/70 mb-1.5 text-center">
+                      <label className="block text-base text-vs-heading/70 mb-1.5 text-center">
                         Enter the 6-digit code from your app
                       </label>
                       <input
@@ -185,7 +185,7 @@ export default function TwoFactorSetupPage() {
                         value={totpCode}
                         onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ""))}
                         placeholder="000000"
-                        className="w-full bg-black/5 border border-gray-300 rounded-xl px-4 py-3 text-slate-900 text-center text-xl tracking-[0.5em] placeholder:text-slate-900/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                        className="w-full bg-black/5 border border-vs-border rounded-xl px-4 py-3 text-vs-heading text-center text-xl tracking-[0.5em] placeholder:text-vs-heading/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                       />
                     </div>
                     {error && (
@@ -208,7 +208,7 @@ export default function TwoFactorSetupPage() {
               <div className="mt-6 text-center">
                 <button
                   onClick={() => navigate("/")}
-                  className="text-slate-900/40 hover:text-slate-900/70 text-base flex items-center justify-center gap-1 transition-colors w-full"
+                  className="text-vs-heading/40 hover:text-vs-heading/70 text-base flex items-center justify-center gap-1 transition-colors w-full"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" /> Cancel
                 </button>

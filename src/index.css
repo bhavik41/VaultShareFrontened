@@ -1,10 +1,9 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
 /* ── Stitch base ── */
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #f8f9ff;
-  color: #0b1c30;
 }
 h1, h2, h3, h4, h5, h6 { font-family: 'Geist', 'Inter', sans-serif; }
 
@@ -32,6 +31,29 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Geist', 'Inter', sans-serif; }
     --input: 240 5.9% 90%;
     --ring: 262 83% 58%;
     --radius: 0.5rem;
+
+    /* VaultShare design tokens */
+    --vs-bg: #f8f9ff;
+    --vs-card: #ffffff;
+    --vs-heading: #0b1c30;
+    --vs-body: #434653;
+    --vs-muted: #737784;
+    --vs-border: #c3c6d5;
+    --vs-border-subtle: #e5eeff;
+    --vs-hover: #eff4ff;
+    --vs-surface: #e5eeff;
+    --vs-active: #d9e2ff;
+    --vs-brand: #003c90;
+    --vs-brand-text: #001945;
+    --vs-brand-light: #0f52ba;
+    --vs-success: #006c49;
+    --vs-success-surface: rgba(108, 248, 187, 0.2);
+    --vs-error: #ba1a1a;
+    --vs-error-surface: #ffdad6;
+    --vs-warn: #5c3800;
+    --vs-warn-surface: #ffddb8;
+    --vs-avatar-bg: #e5eeff;
+    --vs-ring-white: #ffffff;
   }
 
   .dark {
@@ -54,6 +76,29 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Geist', 'Inter', sans-serif; }
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 262 83% 68%;
+
+    /* VaultShare design tokens — dark */
+    --vs-bg: #0a0b14;
+    --vs-card: #111225;
+    --vs-heading: #e2e8f0;
+    --vs-body: #94a3b8;
+    --vs-muted: #64748b;
+    --vs-border: #2d3148;
+    --vs-border-subtle: #1e2035;
+    --vs-hover: #1a1d35;
+    --vs-surface: #161830;
+    --vs-active: #1e2a50;
+    --vs-brand: #5b9bd5;
+    --vs-brand-text: #b0c6ff;
+    --vs-brand-light: #4d8fdc;
+    --vs-success: #34d399;
+    --vs-success-surface: rgba(52, 211, 153, 0.15);
+    --vs-error: #f87171;
+    --vs-error-surface: #3d1515;
+    --vs-warn: #fbbf24;
+    --vs-warn-surface: #3d2a0f;
+    --vs-avatar-bg: #1e2a50;
+    --vs-ring-white: #111225;
   }
 }
 
@@ -62,7 +107,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Geist', 'Inter', sans-serif; }
     border-color: hsl(var(--border));
   }
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--vs-bg);
+    color: var(--vs-heading);
   }
 }

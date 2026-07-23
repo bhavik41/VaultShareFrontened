@@ -25,34 +25,34 @@ export default function SigninPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+    <div className="min-h-screen flex flex-col bg-vs-bg text-vs-heading">
 
       {/* ── Navbar ── */}
-      <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-vs-border bg-vs-card/95 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 no-underline">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-extrabold text-white shadow-lg shadow-violet-500/20">
               V
             </div>
-            <span className="text-slate-900 font-bold text-lg tracking-tight">VaultShare</span>
+            <span className="text-vs-heading font-bold text-lg tracking-tight">VaultShare</span>
           </Link>
 
           <div className="flex items-center gap-2">
             <Link
               to="/"
-              className="text-slate-400 hover:text-slate-900 text-base font-medium px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors no-underline"
+              className="text-vs-muted hover:text-vs-heading text-base font-medium px-3 py-1.5 rounded-lg hover:bg-vs-surface transition-colors no-underline"
             >
               Home
             </Link>
             <Link
               to="/signin"
-              className="text-slate-900 text-base font-medium px-3 py-1.5 rounded-lg bg-gray-200 transition-colors no-underline"
+              className="text-vs-heading text-base font-medium px-3 py-1.5 rounded-lg bg-vs-surface transition-colors no-underline"
             >
               Sign in
             </Link>
             <Link
               to="/signup"
-              className="text-slate-900 text-base font-semibold px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 transition-colors no-underline"
+              className="text-vs-heading text-base font-semibold px-4 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 transition-colors no-underline"
             >
               Sign up
             </Link>
@@ -67,18 +67,18 @@ export default function SigninPage() {
           {/* Heading */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-500/20 mb-4">
-              <span className="text-slate-900 font-extrabold text-xl">V</span>
+              <span className="text-vs-heading font-extrabold text-xl">V</span>
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">Sign in to your account</h1>
+            <h1 className="text-2xl font-bold text-vs-heading">Sign in to your account</h1>
           </div>
 
           {/* Card */}
-          <div className="bg-gray-100 border border-gray-200/60 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
+          <div className="bg-vs-hover border border-vs-border/60 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
             <form onSubmit={handleSubmit} className="space-y-5">
 
               {/* Email */}
               <div className="space-y-1.5">
-                <label className="text-base font-medium text-slate-600">Email</label>
+                <label className="text-base font-medium text-vs-body">Email</label>
                 <input
                   type="email"
                   required
@@ -86,14 +86,14 @@ export default function SigninPage() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-gray-200 border border-gray-300 rounded-xl px-4 py-2.5 text-slate-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60 transition text-base"
+                  className="w-full bg-vs-surface border border-vs-border rounded-xl px-4 py-2.5 text-vs-heading placeholder:text-vs-muted focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60 transition text-base"
                 />
               </div>
 
               {/* Password */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-base font-medium text-slate-600">Password</label>
+                  <label className="text-base font-medium text-vs-body">Password</label>
                   <Link
                     to="/forgot-password"
                     className="text-base text-violet-600 hover:text-violet-700 transition-colors no-underline"
@@ -109,12 +109,12 @@ export default function SigninPage() {
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-gray-200 border border-gray-300 rounded-xl px-4 py-2.5 pr-11 text-slate-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60 transition text-base"
+                    className="w-full bg-vs-surface border border-vs-border rounded-xl px-4 py-2.5 pr-11 text-vs-heading placeholder:text-vs-muted focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60 transition text-base"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-vs-body hover:text-vs-heading transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -138,16 +138,16 @@ export default function SigninPage() {
                 Sign in
               </button>
 
-              <p className="text-center text-sm text-slate-500">
+              <p className="text-center text-sm text-vs-muted">
                 By signing in, you agree to our{" "}
-                <a href="#" className="text-slate-400 hover:text-slate-600 transition-colors">Terms of use</a>
+                <a href="#" className="text-vs-muted hover:text-vs-body transition-colors">Terms of use</a>
                 {" "}and{" "}
-                <a href="#" className="text-slate-400 hover:text-slate-600 transition-colors">Privacy policy</a>
+                <a href="#" className="text-vs-muted hover:text-vs-body transition-colors">Privacy policy</a>
               </p>
             </form>
           </div>
 
-          <p className="mt-6 text-center text-base text-slate-500">
+          <p className="mt-6 text-center text-base text-vs-muted">
             Don't have an account?{" "}
             <Link to="/signup" className="text-violet-600 hover:text-violet-700 font-medium transition-colors no-underline">
               Sign up

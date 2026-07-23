@@ -12,10 +12,10 @@ export const AuditOwnerBadge: React.FC<AuditOwnerBadgeProps> = ({ ownerName, isC
       <Crown size={14} className="text-amber-600 shrink-0" />
       <div>
         <p className="text-sm font-semibold text-amber-700">
-          File Owner: <span className="text-slate-900">{ownerName}</span>
+          File Owner: <span className="text-vs-heading">{ownerName}</span>
           {isCurrentUser && <span className="ml-1 text-amber-500/70">(you)</span>}
         </p>
-        <p className="text-[11px] text-slate-500">
+        <p className="text-[11px] text-vs-muted">
           {isCurrentUser ? "You own this file and can view its full audit history." : "Only the file owner can manage access and view audit history."}
         </p>
       </div>

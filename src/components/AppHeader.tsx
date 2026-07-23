@@ -1,12 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { LogOut, ShieldCheck, ShieldAlert, User, KeyRound, Home, Folder, Share2, Users, Settings, Search, Upload, Loader2 } from "lucide-react";
+import { LogOut, ShieldCheck, ShieldAlert, User, KeyRound, Home, Folder, Share2, Users, Settings, Search, Upload, Loader2, Sun, Moon } from "lucide-react";
 import { logout, fetchMeThunk } from "@/store/authSlice";
 import { uploadFileThunk } from "@/store/filesSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import NotificationBell from "@/components/NotificationBell";
+import { useTheme } from "@/hooks/useTheme";
 
 function randomId() { return Math.random().toString(36).slice(2); }
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <button
+      onClick={toggleTheme}
+      className="flex h-9 w-9 items-center justify-center rounded-xl border border-vs-border bg-vs-card text-vs-muted transition-colors hover:bg-vs-hover hover:text-vs-heading cursor-pointer"
+      title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+    >
+      {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+    </button>
+  );
+}
 
 /* ── Profile Dropdown ── */
 function ProfileDropdown({ name, email, is2fa }: { name: string; email: string; is2fa: boolean }) {
@@ -21,7 +35,7 @@ function ProfileDropdown({ name, email, is2fa }: { name: string; email: string; 
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
-  const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "?";
+  const initials = (name || "").split(" ").filter(Boolean).map(n => n[0] ?? "").join("").toUpperCase().slice(0, 2) || "?";
 
   const handleLogout = () => {
     setOpen(false);
@@ -34,17 +48,17 @@ function ProfileDropdown({ name, email, is2fa }: { name: string; email: string; 
   return (
     <div ref={ref} className="relative">
       <button onClick={() => setOpen(o => !o)}
-        className="w-8 h-8 rounded-full bg-[#e5eeff] hover:ring-2 ring-[#003c90] ring-offset-2 transition-all border-0 cursor-pointer flex items-center justify-center text-sm font-bold text-[#003c90]">
+        className="w-8 h-8 rounded-full bg-vs-surface hover:ring-2 ring-vs-brand ring-offset-2 transition-all border-0 cursor-pointer flex items-center justify-center text-sm font-bold text-vs-brand">
         {initials}
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-60 bg-white border border-[#c3c6d5] rounded-xl shadow-xl z-[100] overflow-hidden">
-          <div className="p-4 border-b border-[#e5eeff]">
+        <div className="absolute right-0 top-full mt-2 w-60 bg-vs-card border border-vs-border rounded-xl shadow-xl z-[100] overflow-hidden">
+          <div className="p-4 border-b border-vs-border-subtle">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#003c90] flex items-center justify-center text-white font-bold text-sm">{initials}</div>
+              <div className="w-10 h-10 rounded-full bg-vs-brand flex items-center justify-center text-white font-bold text-sm">{initials}</div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-[#0b1c30] truncate">{name}</p>
-                <p className="text-xs text-[#737784] truncate">{email}</p>
+                <p className="text-sm font-semibold text-vs-heading truncate">{name}</p>
+                <p className="text-xs text-vs-muted truncate">{email}</p>
               </div>
             </div>
           </div>
@@ -54,23 +68,23 @@ function ProfileDropdown({ name, email, is2fa }: { name: string; email: string; 
               { icon: <Folder size={15} />,  label: "My Drive",       action: () => goTab("files") },
               { icon: <Share2 size={15} />,  label: "Collaboration",  action: () => { setOpen(false); navigate("/collaboration"); } },
               { icon: <Users size={15} />,   label: "Manage Sharing", action: () => { setOpen(false); navigate("/file-sharing"); } },
-              { icon: is2fa ? <ShieldCheck size={15} className="text-[#006c49]" /> : <ShieldAlert size={15} className="text-[#ba1a1a]" />, label: "Two-Factor Auth", action: () => goTab("settings") },
+              { icon: is2fa ? <ShieldCheck size={15} className="text-vs-success" /> : <ShieldAlert size={15} className="text-vs-error" />, label: "Two-Factor Auth", action: () => goTab("settings") },
               { icon: <KeyRound size={15} />, label: "Change Password", action: () => { setOpen(false); navigate("/forgot-password"); } },
               { icon: <Home size={15} />,    label: "Home Page",      action: () => { setOpen(false); navigate("/"); } },
               { icon: <Settings size={15} />, label: "Settings",      action: () => goTab("settings") },
             ].map(({ icon, label, action }) => (
               <button key={label} onClick={action}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-[#eff4ff] transition-colors">
-                <span className="text-[#434653]">{icon}</span>
-                <span className="text-sm text-[#0b1c30]">{label}</span>
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-vs-hover transition-colors">
+                <span className="text-vs-body">{icon}</span>
+                <span className="text-sm text-vs-heading">{label}</span>
               </button>
             ))}
           </div>
-          <div className="border-t border-[#e5eeff] p-1.5">
+          <div className="border-t border-vs-border-subtle p-1.5">
             <button onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-[#ffdad6]/40 transition-colors">
-              <LogOut size={15} className="text-[#ba1a1a]" />
-              <span className="text-sm text-[#ba1a1a] font-medium">Sign out</span>
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-vs-error-surface/40 transition-colors">
+              <LogOut size={15} className="text-vs-error" />
+              <span className="text-sm text-vs-error font-medium">Sign out</span>
             </button>
           </div>
         </div>
@@ -143,17 +157,17 @@ export default function AppHeader() {
 
   return (
     <>
-      <header className="h-16 flex items-center justify-between px-6 border-b border-[#c3c6d5] bg-[#f8f9ff] sticky top-0 z-30 shrink-0">
+      <header className="h-16 flex items-center justify-between px-6 border-b border-vs-border bg-vs-bg sticky top-0 z-30 shrink-0">
         {/* Search */}
         <div className="flex items-center flex-1">
           <div className="relative w-full max-w-xl">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#737784]" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-vs-muted" />
             <input
               type="text"
               placeholder="Search in My Drive..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#eff4ff] border border-[#c3c6d5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003c90]/10 focus:border-[#003c90] text-sm text-[#0b1c30] placeholder:text-[#737784] transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-vs-hover border border-vs-border rounded-lg focus:outline-none focus:ring-2 focus:ring-vs-brand/10 focus:border-vs-brand text-sm text-vs-heading placeholder:text-vs-muted transition-all"
             />
           </div>
         </div>
@@ -163,11 +177,12 @@ export default function AppHeader() {
           <input type="file" ref={fileInputRef} multiple onChange={handleFileChange} className="hidden" />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 px-5 py-2 bg-[#003c90] text-white text-sm font-semibold rounded hover:opacity-90 border-0 cursor-pointer transition-opacity"
+            className="flex items-center gap-2 px-5 py-2 bg-vs-brand text-white text-sm font-semibold rounded hover:opacity-90 border-0 cursor-pointer transition-opacity"
           >
             <Upload size={15} />Upload
           </button>
-          <div className="h-6 w-px bg-[#c3c6d5]" />
+          <div className="h-6 w-px bg-vs-border" />
+          <ThemeToggle />
           <NotificationBell />
           {user && (
             <ProfileDropdown name={user.name ?? "User"} email={user.email ?? ""} is2fa={is2fa} />
@@ -177,9 +192,9 @@ export default function AppHeader() {
 
       {/* Upload progress toast */}
       {localUploads.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-50 w-80 bg-white border border-[#c3c6d5] rounded-xl shadow-xl p-4 space-y-3">
-          <p className="text-sm font-semibold text-[#0b1c30] flex items-center gap-2">
-            <Loader2 size={14} className="animate-spin text-[#003c90]" />
+        <div className="fixed bottom-6 right-6 z-50 w-80 bg-vs-card border border-vs-border rounded-xl shadow-xl p-4 space-y-3">
+          <p className="text-sm font-semibold text-vs-heading flex items-center gap-2">
+            <Loader2 size={14} className="animate-spin text-vs-brand" />
             Uploading {activeUploads.length} file{activeUploads.length !== 1 ? "s" : ""}…
           </p>
           {localUploads.map(entry => {
@@ -187,11 +202,11 @@ export default function AppHeader() {
             return (
               <div key={entry.localId} className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#434653] truncate max-w-[200px]">{entry.name}</span>
-                  <span className="text-xs font-semibold text-[#003c90]">{entry.status === "done" ? "✓" : `${progress}%`}</span>
+                  <span className="text-sm text-vs-body truncate max-w-[200px]">{entry.name}</span>
+                  <span className="text-xs font-semibold text-vs-brand">{entry.status === "done" ? "✓" : `${progress}%`}</span>
                 </div>
-                <div className="h-1.5 rounded-full bg-[#e5eeff] overflow-hidden">
-                  <div className={`h-full rounded-full transition-all ${entry.status === "done" ? "bg-[#006c49]" : "bg-[#003c90]"}`}
+                <div className="h-1.5 rounded-full bg-vs-surface overflow-hidden">
+                  <div className={`h-full rounded-full transition-all ${entry.status === "done" ? "bg-vs-success" : "bg-vs-brand"}`}
                     style={{ width: entry.status === "done" ? "100%" : `${progress}%` }} />
                 </div>
               </div>

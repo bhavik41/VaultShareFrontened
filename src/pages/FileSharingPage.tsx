@@ -33,16 +33,16 @@ function buildPublicShareUrl(token: string) {
   return `${window.location.origin}/share/${token}`
 }
 function statusBadge(status: CollaborationInvitation["status"]) {
-  if (status === "accepted") return "bg-[#6cf8bb]/20 text-[#006c49] border border-[#006c49]/20"
-  if (status === "rejected") return "bg-[#ffdad6]/50 text-[#ba1a1a] border border-[#ba1a1a]/20"
-  return "bg-[#ffddb8]/40 text-[#5c3800] border border-[#5c3800]/20"
+  if (status === "accepted") return "bg-vs-success-surface/20 text-vs-success border border-vs-success/20"
+  if (status === "rejected") return "bg-vs-error-surface/50 text-vs-error border border-vs-error/20"
+  return "bg-vs-warn-surface/40 text-vs-warn border border-vs-warn/20"
 }
 
 /* ── Shared input / select styles ── */
-const inputCls = "w-full rounded-lg border border-[#c3c6d5] bg-[#eff4ff] px-3 py-2 text-sm text-[#0b1c30] placeholder:text-[#737784] outline-none focus:border-[#003c90] focus:ring-2 focus:ring-[#003c90]/10 transition-all"
-const selectCls = "rounded-lg border border-[#c3c6d5] bg-[#eff4ff] px-3 py-2 text-sm text-[#0b1c30] outline-none focus:border-[#003c90] cursor-pointer"
-const primaryBtn = "inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#003c90] px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer border-0"
-const cardCls = "rounded-xl border border-[#c3c6d5] bg-white p-5 shadow-sm"
+const inputCls = "w-full rounded-lg border border-vs-border bg-vs-hover px-3 py-2 text-sm text-vs-heading placeholder:text-vs-muted outline-none focus:border-vs-brand focus:ring-2 focus:ring-vs-brand/10 transition-all"
+const selectCls = "rounded-lg border border-vs-border bg-vs-hover px-3 py-2 text-sm text-vs-heading outline-none focus:border-vs-brand cursor-pointer"
+const primaryBtn = "inline-flex w-full items-center justify-center gap-2 rounded-lg bg-vs-brand px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer border-0"
+const cardCls = "rounded-xl border border-vs-border bg-vs-card p-5 shadow-sm"
 const sectionHead = "mb-4 flex items-center gap-2"
 
 export default function FileSharingPage() {
@@ -128,60 +128,60 @@ export default function FileSharingPage() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#f8f9ff]">
+    <div className="flex-1 overflow-y-auto bg-vs-bg">
       <main className="mx-auto max-w-6xl px-6 py-8">
 
         {/* Page header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[#0b1c30] font-display">Manage File Sharing</h1>
-            <p className="mt-1 text-sm text-[#434653]">Invite collaborators, assign permissions, and control share links.</p>
+            <h1 className="text-2xl font-bold text-vs-heading font-display">Manage File Sharing</h1>
+            <p className="mt-1 text-sm text-vs-body">Invite collaborators, assign permissions, and control share links.</p>
           </div>
           <button type="button" onClick={loadPageData}
-            className="inline-flex items-center gap-2 rounded-lg border border-[#c3c6d5] bg-white px-4 py-2 text-sm font-medium text-[#434653] hover:bg-[#eff4ff] transition-colors cursor-pointer">
+            className="inline-flex items-center gap-2 rounded-lg border border-vs-border bg-vs-card px-4 py-2 text-sm font-medium text-vs-body hover:bg-vs-hover transition-colors cursor-pointer">
             <RefreshCw size={15} />Refresh
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg border border-[#ba1a1a]/20 bg-[#ffdad6]/40 px-4 py-3 text-sm font-medium text-[#ba1a1a]">{error}</div>
+          <div className="mb-4 rounded-lg border border-vs-error/20 bg-vs-error-surface/40 px-4 py-3 text-sm font-medium text-vs-error">{error}</div>
         )}
         {success && (
-          <div className="mb-4 rounded-lg border border-[#006c49]/20 bg-[#6cf8bb]/20 px-4 py-3 text-sm font-medium text-[#006c49]">{success}</div>
+          <div className="mb-4 rounded-lg border border-vs-success/20 bg-vs-success-surface/20 px-4 py-3 text-sm font-medium text-vs-success">{success}</div>
         )}
 
         {loading ? (
-          <div className="flex items-center gap-2 text-sm text-[#434653]">
-            <Loader2 className="animate-spin text-[#003c90]" size={18} />Loading files…
+          <div className="flex items-center gap-2 text-sm text-vs-body">
+            <Loader2 className="animate-spin text-vs-brand" size={18} />Loading files…
           </div>
         ) : files.length === 0 ? (
-          <div className={`${cardCls} text-sm text-[#737784]`}>Upload a file first before managing sharing.</div>
+          <div className={`${cardCls} text-sm text-vs-muted`}>Upload a file first before managing sharing.</div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
 
             {/* File list sidebar */}
             <aside className={cardCls}>
-              <h2 className="mb-4 text-sm font-semibold text-[#434653] uppercase tracking-wider">Your Files</h2>
+              <h2 className="mb-4 text-sm font-semibold text-vs-body uppercase tracking-wider">Your Files</h2>
               <div className="space-y-2">
                 {files.map(file => (
                   <button key={file.id} type="button" onClick={() => setSelectedFileId(file.id)}
                     className={`w-full rounded-lg border px-3 py-3 text-left transition-colors cursor-pointer ${
                       selectedFileId === file.id
-                        ? "border-[#003c90]/30 bg-[#d9e2ff] border-l-4 border-l-[#003c90]"
-                        : "border-[#c3c6d5] bg-[#f8f9ff] hover:bg-[#eff4ff]"
+                        ? "border-vs-brand/30 bg-vs-active border-l-4 border-l-vs-brand"
+                        : "border-vs-border bg-vs-bg hover:bg-vs-hover"
                     }`}>
-                    <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-[#0b1c30]">
+                    <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-vs-heading">
                       <span className="truncate">{file.name}</span>
                       {file.isEncrypted && (
                         <span
                           title="End-to-end encrypted"
-                          className="inline-flex shrink-0 items-center gap-0.5 rounded bg-[#6cf8bb]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#006c49]"
+                          className="inline-flex shrink-0 items-center gap-0.5 rounded bg-vs-success-surface/20 px-1.5 py-0.5 text-[10px] font-semibold text-vs-success"
                         >
                           <Lock size={9} />Encrypted
                         </span>
                       )}
                     </p>
-                    <p className="mt-0.5 text-xs text-[#737784]">{formatSize(file.size)} · {formatDate(file.createdAt)}</p>
+                    <p className="mt-0.5 text-xs text-vs-muted">{formatSize(file.size)} · {formatDate(file.createdAt)}</p>
                   </button>
                 ))}
               </div>
@@ -192,19 +192,19 @@ export default function FileSharingPage() {
               {/* Selected file info */}
               {selectedFile && (
                 <div className={cardCls}>
-                  <p className="text-xs text-[#737784] font-medium uppercase tracking-wider mb-1">Selected file</p>
-                  <h2 className="flex items-center gap-2 text-lg font-bold text-[#0b1c30] font-display truncate">
+                  <p className="text-xs text-vs-muted font-medium uppercase tracking-wider mb-1">Selected file</p>
+                  <h2 className="flex items-center gap-2 text-lg font-bold text-vs-heading font-display truncate">
                     <span className="truncate">{selectedFile.name}</span>
                     {selectedFile.isEncrypted && (
                       <span
                         title="End-to-end encrypted"
-                        className="inline-flex shrink-0 items-center gap-1 rounded bg-[#6cf8bb]/20 px-2 py-0.5 text-xs font-semibold text-[#006c49]"
+                        className="inline-flex shrink-0 items-center gap-1 rounded bg-vs-success-surface/20 px-2 py-0.5 text-xs font-semibold text-vs-success"
                       >
                         <Lock size={11} />Encrypted
                       </span>
                     )}
                   </h2>
-                  <p className="text-sm text-[#434653] mt-0.5">{selectedFile.mimeType} · {formatSize(selectedFile.size)}</p>
+                  <p className="text-sm text-vs-body mt-0.5">{selectedFile.mimeType} · {formatSize(selectedFile.size)}</p>
                 </div>
               )}
 
@@ -212,16 +212,16 @@ export default function FileSharingPage() {
               {selectedFile && (
                 <div className={cardCls}>
                   <div className={sectionHead}>
-                    <ShieldCheck size={17} className="text-[#003c90]" />
-                    <h2 className="text-base font-semibold text-[#0b1c30]">Version Upload Policy</h2>
+                    <ShieldCheck size={17} className="text-vs-brand" />
+                    <h2 className="text-base font-semibold text-vs-heading">Version Upload Policy</h2>
                   </div>
-                  <p className="mb-3 text-sm text-[#434653]">Controls who can upload a new version of this file.</p>
+                  <p className="mb-3 text-sm text-vs-body">Controls who can upload a new version of this file.</p>
                   <select value={selectedFile.versionPolicy ?? "admin_only"} disabled={policySaving}
                     onChange={e => handlePolicyChange(e.target.value as VersionPolicy)}
                     className={`${selectCls} w-full disabled:opacity-50`}>
                     {POLICY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
-                  <p className="mt-2 text-xs text-[#737784]">
+                  <p className="mt-2 text-xs text-vs-muted">
                     {POLICY_OPTIONS.find(o => o.value === (selectedFile.versionPolicy ?? "admin_only"))?.description}
                   </p>
                 </div>
@@ -231,8 +231,8 @@ export default function FileSharingPage() {
               <div className="grid gap-5 md:grid-cols-2">
                 <form onSubmit={handleInvite} className={`${cardCls} space-y-3`}>
                   <div className={sectionHead}>
-                    <UserPlus size={17} className="text-[#003c90]" />
-                    <h2 className="text-base font-semibold text-[#0b1c30]">Invite Collaborator</h2>
+                    <UserPlus size={17} className="text-vs-brand" />
+                    <h2 className="text-base font-semibold text-vs-heading">Invite Collaborator</h2>
                   </div>
                   <input type="email" required value={inviteEmail} onChange={e => setInviteEmail(e.target.value)}
                     placeholder="collaborator@example.com" className={inputCls} />
@@ -247,8 +247,8 @@ export default function FileSharingPage() {
 
                 <form onSubmit={handleDirectShare} className={`${cardCls} space-y-3`}>
                   <div className={sectionHead}>
-                    <Share2 size={17} className="text-[#003c90]" />
-                    <h2 className="text-base font-semibold text-[#0b1c30]">Direct Share</h2>
+                    <Share2 size={17} className="text-vs-brand" />
+                    <h2 className="text-base font-semibold text-vs-heading">Direct Share</h2>
                   </div>
                   <input type="email" required value={shareEmail} onChange={e => setShareEmail(e.target.value)}
                     placeholder="collaborator@example.com" className={inputCls} />
@@ -265,18 +265,18 @@ export default function FileSharingPage() {
               {/* Sent invitations */}
               <div className={cardCls}>
                 <div className={sectionHead}>
-                  <Mail size={17} className="text-[#003c90]" />
-                  <h2 className="text-base font-semibold text-[#0b1c30]">Sent Invitations</h2>
+                  <Mail size={17} className="text-vs-brand" />
+                  <h2 className="text-base font-semibold text-vs-heading">Sent Invitations</h2>
                 </div>
                 {sentInvitations.length === 0 ? (
-                  <p className="text-sm text-[#737784]">No invitations sent for this file.</p>
+                  <p className="text-sm text-vs-muted">No invitations sent for this file.</p>
                 ) : (
                   <div className="space-y-3">
                     {sentInvitations.map(inv => (
-                      <div key={inv.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#e5eeff] bg-[#f8f9ff] p-3">
+                      <div key={inv.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-vs-border-subtle bg-vs-bg p-3">
                         <div>
-                          <p className="text-sm font-semibold text-[#0b1c30]">{inv.inviteeEmail}</p>
-                          <p className="text-xs text-[#737784] mt-0.5">Role: {inv.role} · Sent {formatDate(inv.createdAt)}</p>
+                          <p className="text-sm font-semibold text-vs-heading">{inv.inviteeEmail}</p>
+                          <p className="text-xs text-vs-muted mt-0.5">Role: {inv.role} · Sent {formatDate(inv.createdAt)}</p>
                         </div>
                         <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusBadge(inv.status)}`}>{inv.status}</span>
                       </div>
@@ -288,18 +288,18 @@ export default function FileSharingPage() {
               {/* Collaborators */}
               <div className={cardCls}>
                 <div className={sectionHead}>
-                  <Users size={17} className="text-[#003c90]" />
-                  <h2 className="text-base font-semibold text-[#0b1c30]">Collaborators</h2>
+                  <Users size={17} className="text-vs-brand" />
+                  <h2 className="text-base font-semibold text-vs-heading">Collaborators</h2>
                 </div>
                 {collaborators.length === 0 ? (
-                  <p className="text-sm text-[#737784]">No collaborators yet.</p>
+                  <p className="text-sm text-vs-muted">No collaborators yet.</p>
                 ) : (
                   <div className="space-y-3">
                     {collaborators.map(user => (
-                      <div key={user.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#e5eeff] bg-[#f8f9ff] p-3">
+                      <div key={user.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-vs-border-subtle bg-vs-bg p-3">
                         <div>
-                          <p className="text-sm font-semibold text-[#0b1c30]">{user.name}</p>
-                          <p className="text-xs text-[#737784]">{user.email}</p>
+                          <p className="text-sm font-semibold text-vs-heading">{user.name}</p>
+                          <p className="text-xs text-vs-muted">{user.email}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <select value={user.role} onChange={e => handleRoleChange(user.userId, e.target.value as SharedRole)} className={selectCls}>
@@ -307,7 +307,7 @@ export default function FileSharingPage() {
                             <option value="editor">Editor</option>
                           </select>
                           <button type="button" onClick={() => handleRemoveCollaborator(user.userId)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#ba1a1a] text-white hover:opacity-80 transition-opacity cursor-pointer border-0"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-vs-error text-white hover:opacity-80 transition-opacity cursor-pointer border-0"
                             title="Remove collaborator">
                             <Trash2 size={15} />
                           </button>
@@ -321,8 +321,8 @@ export default function FileSharingPage() {
               {/* Share links */}
               <div className={cardCls}>
                 <div className={sectionHead}>
-                  <Link size={17} className="text-[#003c90]" />
-                  <h2 className="text-base font-semibold text-[#0b1c30]">Share Links</h2>
+                  <Link size={17} className="text-vs-brand" />
+                  <h2 className="text-base font-semibold text-vs-heading">Share Links</h2>
                 </div>
                 <form onSubmit={handleCreateShareLink} className="mb-5 flex flex-col gap-3 lg:grid lg:grid-cols-[1fr_1fr_1fr_auto]">
                   <select value={linkPermissionMode} onChange={e => setLinkPermissionMode(e.target.value as ShareLinkPermissionMode)} className={selectCls}>
@@ -336,36 +336,36 @@ export default function FileSharingPage() {
                   <input type="password" placeholder="Password (optional)" value={linkPassword} onChange={e => setLinkPassword(e.target.value)}
                     className={inputCls} />
                   <button type="submit" disabled={actionLoading}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#003c90] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 cursor-pointer border-0 whitespace-nowrap lg:w-auto">
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-vs-brand px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 cursor-pointer border-0 whitespace-nowrap lg:w-auto">
                     <Link size={14} />Create Link
                   </button>
                 </form>
 
                 {shareLinks.length === 0 ? (
-                  <p className="text-sm text-[#737784]">No share links created yet.</p>
+                  <p className="text-sm text-vs-muted">No share links created yet.</p>
                 ) : (
                   <div className="space-y-3">
                     {shareLinks.map(sl => (
-                      <div key={sl.id} className="rounded-lg border border-[#e5eeff] bg-[#f8f9ff] p-3">
+                      <div key={sl.id} className="rounded-lg border border-vs-border-subtle bg-vs-bg p-3">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-mono text-[#003c90] truncate">{buildPublicShareUrl(sl.token)}</p>
-                            <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-[#737784]">
+                            <p className="text-sm font-mono text-vs-brand truncate">{buildPublicShareUrl(sl.token)}</p>
+                            <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-vs-muted">
                               Mode: {sl.permissionMode} · Expires {formatDate(sl.expiresAt)}
-                              {sl.revokedAt && <span className="text-[#ba1a1a] font-medium">· Revoked</span>}
+                              {sl.revokedAt && <span className="text-vs-error font-medium">· Revoked</span>}
                               {sl.passwordProtected && (
-                                <span className="rounded bg-[#ffddb8]/60 px-1.5 py-0.5 text-xs font-semibold text-[#5c3800]">🔒 Password</span>
+                                <span className="rounded bg-vs-warn-surface/60 px-1.5 py-0.5 text-xs font-semibold text-vs-warn">🔒 Password</span>
                               )}
                             </p>
                           </div>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => handleCopyLink(sl.token)}
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#c3c6d5] bg-white text-[#434653] hover:bg-[#eff4ff] transition-colors cursor-pointer"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-vs-border bg-vs-card text-vs-body hover:bg-vs-hover transition-colors cursor-pointer"
                               title="Copy link">
                               <Copy size={14} />
                             </button>
                             <button type="button" onClick={() => handleRevokeLink(sl.token)} disabled={!!sl.revokedAt}
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#ba1a1a] text-white hover:opacity-80 disabled:opacity-40 transition-opacity cursor-pointer border-0"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-vs-error text-white hover:opacity-80 disabled:opacity-40 transition-opacity cursor-pointer border-0"
                               title="Revoke link">
                               <Trash2 size={14} />
                             </button>

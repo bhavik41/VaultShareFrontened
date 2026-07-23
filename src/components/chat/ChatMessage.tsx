@@ -21,12 +21,13 @@ function formatTime(iso: string): string {
 }
 
 function getInitials(name: string): string {
-  return name
+  return (name || "")
     .split(" ")
-    .map((n) => n[0])
+    .filter(Boolean)
+    .map((n) => n[0] ?? "")
     .join("")
     .toUpperCase()
-    .slice(0, 2);
+    .slice(0, 2) || "?";
 }
 
 export default function ChatMessage({
@@ -40,11 +41,11 @@ export default function ChatMessage({
     <>
       {showDateSeparator && (
         <div className="flex items-center gap-3 my-3">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-[10px] font-semibold text-slate-500 px-2 py-0.5 rounded-full bg-gray-100 border border-gray-200">
+          <div className="flex-1 h-px bg-vs-surface" />
+          <span className="text-[10px] font-semibold text-vs-muted px-2 py-0.5 rounded-full bg-vs-hover border border-vs-border">
             {separatorDate}
           </span>
-          <div className="flex-1 h-px bg-gray-200" />
+          <div className="flex-1 h-px bg-vs-surface" />
         </div>
       )}
 
@@ -52,35 +53,35 @@ export default function ChatMessage({
         {/* Avatar */}
         <div className="relative flex-shrink-0">
           <div
-            className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-900 flex-shrink-0 ${
+            className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-vs-heading flex-shrink-0 ${
               isSelf
                 ? "bg-gradient-to-br from-violet-600 to-indigo-600"
                 : "bg-gradient-to-br from-slate-600 to-slate-700"
-            } ${isOnline ? "ring-2 ring-emerald-400 ring-offset-1 ring-offset-[#06060c]" : ""}`}
+            } ${isOnline ? "ring-2 ring-emerald-400 ring-offset-1 ring-offset-vs-bg" : ""}`}
             title={message.userName}
           >
             {getInitials(message.userName)}
           </div>
           {isOnline && (
-            <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border border-[#06060c]" />
+            <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border border-vs-bg" />
           )}
         </div>
 
         {/* Bubble */}
         <div className={`flex flex-col gap-0.5 max-w-[72%] ${isSelf ? "items-end" : "items-start"}`}>
-          <span className={`text-[10px] font-semibold ${isSelf ? "text-violet-600" : "text-slate-400"}`}>
+          <span className={`text-[10px] font-semibold ${isSelf ? "text-violet-600" : "text-vs-muted"}`}>
             {isSelf ? "You" : message.userName}
           </span>
           <div
             className={`px-3 py-2 rounded-2xl text-base leading-relaxed break-words shadow-sm ${
               isSelf
                 ? "bg-violet-600 text-white rounded-br-sm shadow-violet-900/30"
-                : "bg-gray-200 text-slate-800 rounded-bl-sm shadow-black/30"
+                : "bg-vs-surface text-vs-heading rounded-bl-sm shadow-black/30"
             }`}
           >
             {message.content}
           </div>
-          <span className="text-[9px] text-slate-600">{formatTime(message.timestamp)}</span>
+          <span className="text-[9px] text-vs-body">{formatTime(message.timestamp)}</span>
         </div>
       </div>
     </>

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -38,6 +39,29 @@ module.exports = {
         'inverse-surface':         '#213145',
         'inverse-on-surface':      '#eaf1ff',
         'inverse-primary':         '#b0c6ff',
+
+        // VaultShare theme-aware tokens
+        'vs-bg':             'var(--vs-bg)',
+        'vs-card':           'var(--vs-card)',
+        'vs-heading':        'var(--vs-heading)',
+        'vs-body':           'var(--vs-body)',
+        'vs-muted':          'var(--vs-muted)',
+        'vs-border':         'var(--vs-border)',
+        'vs-border-subtle':  'var(--vs-border-subtle)',
+        'vs-hover':          'var(--vs-hover)',
+        'vs-surface':        'var(--vs-surface)',
+        'vs-active':         'var(--vs-active)',
+        'vs-brand':          'var(--vs-brand)',
+        'vs-brand-text':     'var(--vs-brand-text)',
+        'vs-brand-light':    'var(--vs-brand-light)',
+        'vs-success':        'var(--vs-success)',
+        'vs-success-surface':'var(--vs-success-surface)',
+        'vs-error':          'var(--vs-error)',
+        'vs-error-surface':  'var(--vs-error-surface)',
+        'vs-warn':           'var(--vs-warn)',
+        'vs-warn-surface':   'var(--vs-warn-surface)',
+        'vs-avatar-bg':      'var(--vs-avatar-bg)',
+        'vs-ring-white':     'var(--vs-ring-white)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

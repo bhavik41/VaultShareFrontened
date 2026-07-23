@@ -398,7 +398,7 @@ export default function LandingPage() {
           </Link>
 
           <div
-            style={{ display: "flex", alignItems: "center", gap: 36 }}
+            style={{ alignItems: "center", gap: 36 }}
             className="hidden md:flex"
           >
             {NAV_LINKS.map((item) => (
@@ -425,7 +425,7 @@ export default function LandingPage() {
           </div>
 
           <div
-            style={{ display: "flex", alignItems: "center", gap: 8 }}
+            style={{ alignItems: "center", gap: 8 }}
             className="hidden md:flex"
           >
             {isLoggedIn ? (
@@ -665,16 +665,16 @@ export default function LandingPage() {
         />
 
         <Card
-          className="w-full h-[520px] relative overflow-hidden border-none"
+          className="w-full min-h-[400px] md:h-[520px] relative overflow-hidden border-none"
           style={{ background: "transparent" }}
         >
           <Spotlight className="left-0" fill="white" />
           <div
-            className="flex h-full"
+            className="flex flex-col md:flex-row h-full"
             style={{ position: "relative", zIndex: 1 }}
           >
             {/* Left — text */}
-            <div className="flex-1 py-10 pl-0 pr-40 relative z-10 flex flex-col justify-center items-end text-right">
+            <div className="flex-1 py-8 md:py-10 px-2 md:pl-0 md:pr-40 relative z-10 flex flex-col justify-center items-center text-center md:items-end md:text-right">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -771,12 +771,12 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
+                className="justify-center md:justify-end"
                 style={{
                   display: "flex",
                   gap: 10,
                   marginTop: 32,
                   flexWrap: "wrap",
-                  justifyContent: "flex-end",
                 }}
               >
                 {isLoggedIn ? (
@@ -938,19 +938,20 @@ export default function LandingPage() {
           {STATS.map(({ value, label }, i) => (
             <FadeUp key={label} delay={i * 0.08}>
               <div
+                className="md:border-r last:border-r-0 border-r-0"
                 style={{
-                  flex: "1 1 160px",
+                  flex: "1 1 140px",
                   textAlign: "center",
-                  padding: "12px 32px",
-                  borderRight:
+                  padding: "12px 20px",
+                  borderColor:
                     i < STATS.length - 1
-                      ? "1px solid rgba(255,255,255,0.06)"
-                      : "none",
+                      ? "rgba(255,255,255,0.06)"
+                      : "transparent",
                 }}
               >
                 <div
                   style={{
-                    fontSize: 30,
+                    fontSize: "clamp(22px, 4vw, 30px)",
                     fontWeight: 800,
                     letterSpacing: "-0.04em",
                     lineHeight: 1.1,
@@ -984,7 +985,8 @@ export default function LandingPage() {
       {/* ── Features ── */}
       <section
         id="features"
-        style={{ padding: "120px 24px", maxWidth: 1280, margin: "0 auto" }}
+        className="px-4 md:px-6 py-16 md:py-[120px]"
+        style={{ maxWidth: 1280, margin: "0 auto" }}
       >
         <FadeUp>
           <div style={{ textAlign: "center", marginBottom: 64 }}>
@@ -1033,10 +1035,9 @@ export default function LandingPage() {
         </FadeUp>
 
         <div
+          className="grid gap-4"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(290px, 1fr))",
-            gap: 16,
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 290px), 1fr))",
           }}
         >
           {FEATURES.map(({ icon, color, glow, bg, title, desc }, i) => (
@@ -1108,8 +1109,8 @@ export default function LandingPage() {
 
       {/* ── Chat Demo ── */}
       <section
+        className="px-4 md:px-6 py-12 md:py-20 pb-16 md:pb-[120px]"
         style={{
-          padding: "80px 24px 120px",
           background: "rgba(255,255,255,0.012)",
           borderTop: "1px solid rgba(255,255,255,0.05)",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
@@ -1191,8 +1192,9 @@ export default function LandingPage() {
               }}
             >
               <div
+                className="flex-wrap md:flex-nowrap gap-2 md:gap-0"
                 style={{
-                  padding: "14px 20px",
+                  padding: "14px 16px",
                   borderBottom: "1px solid rgba(255,255,255,0.06)",
                   display: "flex",
                   alignItems: "center",
@@ -1200,8 +1202,9 @@ export default function LandingPage() {
                   background: "#060606",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div className="flex items-center gap-2 md:gap-3 min-w-0">
                   <div
+                    className="truncate"
                     style={{
                       background: "#141414",
                       borderRadius: 6,
@@ -1258,8 +1261,9 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div style={{ display: "flex", minHeight: 280 }}>
+              <div className="flex flex-col md:flex-row" style={{ minHeight: 280 }}>
                 <div
+                  className="hidden md:block"
                   style={{
                     flex: 1,
                     padding: "20px",
@@ -1330,8 +1334,8 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div
+                  className="w-full md:w-[280px]"
                   style={{
-                    width: 280,
                     padding: "16px",
                     display: "flex",
                     flexDirection: "column",
@@ -1471,7 +1475,8 @@ export default function LandingPage() {
       {/* ── Security ── */}
       <section
         id="security"
-        style={{ padding: "120px 24px", maxWidth: 1280, margin: "0 auto" }}
+        className="px-4 md:px-6 py-16 md:py-[120px]"
+        style={{ maxWidth: 1280, margin: "0 auto" }}
       >
         <FadeUp>
           <div style={{ textAlign: "center", marginBottom: 64 }}>
@@ -1520,10 +1525,9 @@ export default function LandingPage() {
         </FadeUp>
 
         <div
+          className="grid gap-4"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: 16,
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
           }}
         >
           {SECURITY.map(({ icon, color, glow, bg, title, desc }, i) => (
@@ -1595,8 +1599,8 @@ export default function LandingPage() {
       {/* ── Pricing ── */}
       <section
         id="pricing"
+        className="px-4 md:px-6 py-12 md:py-20 pb-16 md:pb-[120px]"
         style={{
-          padding: "80px 24px 120px",
           background: "rgba(255,255,255,0.012)",
           borderTop: "1px solid rgba(255,255,255,0.05)",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
@@ -1648,10 +1652,9 @@ export default function LandingPage() {
           </FadeUp>
 
           <div
+            className="grid gap-5"
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(290px, 1fr))",
-              gap: 20,
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
               alignItems: "start",
             }}
           >
@@ -1997,8 +2000,8 @@ export default function LandingPage() {
 
       {/* ── CTA ── */}
       <section
+        className="px-4 md:px-6 py-16 md:py-[120px]"
         style={{
-          padding: "120px 24px",
           textAlign: "center",
           position: "relative",
           overflow: "hidden",
@@ -2238,11 +2241,9 @@ export default function LandingPage() {
         <FadeUp>
           <div style={{ maxWidth: 1280, margin: "0 auto" }}>
             <div
+              className="grid gap-8 md:gap-12 mb-10 md:mb-[52px]"
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                gap: 48,
-                marginBottom: 52,
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 160px), 1fr))",
               }}
             >
               <div>

@@ -101,14 +101,14 @@ function pageNumbers(current: number, total: number): (number | "…")[] {
 function UserCell({ log, onEnter, onLeave }: { log: AuditLog; onEnter: (e: React.MouseEvent, log: AuditLog) => void; onLeave: () => void }) {
   return (
     <button
-      className="flex items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-slate-50"
+      className="flex items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-vs-bg"
       onMouseEnter={(e) => onEnter(e, log)}
       onMouseLeave={onLeave}
     >
       <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-[10px] font-bold text-white">
         {(log.userName || "?").charAt(0).toUpperCase()}
       </div>
-      <span className="text-base text-slate-700 underline decoration-dotted underline-offset-2">
+      <span className="text-base text-vs-heading underline decoration-dotted underline-offset-2">
         {log.userName || "Unknown"}
       </span>
     </button>
@@ -121,7 +121,7 @@ function OwnerCell({ name }: { name: string }) {
       <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-[10px] font-bold text-white">
         {name.charAt(0).toUpperCase()}
       </div>
-      <span className="text-base text-slate-600">{name}</span>
+      <span className="text-base text-vs-body">{name}</span>
     </div>
   );
 }
@@ -237,13 +237,13 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
 
   if (error) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-4 text-slate-400">
+      <div className="flex flex-1 items-center justify-center bg-vs-bg">
+        <div className="flex flex-col items-center gap-4 text-vs-muted">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-700">
             <Lock size={32} />
           </div>
-          <h2 className="text-lg font-semibold text-slate-900">Access Restricted</h2>
-          <p className="text-base text-slate-500">{error}</p>
+          <h2 className="text-lg font-semibold text-vs-heading">Access Restricted</h2>
+          <p className="text-base text-vs-muted">{error}</p>
         </div>
       </div>
     );
@@ -254,12 +254,12 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
   const activeCollaborator = popover ? collaboratorMap.get(popover.log.userId) ?? null : null;
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto bg-slate-50 p-8">
+    <div className="flex flex-1 flex-col overflow-y-auto bg-vs-bg p-8">
       <div className="mx-auto w-full max-w-full flex flex-col gap-5">
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-vs-heading">
             <History size={20} className="text-blue-500" />
             Audit History
           </h2>
@@ -278,19 +278,19 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value as AuditAction | "all")}
-            className="rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-600 focus:border-blue-500 focus:outline-none"
+            className="rounded-lg border border-vs-border bg-vs-hover px-3 py-2 text-sm text-vs-body focus:border-blue-500 focus:outline-none"
           >
             {ACTION_FILTER_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
 
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-vs-muted">
             <span>Rows per page</span>
             <select
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1.5 text-sm text-slate-600 focus:border-blue-500 focus:outline-none"
+              className="rounded-lg border border-vs-border bg-vs-hover px-2 py-1.5 text-sm text-vs-body focus:border-blue-500 focus:outline-none"
             >
               {PAGE_SIZE_OPTIONS.map((n) => (
                 <option key={n} value={n}>{n}</option>
@@ -300,9 +300,9 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-slate-50">
-          <table className="w-full min-w-[820px] text-left text-base text-slate-400">
-            <thead className="border-b border-gray-200 bg-black/3 text-sm uppercase tracking-wider text-slate-500">
+        <div className="overflow-x-auto rounded-xl border border-vs-border bg-vs-bg">
+          <table className="w-full min-w-[820px] text-left text-base text-vs-muted">
+            <thead className="border-b border-vs-border bg-vs-hover text-sm uppercase tracking-wider text-vs-muted">
               <tr>
                 <th className="px-6 py-4 font-medium w-44">Action</th>
                 <th className="px-6 py-4 font-medium">Details</th>
@@ -311,11 +311,11 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                 <th className="px-6 py-4 font-medium w-44 whitespace-nowrap">Timestamp</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-vs-border">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
-                    <div className="flex items-center justify-center gap-3 text-slate-500">
+                    <div className="flex items-center justify-center gap-3 text-vs-muted">
                       <Loader2 size={18} className="animate-spin" />
                       <span className="text-base">Loading…</span>
                     </div>
@@ -324,7 +324,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
               ) : logs.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center gap-3 text-slate-500">
+                    <div className="flex flex-col items-center gap-3 text-vs-muted">
                       <History size={28} className="opacity-40" />
                       <span className="text-base">No audit logs found.</span>
                     </div>
@@ -332,13 +332,13 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                 </tr>
               ) : (
                 logs.map((log) => (
-                  <tr key={log.id} className="transition-colors hover:bg-black/3">
+                  <tr key={log.id} className="transition-colors hover:bg-vs-hover">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-vs-surface">
                           {ACTION_ICONS[log.action] || <History size={16} />}
                         </div>
-                        <span className="font-medium text-slate-700">
+                        <span className="font-medium text-vs-heading">
                           {ACTION_LABELS[log.action] || log.action}
                         </span>
                       </div>
@@ -346,15 +346,15 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                     <td className="px-6 py-4 max-w-[220px]">
                       {log.details ? (
                         <div className="group relative">
-                          <span className="text-slate-600 text-sm block truncate cursor-default">
+                          <span className="text-vs-body text-sm block truncate cursor-default">
                             {log.details}
                           </span>
-                          <div className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-max max-w-xs rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-xl group-hover:block">
+                          <div className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-max max-w-xs rounded-lg border border-vs-border bg-vs-card px-3 py-2 text-sm text-vs-heading shadow-xl group-hover:block">
                             {log.details}
                           </div>
                         </div>
                       ) : (
-                        <span className="text-slate-500 text-sm">—</span>
+                        <span className="text-vs-muted text-sm">—</span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -363,7 +363,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <OwnerCell name={log.fileOwnerName || fileOwnerName || "Unknown"} />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-vs-muted">
                       {new Date(log.timestamp).toLocaleString(undefined, {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -379,34 +379,34 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         {/* Pagination */}
         {!loading && total > 0 && (
           <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-500">
-              Showing <span className="font-semibold text-slate-600">{firstEntry}–{lastEntry}</span> of{" "}
-              <span className="font-semibold text-slate-600">{total}</span> entries
+            <p className="text-sm text-vs-muted">
+              Showing <span className="font-semibold text-vs-body">{firstEntry}–{lastEntry}</span> of{" "}
+              <span className="font-semibold text-vs-body">{total}</span> entries
             </p>
             <div className="flex items-center gap-1">
-              <button onClick={() => setPage(1)} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage(1)} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-vs-border bg-vs-hover text-vs-muted transition-colors hover:bg-vs-bg hover:text-vs-heading disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronsLeft size={14} />
               </button>
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="flex h-8 w-8 items-center justify-center rounded-lg border border-vs-border bg-vs-hover text-vs-muted transition-colors hover:bg-vs-bg hover:text-vs-heading disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronLeft size={14} />
               </button>
               {pageNumbers(page, totalPages).map((p, i) =>
                 p === "…" ? (
-                  <span key={`e-${i}`} className="flex h-8 w-8 items-center justify-center text-sm text-slate-600">…</span>
+                  <span key={`e-${i}`} className="flex h-8 w-8 items-center justify-center text-sm text-vs-body">…</span>
                 ) : (
                   <button
                     key={p}
                     onClick={() => setPage(p)}
-                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-lg border px-2 text-sm font-medium transition-colors ${p === page ? "border-blue-500/50 bg-blue-100 text-blue-700" : "border-gray-200 bg-black/3 text-slate-400 hover:bg-slate-50 hover:text-slate-900"}`}
+                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-lg border px-2 text-sm font-medium transition-colors ${p === page ? "border-blue-500/50 bg-blue-100 text-blue-700" : "border-vs-border bg-vs-hover text-vs-muted hover:bg-vs-bg hover:text-vs-heading"}`}
                   >
                     {p}
                   </button>
                 )
               )}
-              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-vs-border bg-vs-hover text-vs-muted transition-colors hover:bg-vs-bg hover:text-vs-heading disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronRight size={14} />
               </button>
-              <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-black/3 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30">
+              <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="flex h-8 w-8 items-center justify-center rounded-lg border border-vs-border bg-vs-hover text-vs-muted transition-colors hover:bg-vs-bg hover:text-vs-heading disabled:cursor-not-allowed disabled:opacity-30">
                 <ChevronsRight size={14} />
               </button>
             </div>
@@ -419,28 +419,28 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
         <div
           ref={popoverRef}
           style={{ position: "fixed", top: popover.top, left: popover.left, zIndex: 50 }}
-          className="w-72 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl shadow-gray-300/50"
+          className="w-72 overflow-hidden rounded-xl border border-vs-border bg-vs-card shadow-2xl shadow-gray-300/50"
           onMouseEnter={cancelHide}
           onMouseLeave={scheduleHide}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 border-b border-gray-200 p-4">
+          <div className="flex items-center gap-3 border-b border-vs-border p-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-base font-bold text-white">
               {popover.log.userName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="truncate text-base font-semibold text-slate-900">{popover.log.userName}</p>
+                <p className="truncate text-base font-semibold text-vs-heading">{popover.log.userName}</p>
                 {popover.isOwner && (
                   <span className="flex items-center gap-1 rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
                     <Crown size={9} />Owner
                   </span>
                 )}
                 {!popover.isOwner && popover.isSelf && (
-                  <span className="rounded-full bg-gray-300 px-2 py-0.5 text-[10px] font-semibold text-slate-600">You</span>
+                  <span className="rounded-full bg-vs-border px-2 py-0.5 text-[10px] font-semibold text-vs-body">You</span>
                 )}
                 {!popover.isOwner && !popover.isSelf && activeCollaborator && (
-                  <span className="rounded-full bg-gray-300 px-2 py-0.5 text-[10px] font-semibold capitalize text-slate-600">
+                  <span className="rounded-full bg-vs-border px-2 py-0.5 text-[10px] font-semibold capitalize text-vs-body">
                     {activeCollaborator.role}
                   </span>
                 )}
@@ -448,37 +448,37 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
                   <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold text-red-600">No access</span>
                 )}
               </div>
-              <p className="truncate text-sm text-slate-400">{popover.log.userEmail || "—"}</p>
+              <p className="truncate text-sm text-vs-muted">{popover.log.userEmail || "—"}</p>
             </div>
           </div>
 
           {/* Body */}
           {popover.isOwner && (
-            <div className="flex items-center gap-2 border-t border-gray-200 px-4 py-3">
+            <div className="flex items-center gap-2 border-t border-vs-border px-4 py-3">
               <Crown size={13} className="text-violet-600" />
               <span className="text-sm text-violet-700 font-medium">File Owner — cannot be managed</span>
             </div>
           )}
 
           {popover.isSelf && !popover.isOwner && (
-            <div className="px-4 py-3 text-sm text-slate-500">You cannot manage your own access.</div>
+            <div className="px-4 py-3 text-sm text-vs-muted">You cannot manage your own access.</div>
           )}
 
           {!popover.isOwner && !popover.isSelf && activeCollaborator && (
             <div className="space-y-3 p-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Change Access</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-vs-muted">Change Access</p>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   disabled={actionLoading}
                   onClick={() => handleRoleChange("editor")}
-                  className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "editor" ? "border-violet-500/50 bg-violet-500/20 text-violet-800" : "border-gray-200 bg-black/3 text-slate-600 hover:border-violet-500/30 hover:bg-violet-500/10 hover:text-violet-800"}`}
+                  className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "editor" ? "border-violet-500/50 bg-violet-500/20 text-violet-800" : "border-vs-border bg-vs-hover text-vs-body hover:border-violet-500/30 hover:bg-violet-500/10 hover:text-violet-800"}`}
                 >
                   Editor
                 </button>
                 <button
                   disabled={actionLoading}
                   onClick={() => handleRoleChange("viewer")}
-                  className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "viewer" ? "border-blue-500/50 bg-blue-100 text-blue-700" : "border-gray-200 bg-black/3 text-slate-600 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-200"}`}
+                  className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${activeCollaborator.role === "viewer" ? "border-blue-500/50 bg-blue-100 text-blue-700" : "border-vs-border bg-vs-hover text-vs-body hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-200"}`}
                 >
                   Viewer
                 </button>
@@ -497,7 +497,7 @@ export default function AuditLogViewer({ fileId }: AuditLogViewerProps) {
           )}
 
           {!popover.isOwner && !popover.isSelf && !activeCollaborator && (
-            <div className="px-4 py-3 text-sm text-slate-500">This user no longer has access to the file.</div>
+            <div className="px-4 py-3 text-sm text-vs-muted">This user no longer has access to the file.</div>
           )}
         </div>
       )}

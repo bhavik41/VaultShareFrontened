@@ -18,28 +18,28 @@ const ACTION_ICONS: Record<string, { icon: React.ReactNode; color: string }> = {
 export const AuditSummaryCard: React.FC<AuditSummaryCardProps> = ({ summary }) => {
   return (
     <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-      <div className="rounded-xl border border-gray-200 bg-slate-50 p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Total Events</p>
-        <p className="mt-1 text-2xl font-bold text-slate-900">{summary.totalEvents}</p>
+      <div className="rounded-xl border border-vs-border bg-vs-bg p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-vs-muted">Total Events</p>
+        <p className="mt-1 text-2xl font-bold text-vs-heading">{summary.totalEvents}</p>
       </div>
-      <div className="rounded-xl border border-gray-200 bg-slate-50 p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Unique Users</p>
+      <div className="rounded-xl border border-vs-border bg-vs-bg p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-vs-muted">Unique Users</p>
         <div className="mt-1 flex items-center gap-1.5">
           <Users size={16} className="text-violet-600" />
-          <p className="text-2xl font-bold text-slate-900">{summary.uniqueUsers}</p>
+          <p className="text-2xl font-bold text-vs-heading">{summary.uniqueUsers}</p>
         </div>
       </div>
-      <div className="rounded-xl border border-gray-200 bg-slate-50 p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Last Activity</p>
+      <div className="rounded-xl border border-vs-border bg-vs-bg p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-vs-muted">Last Activity</p>
         <div className="mt-1 flex items-center gap-1.5">
-          <Clock size={14} className="text-slate-400" />
-          <p className="text-base font-semibold text-slate-700">
+          <Clock size={14} className="text-vs-muted" />
+          <p className="text-base font-semibold text-vs-heading">
             {summary.lastActivityAt ? new Date(summary.lastActivityAt).toLocaleDateString() : "—"}
           </p>
         </div>
       </div>
-      <div className="rounded-xl border border-gray-200 bg-slate-50 p-4">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">By Action</p>
+      <div className="rounded-xl border border-vs-border bg-vs-bg p-4">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-vs-muted">By Action</p>
         <div className="flex flex-col gap-1">
           {Object.entries(summary.byAction)
             .filter(([, count]) => count > 0)
@@ -48,10 +48,10 @@ export const AuditSummaryCard: React.FC<AuditSummaryCardProps> = ({ summary }) =
             .map(([action, count]) => {
               const meta = ACTION_ICONS[action]
               return (
-                <div key={action} className={`flex items-center gap-1.5 text-sm ${meta?.color ?? "text-slate-400"}`}>
+                <div key={action} className={`flex items-center gap-1.5 text-sm ${meta?.color ?? "text-vs-muted"}`}>
                   {meta?.icon}
                   <span className="flex-1 capitalize">{action.replace("_", " ")}</span>
-                  <span className="font-bold text-slate-900">{count}</span>
+                  <span className="font-bold text-vs-heading">{count}</span>
                 </div>
               )
             })}

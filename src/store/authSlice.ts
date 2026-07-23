@@ -32,6 +32,8 @@ interface AuthState {
   // Password reset
   resetEmailSent: boolean
   resetSuccess: boolean
+  // Backup codes (shown once after signup)
+  backupCodes: string[] | null
   // Idle-timeout session lock
   locked: boolean
   reauthError: string | null
@@ -54,7 +56,8 @@ const initialState: AuthState = {
   otpType: null,
   resetEmailSent: false,
   resetSuccess: false,
-  locked: false,
+  backupCodes: null,
+  locked: sessionStorage.getItem("sessionLocked") === "true",
   reauthError: null,
   reauthLoading: false,
 }
@@ -104,14 +107,14 @@ export const signupThunk = createAsyncThunk<
 
 // Verify email OTP after signup
 export const verifySignupEmailOtpThunk = createAsyncThunk<
-  { token: string; refreshToken: string; user: User },
+  { token: string; refreshToken: string; user: User; backupCodes?: string[] },
   { otp: string },
   { rejectValue: string }
 >("auth/signup/verifyOtp", async (data, { getState, rejectWithValue }) => {
   const { auth } = getState() as { auth: AuthState }
   const tempToken = auth.tempToken ?? sessionStorage.getItem("tempToken")
   try {
-    return await apiPost<{ token: string; refreshToken: string; user: User }>(
+    return await apiPost<{ token: string; refreshToken: string; user: User; backupCodes?: string[] }>(
       `${BASE_URL}/verify-email-otp`,
       { tempToken, otp: data.otp },
     )
@@ -150,6 +153,25 @@ export const verifySigninOtpThunk = createAsyncThunk<
     return await apiPost<{ token: string; refreshToken: string; user: User }>(
       `${BASE_URL}/signin/verify-otp`,
       { tempToken, otp: data.otp },
+    )
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) return rejectWithValue(err.response?.data?.message ?? "Verification failed.")
+    return rejectWithValue("Network error.")
+  }
+})
+
+// Verify backup code (alternative to OTP)
+export const verifyBackupCodeThunk = createAsyncThunk<
+  { token: string; refreshToken: string; user: User },
+  { code: string },
+  { rejectValue: string }
+>("auth/verifyBackupCode", async (data, { getState, rejectWithValue }) => {
+  const { auth } = getState() as { auth: AuthState }
+  const tempToken = auth.tempToken ?? sessionStorage.getItem("tempToken")
+  try {
+    return await apiPost<{ token: string; refreshToken: string; user: User }>(
+      `${BASE_URL}/verify-backup-code`,
+      { tempToken, code: data.code },
     )
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) return rejectWithValue(err.response?.data?.message ?? "Verification failed.")
@@ -360,6 +382,7 @@ const authSlice = createSlice({
       state.qrCode = null
       state.locked = false
       clearTokens()
+      sessionStorage.removeItem("sessionLocked")
     },
     clearError: (state) => { state.error = null },
     clearOtpState: (state) => {
@@ -378,9 +401,13 @@ const authSlice = createSlice({
       state.resetSuccess = false
       state.error = null
     },
+    clearBackupCodes: (state) => {
+      state.backupCodes = null
+    },
     lockSession: (state) => {
       state.locked = true
       state.reauthError = null
+      sessionStorage.setItem("sessionLocked", "true")
     },
   },
   extraReducers: (builder) => {
@@ -408,6 +435,7 @@ const authSlice = createSlice({
         s.requiresOtp = false
         s.otpType = null
         s.tempToken = null
+        s.backupCodes = a.payload.backupCodes ?? null
         sessionStorage.removeItem("tempToken")
         saveTokens(a.payload.token, a.payload.refreshToken)
         saveUserEmail(a.payload.user.email)
@@ -449,6 +477,23 @@ const authSlice = createSlice({
         saveUserEmail(a.payload.user.email)
       })
       .addCase(verifySigninOtpThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Verification failed." })
+
+    // ── verify backup code ────────────────────────────────────────────────────
+    builder
+      .addCase(verifyBackupCodeThunk.pending, (s) => { s.loading = true; s.error = null })
+      .addCase(verifyBackupCodeThunk.fulfilled, (s, a) => {
+        s.loading = false
+        s.token = a.payload.token
+        s.refreshToken = a.payload.refreshToken
+        s.user = a.payload.user
+        s.requiresOtp = false
+        s.otpType = null
+        s.tempToken = null
+        sessionStorage.removeItem("tempToken")
+        saveTokens(a.payload.token, a.payload.refreshToken)
+        saveUserEmail(a.payload.user.email)
+      })
+      .addCase(verifyBackupCodeThunk.rejected, (s, a) => { s.loading = false; s.error = a.payload ?? "Verification failed." })
 
     // ── refresh ────────────────────────────────────────────────────────────────
     builder
@@ -524,10 +569,10 @@ const authSlice = createSlice({
       .addCase(requestReauthOtpThunk.fulfilled, (s) => { s.reauthLoading = false })
       .addCase(requestReauthOtpThunk.rejected, (s, a) => { s.reauthLoading = false; s.reauthError = a.payload ?? "Failed to send code." })
       .addCase(verifyReauthOtpThunk.pending, (s) => { s.reauthLoading = true; s.reauthError = null })
-      .addCase(verifyReauthOtpThunk.fulfilled, (s) => { s.reauthLoading = false; s.locked = false; s.reauthError = null })
+      .addCase(verifyReauthOtpThunk.fulfilled, (s) => { s.reauthLoading = false; s.locked = false; s.reauthError = null; sessionStorage.removeItem("sessionLocked") })
       .addCase(verifyReauthOtpThunk.rejected, (s, a) => { s.reauthLoading = false; s.reauthError = a.payload ?? "Verification failed." })
   },
 })
 
-export const { logout, clearError, setToken, clearResetState, clearOtpState, lockSession } = authSlice.actions
+export const { logout, clearError, setToken, clearResetState, clearOtpState, clearBackupCodes, lockSession } = authSlice.actions
 export default authSlice.reducer

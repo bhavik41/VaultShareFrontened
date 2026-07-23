@@ -44,15 +44,15 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080810] text-slate-900">
+    <div className="min-h-screen bg-vs-bg text-vs-heading">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-gray-200 bg-[#080810]/90 backdrop-blur">
+      <nav className="sticky top-0 z-50 border-b border-vs-border bg-vs-bg/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-base font-extrabold text-slate-900">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-base font-extrabold text-vs-heading">
               V
             </div>
-            <span className="text-base font-bold text-slate-900">VaultShare</span>
+            <span className="text-base font-bold text-vs-heading">VaultShare</span>
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
@@ -60,7 +60,7 @@ export default function ContactPage() {
               <a
                 key={link}
                 href="#"
-                className="text-base text-slate-400 transition-colors hover:text-slate-900"
+                className="text-base text-vs-muted transition-colors hover:text-vs-heading"
               >
                 {link}
               </a>
@@ -70,13 +70,13 @@ export default function ContactPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/signin"
-              className="rounded-lg border border-gray-200 px-4 py-1.5 text-base text-slate-600 transition-colors hover:bg-black/3"
+              className="rounded-lg border border-vs-border px-4 py-1.5 text-base text-vs-body transition-colors hover:bg-vs-hover"
             >
               Sign In
             </Link>
             <Link
               to="/signup"
-              className="rounded-lg bg-blue-600 px-4 py-1.5 text-base font-semibold text-slate-900 transition-colors hover:bg-blue-500"
+              className="rounded-lg bg-blue-600 px-4 py-1.5 text-base font-semibold text-vs-heading transition-colors hover:bg-blue-500"
             >
               Get Started
             </Link>
@@ -89,10 +89,10 @@ export default function ContactPage() {
         <p className="mb-4 text-base font-semibold uppercase tracking-widest text-cyan-400">
           Get in touch
         </p>
-        <h1 className="mb-3 text-5xl font-extrabold leading-tight text-slate-900">
+        <h1 className="mb-3 text-5xl font-extrabold leading-tight text-vs-heading">
           We'd love to<br />hear from you.
         </h1>
-        <p className="text-slate-400">
+        <p className="text-vs-muted">
           Questions, demos, or enterprise inquiries — we're here.
         </p>
       </section>
@@ -102,19 +102,19 @@ export default function ContactPage() {
         <div className="grid gap-4 md:grid-cols-3">
           {[
             {
-              icon: <Mail size={20} className="text-slate-400" />,
+              icon: <Mail size={20} className="text-vs-muted" />,
               title: "Email Us",
               value: "hello@vaultshare.io",
               sub: "Reply within 24 hours",
             },
             {
-              icon: <MessageSquare size={20} className="text-slate-400" />,
+              icon: <MessageSquare size={20} className="text-vs-muted" />,
               title: "Live Chat",
               value: "Available in-app",
               sub: "Mon–Fri, 9am–6pm EST",
             },
             {
-              icon: <Phone size={20} className="text-slate-400" />,
+              icon: <Phone size={20} className="text-vs-muted" />,
               title: "Enterprise Sales",
               value: "+1 (800) 555-0192",
               sub: "For teams over 50",
@@ -122,14 +122,14 @@ export default function ContactPage() {
           ].map(({ icon, title, value, sub }) => (
             <div
               key={title}
-              className="rounded-xl border border-gray-200 bg-[#0f1020] p-6"
+              className="rounded-xl border border-vs-border bg-vs-card p-6"
             >
-              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-gray-300 bg-gray-100">
+              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-vs-border bg-vs-hover">
                 {icon}
               </div>
-              <p className="mb-1 text-base font-semibold text-slate-700">{title}</p>
+              <p className="mb-1 text-base font-semibold text-vs-heading">{title}</p>
               <p className="mb-1 text-base font-medium text-cyan-400">{value}</p>
-              <p className="text-sm text-slate-500">{sub}</p>
+              <p className="text-sm text-vs-muted">{sub}</p>
             </div>
           ))}
         </div>
@@ -139,19 +139,19 @@ export default function ContactPage() {
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
           {/* Form */}
-          <div className="rounded-xl border border-gray-200 bg-[#0f1020] p-8">
-            <h2 className="mb-6 text-xl font-bold text-slate-900">Send us a message</h2>
+          <div className="rounded-xl border border-vs-border bg-vs-card p-8">
+            <h2 className="mb-6 text-xl font-bold text-vs-heading">Send us a message</h2>
 
             {sent ? (
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
                 <p className="font-semibold text-emerald-700">Message sent!</p>
-                <p className="mt-1 text-base text-slate-400">We'll get back to you within 24 hours.</p>
+                <p className="mt-1 text-base text-vs-muted">We'll get back to you within 24 hours.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-400">
+                    <label className="mb-1.5 block text-sm font-medium text-vs-muted">
                       First Name
                     </label>
                     <input
@@ -159,11 +159,11 @@ export default function ContactPage() {
                       placeholder="Alex"
                       value={form.firstName}
                       onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-lg border border-vs-border bg-vs-hover px-3 py-2.5 text-base text-vs-heading placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-400">
+                    <label className="mb-1.5 block text-sm font-medium text-vs-muted">
                       Last Name
                     </label>
                     <input
@@ -171,13 +171,13 @@ export default function ContactPage() {
                       placeholder="Morgan"
                       value={form.lastName}
                       onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-lg border border-vs-border bg-vs-hover px-3 py-2.5 text-base text-vs-heading placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-400">
+                  <label className="mb-1.5 block text-sm font-medium text-vs-muted">
                     Email Address
                   </label>
                   <input
@@ -186,12 +186,12 @@ export default function ContactPage() {
                     placeholder="alex@company.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-vs-border bg-vs-hover px-3 py-2.5 text-base text-vs-heading placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-400">
+                  <label className="mb-1.5 block text-sm font-medium text-vs-muted">
                     Company
                   </label>
                   <input
@@ -199,12 +199,12 @@ export default function ContactPage() {
                     placeholder="Acme Corp"
                     value={form.company}
                     onChange={(e) => setForm({ ...form, company: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-vs-border bg-vs-hover px-3 py-2.5 text-base text-vs-heading placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-400">
+                  <label className="mb-1.5 block text-sm font-medium text-vs-muted">
                     Subject
                   </label>
                   <input
@@ -212,12 +212,12 @@ export default function ContactPage() {
                     placeholder="Enterprise / Demo request / Support"
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded-lg border border-vs-border bg-vs-hover px-3 py-2.5 text-base text-vs-heading placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-400">
+                  <label className="mb-1.5 block text-sm font-medium text-vs-muted">
                     Message
                   </label>
                   <textarea
@@ -225,13 +225,13 @@ export default function ContactPage() {
                     placeholder="Tell us how we can help..."
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full resize-none rounded-lg border border-gray-300 bg-gray-100 px-3 py-2.5 text-base text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+                    className="w-full resize-none rounded-lg border border-vs-border bg-vs-hover px-3 py-2.5 text-base text-vs-heading placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 py-2.5 text-base font-semibold text-slate-900 transition-colors hover:bg-blue-500"
+                  className="w-full rounded-lg bg-blue-600 py-2.5 text-base font-semibold text-vs-heading transition-colors hover:bg-blue-500"
                 >
                   Send Message →
                 </button>
@@ -241,15 +241,15 @@ export default function ContactPage() {
 
           {/* FAQ */}
           <div>
-            <h2 className="mb-5 text-xl font-bold text-slate-900">Frequently Asked</h2>
+            <h2 className="mb-5 text-xl font-bold text-vs-heading">Frequently Asked</h2>
             <div className="space-y-3">
               {FAQS.map(({ q, a }) => (
                 <div
                   key={q}
-                  className="rounded-xl border border-gray-200 bg-[#0f1020] p-5"
+                  className="rounded-xl border border-vs-border bg-vs-card p-5"
                 >
-                  <p className="mb-1.5 text-base font-semibold text-slate-900">{q}</p>
-                  <p className="text-base text-slate-400">{a}</p>
+                  <p className="mb-1.5 text-base font-semibold text-vs-heading">{q}</p>
+                  <p className="text-base text-vs-muted">{a}</p>
                 </div>
               ))}
             </div>

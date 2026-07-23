@@ -19,19 +19,19 @@ export default function TypingIndicator({ typingUsers }: TypingIndicatorProps) {
       {/* Animated dots */}
       <div className="flex items-center gap-0.5">
         <span
-          className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"
+          className="w-1.5 h-1.5 rounded-full bg-vs-muted animate-bounce"
           style={{ animationDelay: "0ms", animationDuration: "1s" }}
         />
         <span
-          className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"
+          className="w-1.5 h-1.5 rounded-full bg-vs-muted animate-bounce"
           style={{ animationDelay: "150ms", animationDuration: "1s" }}
         />
         <span
-          className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"
+          className="w-1.5 h-1.5 rounded-full bg-vs-muted animate-bounce"
           style={{ animationDelay: "300ms", animationDuration: "1s" }}
         />
       </div>
-      <span className="text-[11px] text-slate-500 italic">{text}...</span>
+      <span className="text-[11px] text-vs-muted italic">{text}...</span>
     </div>
   );
 }

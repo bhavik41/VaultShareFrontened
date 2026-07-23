@@ -46,10 +46,52 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [validationError, setValidationError] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit?.({ firstName, lastName, username, email, password, agreedToTerms })
+    setValidationError("")
+
+    const trimmedFirst = firstName.trim()
+    const trimmedLast = lastName.trim()
+    const trimmedEmail = email.trim()
+    const trimmedUsername = username.trim()
+
+    if (!trimmedFirst || !trimmedLast) {
+      setValidationError("First and last name are required.")
+      return
+    }
+    if (trimmedFirst.length > 50 || trimmedLast.length > 50) {
+      setValidationError("Name is too long (max 50 characters each).")
+      return
+    }
+    if (!trimmedUsername || trimmedUsername.length < 3) {
+      setValidationError("Username must be at least 3 characters.")
+      return
+    }
+    if (trimmedUsername.length > 30) {
+      setValidationError("Username is too long (max 30 characters).")
+      return
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(trimmedEmail)) {
+      setValidationError("Please enter a valid email address.")
+      return
+    }
+    if (password.length < 8) {
+      setValidationError("Password must be at least 8 characters.")
+      return
+    }
+    if (password.length > 128) {
+      setValidationError("Password is too long (max 128 characters).")
+      return
+    }
+    if (!agreedToTerms) {
+      setValidationError("You must agree to the terms and conditions.")
+      return
+    }
+
+    onSubmit?.({ firstName: trimmedFirst, lastName: trimmedLast, username: trimmedUsername, email: trimmedEmail, password, agreedToTerms })
   }
 
   return (
@@ -159,7 +201,7 @@ export function SignupForm({ onSubmit, isSubmitting = false, error }: SignupForm
               </div>
 
               {/* Error */}
-              {error && <p className="text-base text-destructive text-center">{error}</p>}
+              {(error || validationError) && <p className="text-base text-destructive text-center">{validationError || error}</p>}
 
               <Button
                 type="submit"
@@ -197,10 +239,28 @@ export function SigninForm({ onSubmit, isSubmitting = false, error }: SigninForm
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [validationError, setValidationError] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit?.({ email, password })
+    setValidationError("")
+
+    const trimmedEmail = email.trim()
+    if (!trimmedEmail) {
+      setValidationError("Email is required.")
+      return
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(trimmedEmail)) {
+      setValidationError("Please enter a valid email address.")
+      return
+    }
+    if (!password) {
+      setValidationError("Password is required.")
+      return
+    }
+
+    onSubmit?.({ email: trimmedEmail, password })
   }
 
   return (
@@ -266,7 +326,7 @@ export function SigninForm({ onSubmit, isSubmitting = false, error }: SigninForm
               </div>
 
               {/* Error */}
-              {error && <p className="text-base text-destructive text-center">{error}</p>}
+              {(error || validationError) && <p className="text-base text-destructive text-center">{validationError || error}</p>}
 
               <Button type="submit" className="w-full font-medium" disabled={isSubmitting}>
                 {isSubmitting ? "Signing in…" : "Sign in"}

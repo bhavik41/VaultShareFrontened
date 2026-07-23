@@ -82,7 +82,7 @@ export default function ChatInput({
   }, [onStopTyping]);
 
   return (
-    <div className="flex items-end gap-2 p-3 border-t border-gray-200/60">
+    <div className="flex items-end gap-2 p-3 border-t border-vs-border/60">
       <textarea
         ref={textareaRef}
         value={value}
@@ -91,7 +91,7 @@ export default function ChatInput({
         disabled={disabled}
         placeholder={disabled ? "Connecting..." : "Message... (Enter to send)"}
         rows={1}
-        className="flex-1 resize-none bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-base text-slate-700 placeholder:text-gray-400 focus:outline-none focus:border-violet-500/60 focus:ring-1 focus:ring-violet-500/30 transition-all duration-200 max-h-32 overflow-y-auto disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex-1 resize-none bg-vs-hover border border-vs-border rounded-xl px-3 py-2.5 text-base text-vs-heading placeholder:text-gray-400 focus:outline-none focus:border-violet-500/60 focus:ring-1 focus:ring-violet-500/30 transition-all duration-200 max-h-32 overflow-y-auto disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ minHeight: "40px" }}
         onInput={(e) => {
           const target = e.currentTarget;
@@ -102,7 +102,7 @@ export default function ChatInput({
       <button
         onClick={handleSend}
         disabled={disabled || !value.trim()}
-        className="flex-shrink-0 w-9 h-9 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:bg-gray-200 disabled:text-slate-500 text-white flex items-center justify-center transition-all duration-150 cursor-pointer disabled:cursor-not-allowed active:scale-95"
+        className="flex-shrink-0 w-9 h-9 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:bg-vs-surface disabled:text-vs-muted text-white flex items-center justify-center transition-all duration-150 cursor-pointer disabled:cursor-not-allowed active:scale-95"
         title="Send message"
       >
         <Send size={15} />

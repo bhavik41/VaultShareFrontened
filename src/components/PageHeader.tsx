@@ -41,12 +41,13 @@ function ProfileDropdown({
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const initials = name
+  const initials = (name || "")
     .split(" ")
-    .map((n) => n[0])
+    .filter(Boolean)
+    .map((n) => n[0] ?? "")
     .join("")
     .toUpperCase()
-    .slice(0, 2);
+    .slice(0, 2) || "?";
 
   const menuItems = [
     {
@@ -99,28 +100,28 @@ function ProfileDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2.5 p-1.5 pr-3 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-gray-200 transition-all duration-200"
+        className="flex items-center gap-2.5 p-1.5 pr-3 bg-vs-card border border-vs-border rounded-xl cursor-pointer hover:bg-vs-surface transition-all duration-200"
       >
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-slate-900 shadow-md">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-sm font-bold text-vs-heading shadow-md">
           {initials}
         </div>
-        <span className="text-base text-slate-700 font-medium max-w-[100px] truncate">{name}</span>
+        <span className="text-base text-vs-heading font-medium max-w-[100px] truncate">{name}</span>
         <ChevronDown
           size={14}
-          className={`text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`text-vs-muted transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2.5 w-60 bg-gray-50 border border-gray-200 rounded-xl p-1.5 z-[100] shadow-2xl shadow-black/80">
-          <div className="p-3 border-b border-gray-200 mb-1">
+        <div className="absolute right-0 top-full mt-2.5 w-60 bg-vs-bg border border-vs-border rounded-xl p-1.5 z-[100] shadow-2xl shadow-black/80">
+          <div className="p-3 border-b border-vs-border mb-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-slate-900">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-base font-bold text-vs-heading">
                 {initials}
               </div>
               <div className="min-w-0">
-                <div className="text-base font-semibold text-slate-700 truncate">{name}</div>
-                <div className="text-sm text-slate-500 truncate">{email}</div>
+                <div className="text-base font-semibold text-vs-heading truncate">{name}</div>
+                <div className="text-sm text-vs-muted truncate">{email}</div>
               </div>
             </div>
           </div>
@@ -129,17 +130,17 @@ function ProfileDropdown({
             <button
               key={label}
               onClick={action}
-              className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-gray-100 transition-colors group"
+              className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-vs-hover transition-colors group"
             >
-              <span className="text-slate-500 group-hover:text-slate-600">{icon}</span>
+              <span className="text-vs-muted group-hover:text-vs-body">{icon}</span>
               <div>
-                <div className="text-sm font-semibold text-slate-700">{label}</div>
-                <div className="text-[10px] text-slate-500">{sub}</div>
+                <div className="text-sm font-semibold text-vs-heading">{label}</div>
+                <div className="text-[10px] text-vs-muted">{sub}</div>
               </div>
             </button>
           ))}
 
-          <div className="border-t border-gray-200 mt-1.5 pt-1.5">
+          <div className="border-t border-vs-border mt-1.5 pt-1.5">
             <button
               onClick={() => { setOpen(false); onLogout(); }}
               className="w-full flex items-center gap-3 p-2.5 rounded-lg border-0 cursor-pointer bg-transparent text-left hover:bg-rose-950/20 transition-colors"
@@ -173,7 +174,7 @@ export default function PageHeader() {
   }
 
   return (
-    <header className="h-16 shrink-0 border-b border-gray-200 px-6 flex items-center justify-end gap-4 bg-slate-50 sticky top-0 z-30">
+    <header className="h-16 shrink-0 border-b border-vs-border px-6 flex items-center justify-end gap-4 bg-vs-bg sticky top-0 z-30">
       <input
         type="file"
         ref={fileInputRef}

@@ -200,11 +200,11 @@ export default function VersionHistoryPanel({
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto bg-slate-50 p-8">
+    <div className="flex flex-1 flex-col overflow-y-auto bg-vs-bg p-8">
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-5">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-vs-heading">
             <History size={20} className="text-blue-500" />
             Version History
           </h2>
@@ -238,7 +238,7 @@ export default function VersionHistoryPanel({
         {showUploadForm && (
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-slate-50 p-4"
+            className="flex flex-col gap-3 rounded-xl border border-vs-border bg-vs-bg p-4"
           >
             {uploadMode === "request" && (
               <p className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700">
@@ -251,14 +251,14 @@ export default function VersionHistoryPanel({
               ref={fileInputRef}
               type="file"
               onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
-              className="text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-200 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-700"
+              className="text-sm text-vs-body file:mr-3 file:rounded-lg file:border-0 file:bg-vs-surface file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-vs-heading"
             />
             <textarea
               value={changeNote}
               onChange={(e) => setChangeNote(e.target.value)}
               placeholder="What changed in this version? (optional)"
               rows={2}
-              className="rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-slate-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+              className="rounded-lg border border-vs-border bg-vs-hover px-3 py-2 text-sm text-vs-heading placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             />
             {submitError && <p className="text-sm text-rose-600">{submitError}</p>}
             <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export default function VersionHistoryPanel({
               <button
                 type="button"
                 onClick={() => setShowUploadForm(false)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-gray-200"
+                className="rounded-lg border border-vs-border px-4 py-2 text-sm font-semibold text-vs-body hover:bg-vs-surface"
               >
                 Cancel
               </button>
@@ -287,17 +287,17 @@ export default function VersionHistoryPanel({
             <Clock size={16} className="mt-0.5 shrink-0 text-amber-600" />
             <div className="min-w-0">
               <p className="text-base font-semibold text-amber-700">Request Pending Approval</p>
-              <p className="mt-1 text-[11px] text-slate-400">
-                <span className="font-medium text-slate-600">{myPendingRequest.originalName}</span>
+              <p className="mt-1 text-[11px] text-vs-muted">
+                <span className="font-medium text-vs-body">{myPendingRequest.originalName}</span>
                 {" · "}{formatBytes(myPendingRequest.size)}
                 {" · submitted "}{formatDate(myPendingRequest.createdAt)}
                 {myPendingRequest.changeNote ? ` · "${myPendingRequest.changeNote}"` : ""}
               </p>
-              <p className="mt-1 text-[11px] text-slate-500">Waiting for the owner to approve or reject your upload.</p>
+              <p className="mt-1 text-[11px] text-vs-muted">Waiting for the owner to approve or reject your upload.</p>
             </div>
             <button
               onClick={() => setMyPendingRequest(null)}
-              className="absolute top-3 right-3 rounded-full p-1 text-slate-500 hover:text-slate-900 hover:bg-gray-300/60 transition-colors"
+              className="absolute top-3 right-3 rounded-full p-1 text-vs-muted hover:text-vs-heading hover:bg-vs-border/60 transition-colors"
               title="Dismiss"
             >
               <X size={14} />
@@ -309,13 +309,13 @@ export default function VersionHistoryPanel({
             <X size={16} className="mt-0.5 shrink-0 text-rose-600" />
             <div className="min-w-0 flex-1">
               <p className="text-base font-semibold text-rose-300">Request Rejected</p>
-              <p className="mt-1 text-[11px] text-slate-400">
-                <span className="font-medium text-slate-600">{myPendingRequest.originalName}</span>
+              <p className="mt-1 text-[11px] text-vs-muted">
+                <span className="font-medium text-vs-body">{myPendingRequest.originalName}</span>
                 {" · "}{formatBytes(myPendingRequest.size)}
                 {" · submitted "}{formatDate(myPendingRequest.createdAt)}
                 {myPendingRequest.changeNote ? ` · "${myPendingRequest.changeNote}"` : ""}
               </p>
-              <p className="mt-1 text-[11px] text-slate-500">
+              <p className="mt-1 text-[11px] text-vs-muted">
                 The owner rejected your upload.
               </p>
               <button
@@ -328,7 +328,7 @@ export default function VersionHistoryPanel({
             </div>
             <button
               onClick={() => setMyPendingRequest(null)}
-              className="absolute top-3 right-3 rounded-full p-1 text-slate-500 hover:text-slate-900 hover:bg-rose-500/20 transition-colors"
+              className="absolute top-3 right-3 rounded-full p-1 text-vs-muted hover:text-vs-heading hover:bg-rose-500/20 transition-colors"
               title="Dismiss"
             >
               <X size={14} />
@@ -346,13 +346,13 @@ export default function VersionHistoryPanel({
             {pendingRequests.map((req) => (
               <div
                 key={req.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-slate-50 px-3 py-2.5"
+                className="flex items-center justify-between gap-3 rounded-lg border border-vs-border bg-vs-bg px-3 py-2.5"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-slate-700">
+                  <p className="truncate text-sm font-semibold text-vs-heading">
                     {uploaderName(req.requestedBy)} · {req.originalName}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-slate-500">
+                  <p className="mt-0.5 text-[11px] text-vs-muted">
                     {formatBytes(req.size)} · {formatDate(req.createdAt)}
                     {req.changeNote ? ` · "${req.changeNote}"` : ""}
                   </p>
@@ -381,28 +381,28 @@ export default function VersionHistoryPanel({
         {error && <p className="text-sm text-rose-600">{error}</p>}
 
         {/* Version list */}
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-slate-50">
+        <div className="overflow-hidden rounded-xl border border-vs-border bg-vs-bg">
           {loading ? (
-            <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
+            <div className="flex items-center justify-center gap-3 py-12 text-vs-muted">
               <Loader2 size={18} className="animate-spin" />
               <span className="text-base">Loading…</span>
             </div>
           ) : versions.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-12 text-slate-500">
+            <div className="flex flex-col items-center gap-3 py-12 text-vs-muted">
               <History size={28} className="opacity-40" />
               <span className="text-base">No versions yet.</span>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-vs-border">
               {versions.map((v) => (
                 <div key={v.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-200 text-sm font-bold text-slate-600">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-vs-surface text-sm font-bold text-vs-body">
                       v{v.versionNumber}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-base font-medium text-slate-700 truncate">
+                        <span className="text-base font-medium text-vs-heading truncate">
                           {v.originalName || fileName}
                         </span>
                         {v.isActive && (
@@ -411,7 +411,7 @@ export default function VersionHistoryPanel({
                           </span>
                         )}
                       </div>
-                      <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                      <p className="mt-0.5 truncate text-[11px] text-vs-muted">
                         {uploaderName(v.uploadedBy)} · {formatBytes(v.size)} · {formatDate(v.createdAt)}
                         {v.changeNote ? ` · "${v.changeNote}"` : ""}
                       </p>
@@ -422,7 +422,7 @@ export default function VersionHistoryPanel({
                       disabled={actionLoadingId === v.id}
                       onClick={() => handleDownload(v)}
                       title="Download this version"
-                      className="rounded-lg p-2 text-slate-400 hover:bg-black/3 hover:text-slate-900 disabled:opacity-50"
+                      className="rounded-lg p-2 text-vs-muted hover:bg-vs-hover hover:text-vs-heading disabled:opacity-50"
                     >
                       {actionLoadingId === v.id ? (
                         <Loader2 size={14} className="animate-spin" />
@@ -459,12 +459,12 @@ export default function VersionHistoryPanel({
 
         {/* Rejected upload requests (collaborator view) */}
         {!isOwner && myRejectedRequests.length > 0 && (
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-slate-50">
-            <div className="flex items-center gap-2 border-b border-gray-200 px-5 py-3">
+          <div className="overflow-hidden rounded-xl border border-vs-border bg-vs-bg">
+            <div className="flex items-center gap-2 border-b border-vs-border px-5 py-3">
               <X size={13} className="text-rose-600" />
-              <span className="text-sm font-semibold text-slate-400">Rejected Requests</span>
+              <span className="text-sm font-semibold text-vs-muted">Rejected Requests</span>
             </div>
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-vs-border">
               {myRejectedRequests.map((req) => (
                 <div key={req.id} className="flex items-center justify-between gap-3 px-5 py-3.5 opacity-70">
                   <div className="flex min-w-0 items-center gap-3">
@@ -473,12 +473,12 @@ export default function VersionHistoryPanel({
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-base font-medium text-slate-600 truncate">{req.originalName}</span>
+                        <span className="text-base font-medium text-vs-body truncate">{req.originalName}</span>
                         <span className="flex items-center gap-1 rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-semibold text-rose-300 shrink-0">
                           Rejected
                         </span>
                       </div>
-                      <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                      <p className="mt-0.5 truncate text-[11px] text-vs-muted">
                         {formatBytes(req.size)} · {formatDate(req.createdAt)}
                         {req.changeNote ? ` · "${req.changeNote}"` : ""}
                       </p>
@@ -491,9 +491,9 @@ export default function VersionHistoryPanel({
         )}
 
         {myRole && myRole !== "owner" && (
-          <p className="flex items-center gap-2 text-[11px] text-slate-600">
+          <p className="flex items-center gap-2 text-[11px] text-vs-body">
             <Users size={12} />
-            Your role on this file: <span className="font-semibold capitalize text-slate-400">{myRole}</span>
+            Your role on this file: <span className="font-semibold capitalize text-vs-muted">{myRole}</span>
           </p>
         )}
       </div>

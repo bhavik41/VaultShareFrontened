@@ -4,6 +4,8 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { fetchMeThunk, lockSession, requestReauthOtpThunk } from "@/store/authSlice";
 import { useIdleTimer } from "@/hooks/useIdleTimer";
 import SessionLockOverlay from "@/components/SessionLockOverlay";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { ThemeProvider } from "@/hooks/useTheme";
 
 const IDLE_TIMEOUT_MS = 2 * 60 * 1000;
 import SignupPage from "@/pages/SignupPage";
@@ -69,6 +71,8 @@ export default function App() {
   }, [dispatch, token, user]);
 
   return (
+    <ThemeProvider>
+    <ErrorBoundary>
     <BrowserRouter>
       <Routes>
         {/* Public routes */}
@@ -132,5 +136,7 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    </ErrorBoundary>
+    </ThemeProvider>
   );
 }
