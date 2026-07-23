@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getDashboardDocuments, getTrashedFiles, restoreFileApi, permanentlyDeleteFileApi, type DashboardDocument, type DashboardCollaborator, type TrashedFile } from "@/store/dashboardApi";
 import { getStarredFileIds, starFile, unstarFile } from "@/store/starredApi";
 import FileSettingsModal from "@/components/FileSettingsModal";
+import FileThumbnail from "@/components/FileThumbnail";
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
 function formatBytes(b: number) {
@@ -190,7 +191,7 @@ export default function DashboardPage() {
           </button>
         </div>
         <div className="aspect-square rounded-lg bg-vs-surface flex items-center justify-center border border-vs-border/30 group-hover:border-vs-brand/30 transition-all overflow-hidden">
-          <div className="flex items-center justify-center opacity-40">{fti.icon}</div>
+          <FileThumbnail fileId={doc.id} mimeType={doc.mimeType} fallback={<div className="flex items-center justify-center opacity-40">{fti.icon}</div>} />
         </div>
         <div>
           <p className="text-sm font-medium text-vs-heading truncate">{doc.name}</p>
@@ -305,7 +306,7 @@ export default function DashboardPage() {
                             <Lock size={12} className="text-vs-success" aria-label="Encrypted" />
                           </div>
                           <div className="aspect-square rounded-lg bg-vs-surface flex items-center justify-center border border-vs-border/30 overflow-hidden">
-                            <div className="opacity-30">{fti.icon}</div>
+                            <FileThumbnail fileId={doc.id} mimeType={doc.mimeType} fallback={<div className="opacity-30">{fti.icon}</div>} />
                           </div>
                           <div>
                             <p className="text-xs font-medium text-vs-heading truncate">{doc.name}</p>
