@@ -92,6 +92,31 @@ export async function deleteGroup(groupId: string): Promise<void> {
   await axios.delete(`${API}/groups/${groupId}`, { headers: getAuthHeaders() })
 }
 
+// ── Invitations ───────────────────────────────────────────────────────────────
+
+export interface GroupInvite {
+  id: string
+  groupId: string
+  groupName: string
+  inviterName: string
+  inviterEmail: string
+  role: GroupRole
+  createdAt: string
+}
+
+export async function getMyGroupInvitations(): Promise<GroupInvite[]> {
+  const res = await axios.get(`${API}/groups/invitations/mine`, { headers: getAuthHeaders() })
+  return res.data.invitations ?? []
+}
+
+export async function respondToGroupInvitation(invitationId: string, accept: boolean): Promise<void> {
+  await axios.patch(
+    `${API}/groups/invitations/${invitationId}/respond`,
+    { accept },
+    { headers: getAuthHeaders() },
+  )
+}
+
 // ── Members ────────────────────────────────────────────────────────────────────
 
 export async function addMember(

@@ -7,7 +7,7 @@ import SessionLockOverlay from "@/components/SessionLockOverlay";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/hooks/useTheme";
 
-const IDLE_TIMEOUT_MS = 2 * 60 * 1000;
+const IDLE_TIMEOUT_MS = 4 * 60 * 1000;
 import SignupPage from "@/pages/SignupPage";
 import SigninPage from "@/pages/SigninPage";
 import DashboardPage from "@/pages/DashboardPage";

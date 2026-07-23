@@ -1,12 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
-  ChevronLeft, FileText, Loader2, Plus, RefreshCw,
+  Check, ChevronLeft, FileText, Loader2, Mail, Plus, RefreshCw,
   Shield, Trash2, UserMinus, UserPlus, Users, X,
 } from 'lucide-react'
-import type { Group, GroupDetail, GroupFile, GroupFileForMe, GroupMember, GroupRole, SharedRole } from '@/store/groupsApi'
+import type { Group, GroupDetail, GroupFile, GroupFileForMe, GroupInvite, GroupMember, GroupRole, SharedRole } from '@/store/groupsApi'
 import {
-  addMember, createGroup, deleteGroup, getGroup, getGroupFilesForMe, listGroups,
-  removeGroupFile, removeMember, shareFileWithGroup, updateGroup,
+  addMember, createGroup, deleteGroup, getGroup, getGroupFilesForMe,
+  getMyGroupInvitations, listGroups, removeGroupFile, removeMember,
+  respondToGroupInvitation, shareFileWithGroup, updateGroup,
   updateGroupFilePermission, updateMemberRole,
 } from '@/store/groupsApi'
 import { getMyFiles } from '@/store/filesApi'
@@ -30,15 +32,17 @@ const inputCls  = 'w-full rounded-lg border border-vs-border bg-vs-hover px-3 py
 const selectCls = 'rounded-lg border border-vs-border bg-vs-hover px-3 py-2 text-sm text-vs-heading outline-none focus:border-vs-brand cursor-pointer'
 const cardCls   = 'bg-vs-card border border-vs-border rounded-xl p-4 shadow-sm'
 
-type Tab = 'my-groups' | 'shared-with-me'
+type Tab = 'my-groups' | 'shared-with-me' | 'invitations'
 type GroupTab = 'members' | 'files'
 
 export default function GroupsPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [tab, setTab]                         = useState<Tab>('my-groups')
   const [groups, setGroups]                   = useState<Group[]>([])
   const [selectedGroup, setSelectedGroup]     = useState<GroupDetail | null>(null)
   const [groupTab, setGroupTab]               = useState<GroupTab>('members')
   const [sharedFiles, setSharedFiles]         = useState<GroupFileForMe[]>([])
+  const [invitations, setInvitations]         = useState<GroupInvite[]>([])
   const [myFiles, setMyFiles]                 = useState<UploadedFile[]>([])
   const [loading, setLoading]                 = useState(true)
   const [actionLoading, setActionLoading]     = useState(false)
@@ -65,12 +69,29 @@ export default function GroupsPage() {
     try { setLoading(true); setError(''); setSharedFiles(await getGroupFilesForMe()) }
     catch { setError('Unable to load shared files.') } finally { setLoading(false) }
   }
+  async function loadInvitations() {
+    try { setLoading(true); setError(''); setInvitations(await getMyGroupInvitations()) }
+    catch { setError('Unable to load invitations.') } finally { setLoading(false) }
+  }
   async function loadGroupDetail(id: string) {
     try { setActionLoading(true); const d = await getGroup(id); setSelectedGroup(d); setEditName(d.name); setEditDesc(d.description ?? ''); setEditDefaultRole((d as any).defaultRole ?? 'viewer'); setShareFileRole((d as any).defaultRole ?? 'viewer') }
     catch { setError('Unable to load group.') } finally { setActionLoading(false) }
   }
 
-  useEffect(() => { if (tab === 'my-groups') loadGroups(); else loadSharedFiles() }, [tab])
+  useEffect(() => {
+    if (tab === 'my-groups') loadGroups()
+    else if (tab === 'shared-with-me') loadSharedFiles()
+    else loadInvitations()
+  }, [tab])
+
+  useEffect(() => {
+    getMyGroupInvitations().then(setInvitations).catch(() => {})
+    const inviteId = searchParams.get('invite')
+    if (inviteId) {
+      setTab('invitations')
+      setSearchParams({}, { replace: true })
+    }
+  }, [])
 
   function flashSuccess(msg: string) { setSuccess(msg); setTimeout(() => setSuccess(''), 3500) }
 
@@ -91,8 +112,12 @@ export default function GroupsPage() {
   }
   async function handleAddMember(e: FormEvent) {
     e.preventDefault(); if (!selectedGroup || !memberEmail.trim()) return
-    try { setActionLoading(true); setError(''); await addMember(selectedGroup.id, { email: memberEmail.trim(), role: memberRole }); await loadGroupDetail(selectedGroup.id); setMemberEmail(''); setMemberRole('viewer'); flashSuccess('Member added.') }
-    catch (err: any) { setError(err?.response?.data?.message ?? 'Failed to add member.') } finally { setActionLoading(false) }
+    try { setActionLoading(true); setError(''); await addMember(selectedGroup.id, { email: memberEmail.trim(), role: memberRole }); await loadGroupDetail(selectedGroup.id); setMemberEmail(''); setMemberRole('viewer'); flashSuccess('Invitation sent.') }
+    catch (err: any) { setError(err?.response?.data?.message ?? 'Failed to send invitation.') } finally { setActionLoading(false) }
+  }
+  async function handleRespondInvitation(invitationId: string, accept: boolean) {
+    try { setActionLoading(true); setError(''); await respondToGroupInvitation(invitationId, accept); setInvitations(p => p.filter(i => i.id !== invitationId)); flashSuccess(accept ? 'Invitation accepted! You are now a member.' : 'Invitation rejected.') }
+    catch (err: any) { setError(err?.response?.data?.message ?? 'Failed to respond.') } finally { setActionLoading(false) }
   }
   async function handleUpdateMemberRole(userId: string, role: GroupRole) {
     if (!selectedGroup) return
@@ -237,12 +262,12 @@ export default function GroupsPage() {
 
               {canManage && (
                 <div className={cardCls}>
-                  <h3 className="text-xs font-semibold text-vs-muted uppercase tracking-wider mb-3 flex items-center gap-1.5"><UserPlus size={13} />Add Member</h3>
+                  <h3 className="text-xs font-semibold text-vs-muted uppercase tracking-wider mb-3 flex items-center gap-1.5"><UserPlus size={13} />Invite Member</h3>
                   <form onSubmit={handleAddMember} className="flex gap-2 flex-wrap">
                     <input type="email" value={memberEmail} onChange={e => setMemberEmail(e.target.value)} placeholder="user@example.com" required className={inputCls + ' flex-1 min-w-[200px] w-auto'} />
                     <select value={memberRole} onChange={e => setMemberRole(e.target.value as GroupRole)} className={selectCls}><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="admin">Admin</option></select>
                     <button type="submit" disabled={actionLoading || !memberEmail.trim()} className="flex items-center gap-1.5 px-4 py-2 bg-vs-brand hover:opacity-90 text-white rounded-lg text-sm font-semibold disabled:opacity-50 cursor-pointer border-0 transition-opacity">
-                      {actionLoading ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}Add
+                      {actionLoading ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}Invite
                     </button>
                   </form>
                 </div>
@@ -326,10 +351,14 @@ export default function GroupsPage() {
           {([
             { key: 'my-groups',      label: 'My Groups',       icon: <Users size={13} /> },
             { key: 'shared-with-me', label: 'Shared With Me',  icon: <Shield size={13} /> },
+            { key: 'invitations',    label: 'Invitations',     icon: <Mail size={13} /> },
           ] as const).map(({ key, label, icon }) => (
             <button key={key} onClick={() => setTab(key)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer border-0 ${tab === key ? 'bg-vs-active text-vs-brand font-semibold' : 'bg-transparent text-vs-body hover:text-vs-heading'}`}>
               {icon}{label}
+              {key === 'invitations' && invitations.length > 0 && (
+                <span className="ml-1 w-5 h-5 rounded-full bg-vs-brand text-white text-[10px] font-bold flex items-center justify-center">{invitations.length}</span>
+              )}
             </button>
           ))}
         </div>
@@ -400,6 +429,50 @@ export default function GroupsPage() {
                     <span>{formatDate(group.createdAt)}</span>
                   </div>
                 </button>
+              ))}
+            </div>
+          )
+        )}
+
+        {/* Invitations */}
+        {tab === 'invitations' && (
+          loading ? <div className="flex justify-center py-20"><Loader2 size={28} className="animate-spin text-vs-brand" /></div>
+          : invitations.length === 0 ? (
+            <div className="text-center py-20 text-vs-muted">
+              <Mail size={40} className="mx-auto mb-3 opacity-30" />
+              <p className="text-sm font-semibold text-vs-body">No pending invitations</p>
+              <p className="text-sm mt-1">When someone invites you to a group, it will appear here.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {invitations.map(inv => (
+                <div key={inv.id} className="bg-vs-card border border-vs-border rounded-xl p-5 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-vs-active flex items-center justify-center shrink-0">
+                      <Users size={18} className="text-vs-brand" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-vs-heading">
+                        <span className="text-vs-brand">{inv.inviterName}</span> invited you to join <span className="text-vs-brand">{inv.groupName}</span>
+                      </p>
+                      <div className="flex items-center gap-3 mt-1 text-xs text-vs-muted">
+                        <span>Role: <span className={`px-1.5 py-0.5 rounded-full font-semibold ${ROLE_BADGE[inv.role] ?? ROLE_BADGE.viewer}`}>{inv.role}</span></span>
+                        <span>·</span>
+                        <span>{formatDate(inv.createdAt)}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button onClick={() => handleRespondInvitation(inv.id, true)} disabled={actionLoading}
+                        className="flex items-center gap-1.5 px-4 py-2 bg-vs-brand hover:opacity-90 text-white rounded-lg text-sm font-semibold disabled:opacity-50 cursor-pointer border-0 transition-opacity">
+                        <Check size={14} />Accept
+                      </button>
+                      <button onClick={() => handleRespondInvitation(inv.id, false)} disabled={actionLoading}
+                        className="flex items-center gap-1.5 px-4 py-2 bg-vs-error-surface/40 hover:bg-vs-error-surface/70 text-vs-error rounded-lg text-sm font-semibold disabled:opacity-50 cursor-pointer border-0 transition-colors">
+                        <X size={14} />Reject
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           )
